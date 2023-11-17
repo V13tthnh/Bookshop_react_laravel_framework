@@ -14,3 +14,4 @@ use  App\Http\Controllers\AdminsController;
 */
 
 Route::get('/login',[AdminsController::class,'login'])->name('admin.login');
+Route::get('/',[AdminsController::class,'index'])->name('admin.index');
