@@ -29,6 +29,7 @@
 
     <!-- Template Stylesheet -->
     <link href="{{asset('css/style.css')}}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -50,85 +51,117 @@
                 </a>
                 <div class="d-flex align-items-center ms-4 mb-4">
                     <div class="position-relative">
+                        @if(Auth::user()->avatar != null)
+                            <img class="rounded-circle" src="{{asset('/'.Auth::user()->avatar)}}" alt="" style="width: 40px; height: 40px;">
+                            <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
+                        @else
                         <img class="rounded-circle" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
-                        <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
+                            <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
+                        @endif
                     </div>
                     <div class="ms-3">
                         <h6 class="mb-0">{{Auth::user()->name}}</h6>
-                        <span>Admin</span>
+                        
+                            @if(Auth::user()->role == 1)
+                                <span>Super Admin</span>
+                            @endif
+                            @if(Auth::user()->role == 2)
+                                <span>Admin</span>
+                            @endif
+                            @if(Auth::user()->role == 3)
+                                <span>Sales Agent</span>
+                            @endif
+                        
                     </div>
                 </div>
                 <div class="navbar-nav w-100">
-                    <div class="nav-item dropdown">
-                        <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-user me-2"></i>Nhân viên</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
-                            <a href="typography.html" class="dropdown-item">Thêm</a>
+                    @if(Auth::user()->role == 3)
+                        <div class="nav-item dropdown">
+                            <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-chart-pie me-2"></i>Thống kê</a>
+                            <div class="dropdown-menu bg-transparent border-0">
+                                <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
+                                <a href="typography.html" class="dropdown-item">Thêm</a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="nav-item dropdown">
-                        <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-user me-2"></i>Khách hàng</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
-                            <a href="typography.html" class="dropdown-item">Thêm</a>
+                        <div class="nav-item dropdown">
+                            <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-file-invoice me-2"></i>Hóa đơn</a>
+                            <div class="dropdown-menu bg-transparent border-0">
+                                <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
+                                <a href="typography.html" class="dropdown-item">Thêm</a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="nav-item dropdown">
-                        <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-book me-2"></i>Sách</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
-                            <a href="typography.html" class="dropdown-item">Thêm</a>
+                    @else
+                        <div class="nav-item dropdown">
+                            <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-user me-2"></i>Nhân viên</a>
+                            <div class="dropdown-menu bg-transparent border-0">
+                                <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
+                                <a href="{{route('admin.create')}}" class="dropdown-item">Thêm</a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="nav-item dropdown">
-                        <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-tags me-2"></i>Thể loại</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
-                            <a href="typography.html" class="dropdown-item">Thêm</a>
+                        <div class="nav-item dropdown">
+                            <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-user me-2"></i>Khách hàng</a>
+                            <div class="dropdown-menu bg-transparent border-0">
+                                <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
+                                <a href="typography.html" class="dropdown-item">Thêm</a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="nav-item dropdown">
-                        <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-pen me-2"></i>Tác giả</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
-                            <a href="typography.html" class="dropdown-item">Thêm</a>
+                        <div class="nav-item dropdown">
+                            <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-book me-2"></i>Sách</a>
+                            <div class="dropdown-menu bg-transparent border-0">
+                                <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
+                                <a href="typography.html" class="dropdown-item">Thêm</a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="nav-item dropdown">
-                        <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-building me-2"></i>Nhà xuất bản</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
-                            <a href="typography.html" class="dropdown-item">Thêm</a>
+                        <div class="nav-item dropdown">
+                            <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-tags me-2"></i>Thể loại</a>
+                            <div class="dropdown-menu bg-transparent border-0">
+                                <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
+                                <a href="typography.html" class="dropdown-item">Thêm</a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="nav-item dropdown">
-                        <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-file-invoice me-2"></i>Hóa đơn</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
-                            <a href="typography.html" class="dropdown-item">Thêm</a>
+                        <div class="nav-item dropdown">
+                            <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-pen me-2"></i>Tác giả</a>
+                            <div class="dropdown-menu bg-transparent border-0">
+                                <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
+                                <a href="typography.html" class="dropdown-item">Thêm</a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="nav-item dropdown">
-                        <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-truck me-2"></i>Nhập hàng</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
-                            <a href="typography.html" class="dropdown-item">Thêm</a>
+                        <div class="nav-item dropdown">
+                            <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-building me-2"></i>Nhà xuất bản</a>
+                            <div class="dropdown-menu bg-transparent border-0">
+                                <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
+                                <a href="typography.html" class="dropdown-item">Thêm</a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="nav-item dropdown">
-                        <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-ad me-2"></i>Slideshow</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
-                            <a href="typography.html" class="dropdown-item">Thêm</a>
+                        <div class="nav-item dropdown">
+                            <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-file-invoice me-2"></i>Hóa đơn</a>
+                            <div class="dropdown-menu bg-transparent border-0">
+                                <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
+                                <a href="typography.html" class="dropdown-item">Thêm</a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="nav-item dropdown">
-                        <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-chart-pie me-2"></i>Thống kê</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
-                            <a href="typography.html" class="dropdown-item">Thêm</a>
+                        <div class="nav-item dropdown">
+                            <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-truck me-2"></i>Nhập hàng</a>
+                            <div class="dropdown-menu bg-transparent border-0">
+                                <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
+                                <a href="typography.html" class="dropdown-item">Thêm</a>
+                            </div>
                         </div>
-                    </div>
+                        <div class="nav-item dropdown">
+                            <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-ad me-2"></i>Slideshow</a>
+                            <div class="dropdown-menu bg-transparent border-0">
+                                <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
+                                <a href="typography.html" class="dropdown-item">Thêm</a>
+                            </div>
+                        </div>
+                        <div class="nav-item dropdown">
+                            <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-chart-pie me-2"></i>Thống kê</a>
+                            <div class="dropdown-menu bg-transparent border-0">
+                                <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
+                                <a href="typography.html" class="dropdown-item">Thêm</a>
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </nav>
         </div>
@@ -214,7 +247,11 @@
                     </div>
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <img class="rounded-circle me-lg-2" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                            @if(Auth::user()->avatar != null)
+                                <img class="rounded-circle me-lg-2" src="{{asset('/'.Auth::user()->avatar)}}" alt="" style="width: 40px; height: 40px;">
+                            @else
+                                <img class="rounded-circle me-lg-2" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                            @endif
                             <span class="d-none d-lg-inline-flex">{{Auth::user()->name}}</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
@@ -227,7 +264,16 @@
             </nav>
             <!-- Navbar End -->
 
-
+            @if(session('loginSuccessMsg'))
+                <script>
+                    Swal.fire({
+                        title: '{{session('successMsg')}}',
+                        text: 'Xin chào {{Auth::user()->name}}',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    })
+                </script>
+            @endif
            
            
             <!-- main-content -->
@@ -266,9 +312,11 @@
     <script src="{{asset('lib/tempusdominus/js/moment.min.js')}}"></script>
     <script src="{{asset('lib/tempusdominus/js/moment-timezone.min.js')}}"></script>
     <script src="{{asset('lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js')}}"></script>
-
+    
     <!-- Template Javascript -->
     <script src="{{asset('js/main.js')}}"></script>
+
+    @yield('js')
 </body>
 
 </html>
