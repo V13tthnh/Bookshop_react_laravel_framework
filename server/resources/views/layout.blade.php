@@ -90,8 +90,8 @@
                     <div class="nav-item dropdown">
                         <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-pen me-2"></i>Tác giả</a>
                         <div class="dropdown-menu bg-transparent border-0">
-                            <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
-                            <a href="typography.html" class="dropdown-item">Thêm</a>
+                            <a href="{{route('author.index')}}" class="dropdown-item">Danh sách</a>
+                            <a href="{{route('author.create')}}" class="dropdown-item">Thêm</a>
                         </div>
                     </div>
                     <div class="nav-item dropdown">
