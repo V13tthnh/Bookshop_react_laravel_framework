@@ -25,25 +25,28 @@ class AddDataToDBSeeder extends Seeder
     {
         //thêm admin 1
         $admin1=new admin();
-        $admin1->name='Nghĩa';
-        $admin1->email='trannghia251203@gmail.com';
+        $admin1->name='Viết Thành';
+        $admin1->email='admin@123';
         $admin1->email_verified_at='';
-        $admin1->password=Hash::make('123123@');
+        $admin1->password=Hash::make('123123');
+        $admin1->role = 1;
         $admin1->remember_token='';
 
         $admin2 = new admin();
-        $admin2->name = 'Admin 1';
-        $admin2->email = 'admin1@example.com';
+        $admin2->name = 'Thành Nghĩa';
+        $admin2->email = 'admin@456';
         $admin2->email_verified_at = '';
-        $admin2->password = Hash::make('admin123');
+        $admin2->password = Hash::make('123123');
+        $admin2->role = 2;
         $admin2->remember_token = '';
         $admin2->save(); // Save the admin1 object to the database
 
         $admin3 = new admin();
-        $admin3->name = 'Admin 2';
-        $admin3->email = 'admin2@example.com';
+        $admin3->name = 'Thanh Tuấn';
+        $admin3->email = 'admin@789';
         $admin3->email_verified_at = '';
-        $admin3->password = Hash::make('admin456');
+        $admin3->password = Hash::make('123123');
+        $admin2->role = 3;
         $admin3->remember_token = '';
         $admin3->save(); // Save the admin2 object to the database
 

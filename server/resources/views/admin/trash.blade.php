@@ -53,11 +53,8 @@
         <div class="col-sm-12 col-xl-6">
             <div class="bg-secondary rounded h-100 p-4">
                 <div class="m-n2">
-                    <a href="{{route('admin.create')}}">
-                        <button type="button" class="btn btn-success m-2"><i class="fa fa-plus me-2"></i>Thêm</button>
-                    </a>
-                    <a href="{{route('admin.trash')}}">
-                        <button type="button" class="btn btn-warning m-2"><i class="fa fa-list me-2"></i>Danh sách đã xóa</button>
+                    <a href="{{route('admin.index')}}">
+                        <button type="button" class="btn btn-warning m-2"><i class="fa fa-list me-2"></i>Danh sách</button>
                     </a>
                 </div>
             </div>
@@ -83,31 +80,24 @@
                     </tr>
                 </thead>
                 <tbody>
-                    
-                    @forelse($admins as $item)
+                    @forelse($trash as $item)
                         <tr>
                             <td><input class="form-check-input" type="checkbox"></td>
-                            <td>{{$id+=1}}</td>
-                            <td><a href="{{route('admin.edit', $item->id)}}">{{$item->name}}</a></td>
+                            <td>{{$item->id}}</td>
+                            <td>{{$item->name}}</td>
                             <td>{{$item->email}}</td>
                             <td>   
-                            
-                            <a type="button" href="{{route('admin.edit', $item->id)}}" class="btn btn-rectangle btn-warning m-2"><i class="fa fa-edit"></i></a>
-                                <form class="d-inline" action="{{route('admin.destroy', $item->id)}}" method="post">
-                                    @csrf
-                                    <button type="submit" class="btn btn-rectangle btn-primary m-2"><i class="fa fa-trash"></i></button>
-                                </form>
-                            </td>
+                                <a type="button" href="{{route('admin.untrash', $item->id)}}" class="btn btn-rectangle btn-info m-2"><i class="fa fa-trash-restore"></i></a>
+                            </td>  
                         </tr>
                     @empty
-                        <tr colspan=4>Không có dữ liệu!</tr>
+                        <td colspan=5><p>Không có dữ liệu!</p></td>
                     @endforelse
                 </tbody>
             </table>
         </div>
     </div>
     <div class="d-flex align-items-center justify-content-between mb-4 mt-3 ">
-        {{$admins->links()}}
     </div>
 </div>
 @endsection
