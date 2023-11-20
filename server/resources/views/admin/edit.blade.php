@@ -1,56 +1,52 @@
-@extends('layout')
-
-@if(session('errorMsg'))
-    <script>
-    Swal.fire({
-        title: '{{session('errorMsg')}}',
-        icon: 'error',
-        confirmButtonText: 'OK'
-    })
-    </script>
-@endif
-
-
-@section('content')
-<div class="container-fluid pt-4 px-4">
-    <div class="row g-4">
-        <div class="bg-secondary rounded h-100 p-4">
-            <h6 class="mb-4">Sửa admin</h6>
+<div class="modal fade" id="modal-edit">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Sửa admin</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
             <form action="{{route('admin.update', $admin->id)}}" method="post" enctype="multipart/form-data">
                 @csrf
-                <div class="mb-3">
-                    <label for="exampleInputEmail1" class="form-label">Tên</label>
-                    <input name="name" value="{{$admin->name}}" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                <input type="number" id="id" value="{{$admin->id}}" hidden>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="inputName">Tên</label>
+                        <input id="name" type="text" value="{{$admin->name}}" name="name" id="inputName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputProjectLeader">Email</label>
+                        <input id="email" type="email" value="{{$admin->email}}" name="email" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputProjectLeader">Mật khẩu</label required>
+                        <input id="password" type="password" name="password" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputProjectLeader">Ảnh</label>
+                        <div class="input-group">
+                            <div class="custom-file">
+                                <input id="avatar" type="file" name="avatar" class="custom-file-input" id="exampleInputFile">
+                                <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputStatus">Quyền</label>
+                        <select id="role" name="role" class="form-control custom-select">
+                            <option selected disabled>Select one</option>
+                            <option value="1" @if($admin->role === 1) selected @endif>Super admin</option>
+                            <option value="2" @if($admin->role === 2) selected @endif>Admin</option>
+                            <option value="3" @if($admin->role === 3) selected @endif>Sales Agent</option>
+                        </select>
+                    </div>
                 </div>
-
-                <div class="mb-3">
-                    <label for="exampleInputEmail1" class="form-label">Email address</label>
-                    <input name="email" value="{{$admin->email}}" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
                 </div>
-                
-                <div class="mb-3">
-                    <label for="exampleInputPassword1" class="form-label">Password</label>
-                    <input type="text" name="password" class="form-control" id="exampleInputPassword1">
-                </div>
-
-                <div class="mb-3">
-                    <label for="formFile" class="form-label">Avatar</label>
-                    <input class="form-control bg-dark" name="avatar" type="file" id="formFile">
-                </div>
-
-                <div class="mb-3">
-                <label for="formFile" class="form-label">Quyền</label>
-                    <select name="role" class="form-select" id="floatingSelect"
-                        aria-label="Floating label select example">
-                        <option value="1" @if($admin->role === 1) selected @endif>Super admin</option>
-                        <option value="2" @if($admin->role === 2) selected @endif>admin</option>
-                        <option value="3" @if($admin->role === 3) selected @endif>sales agent</option>
-                    </select>
-                </div>
-
-                <button type="submit" class="btn btn-success mt-2">Lưu</button>
             </form>
         </div>
     </div>
 </div>
-@endsection

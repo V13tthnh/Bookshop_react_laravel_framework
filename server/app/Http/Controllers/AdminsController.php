@@ -31,7 +31,7 @@ class AdminsController extends Controller
     public function index()
     {
         $admins = admin::paginate(5);
-        $id = 0;
+        $id = 1;
         return view('admin.index', compact('admins', 'id'));
     }
 
@@ -82,7 +82,11 @@ class AdminsController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $admin = admin::find($id);
+        if($admin == null){
+            return back()->with('errorMsg', "Dữ liệu không tồn tại!");
+        }
+        return view('admin.show', compact('admin'));
     }
 
     /**
@@ -94,23 +98,26 @@ class AdminsController extends Controller
         if($admin == null){
             return redirect()->back()->with('errorMsg', "Dữ liệu không tồn tại!");
         }
-        $role_list = admin::all();
-        return view('admin.edit', compact('admin', 'role_list'));
+        return response()->json([
+            'success' => 200,
+            'admin' => $admin
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        $email = admin::where('id', '<>', $id)->where('email', $request->email)->first();
+        //dd($request);       
+        $email = admin::where('id', '<>', $request->id)->where('email', $request->email)->first();
         if($email != null){
             return redirect()->back()->with('errorMsg', "Email đã tồn tại!");
         }
         if($request->hasFile('avatar')){ 
             $file = $request->avatar;
             $path = $file->store('uploads');
-            $admin = admin::find($id);
+            $admin = admin::find($request->id);
             $admin->name = $request->name;
             $admin->email = $request->email;
             $admin->password = Hash::make($request->password);
@@ -119,14 +126,14 @@ class AdminsController extends Controller
             $admin->save();
         }
         else{
-            $admin = admin::find($id);
+            $admin = admin::find($request->id);
             $admin->name = $request->name;
             $admin->email = $request->email;
             $admin->password = Hash::make($request->password);
             $admin->role = $request->role;
             $admin->save();
         }
-        return redirect()->route('admin.index')->with('successMsg', "Cập nhật thành công!");
+        return redirect()->back()->with('successMsg', "Cập nhật thành công!");
     }
 
     public function destroy(string $id)

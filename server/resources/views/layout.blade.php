@@ -3,318 +3,369 @@
 
 <head>
     <meta charset="utf-8">
-    <title>BookShop DashBoard</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="" name="keywords">
-    <meta content="" name="description">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BookShop Dashboard</title>
 
-    <!-- Favicon -->
-    <link href="img/favicon.ico" rel="icon">
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{{asset('plugins/fontawesome-free/css/all.min.css')}}">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- Tempusdominus Bootstrap 4 -->
+    <link rel="stylesheet" href="{{asset('plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css')}}">
+    <!-- iCheck -->
+    <link rel="stylesheet" href="{{asset('plugins/icheck-bootstrap/icheck-bootstrap.min.css')}}">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{{asset('dist/css/adminlte.min.css')}}">
+    <!-- overlayScrollbars -->
+    <link rel="stylesheet" href="{{asset('plugins/overlayScrollbars/css/OverlayScrollbars.min.css')}}">
+    <!-- Daterange picker -->
+    <link rel="stylesheet" href="{{asset('plugins/daterangepicker/daterangepicker.css')}}">
+    <!-- summernote -->
+    <link rel="stylesheet" href="{{asset('plugins/summernote/summernote-bs4.min.css')}}">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{asset('plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
+    <link rel="stylesheet" href="{{asset('plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
+    <link rel="stylesheet" href="{{asset('plugins/datatables-buttons/css/buttons.bootstrap4.min.css')}}">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{{asset('dist/css/adminlte.min.cs')}}">
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="{{asset('plugins/sweetalert2/sweetalert2.min.css')}}">
+    <script src="{{asset('plugins/sweetalert2/sweetalert2.min.js')}}"></script>
+    <link rel="stylesheet" href="{{asset('plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css')}}">
+    <!-- Toastr -->
+    <link rel="stylesheet" href="{{asset('plugins/toastr/toastr.min.css')}}">
 
-    <!-- Google Web Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Roboto:wght@500;700&display=swap" rel="stylesheet"> 
-    
-    <!-- Icon Font Stylesheet -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
-    <!-- Libraries Stylesheet -->
-    <link href="{{asset('lib/owlcarousel/assets/owl.carousel.min.css')}}" rel="stylesheet">
-    <link href="{{asset('lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css')}}" rel="stylesheet" />
-
-    <!-- Customized Bootstrap Stylesheet -->
-    <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet">
-
-    <!-- Template Stylesheet -->
-    <link href="{{asset('css/style.css')}}" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
-<body>
-    <div class="container-fluid position-relative d-flex p-0">
-        <!-- Spinner Start -->
-        <div id="spinner" class="show bg-dark position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                <span class="sr-only">Loading...</span>
+<body class="hold-transition sidebar-mini layout-fixed">
+    <div class="wrapper">
+        <!-- Preloader -->
+        <div class="preloader flex-column justify-content-center align-items-center">
+            <img class="animation__shake" src="{{asset('dist/img/book.png')}}" alt="AdminLTELogo" height="60"
+                width="60">
+        </div>
+
+        <!-- Navbar -->
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+            <!-- Left navbar links -->
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+                </li>
+            </ul>
+
+            <!-- Right navbar links -->
+            <ul class="navbar-nav ml-auto">
+                <!-- Navbar Search -->
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="navbar-search" href="#" role="button">
+                        <i class="fas fa-search"></i>
+                    </a>
+                    <div class="navbar-search-block">
+                        <form class="form-inline">
+                            <div class="input-group input-group-sm">
+                                <input class="form-control form-control-navbar" type="search" placeholder="Search"
+                                    aria-label="Search">
+                                <div class="input-group-append">
+                                    <button class="btn btn-navbar" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                    <button class="btn btn-navbar" type="button" data-widget="navbar-search">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('admin.logout')}}" role="button">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true" href="#"
+                        role="button">
+                        <i class="fas fa-th-large"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <!-- /.navbar -->
+
+        <!-- Main Sidebar Container -->
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            <!-- Brand Logo -->
+            <a href="" class="brand-link">
+                <img src="{{asset('dist/img/book.png')}}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+                    style="opacity: .8">
+                <span class="brand-text font-weight-light">BookShop</span>
+            </a>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Sidebar user panel (optional) -->
+                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                    <div class="image">
+                        <img src="{{asset('/'.Auth::user()->avatar)}}" class="img-circle elevation-2" alt="User Image">
+                    </div>
+                    <div class="info">
+                        <a href="#" class="d-block">{{Auth::user()->name}}</a>
+                    </div>
+                </div>
+
+                <!-- SidebarSearch Form -->
+                <div class="form-inline">
+                    <div class="input-group" data-widget="sidebar-search">
+                        <input class="form-control form-control-sidebar" type="search" placeholder="Search"
+                            aria-label="Search">
+                        <div class="input-group-append">
+                            <button class="btn btn-sidebar">
+                                <i class="fas fa-search fa-fw"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar Menu -->
+                <nav class="mt-2">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                        data-accordion="false">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-home"></i>
+                                <p>Trang chủ</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-book"></i>
+                                <p>
+                                    Sách
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="" class="nav-link">
+                                        <i class="nav-icon fas fa-table"></i>
+                                        <p>Danh sách</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="pages/forms/advanced.html" class="nav-link">
+                                        <i class="nav-icon fas fa-plus"></i>
+                                        <p>Thêm</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link">
+                                <i class="nav-icon fas fa-tag"></i>
+                                <p>
+                                    Thể loại
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{route('category.index')}}" class="nav-link">
+                                        <i class="nav-icon fas fa-table"></i>
+                                        <p>Danh sách</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{route('category.index')}}" class="nav-link">
+                                        <i class="nav-icon fas fa-plus"></i>
+                                        <p>Thêm</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="" class="nav-link">
+                                <i class="nav-icon fas fa-user"></i>
+                                <p>
+                                    Nhân viên
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{route('admin.index')}}" class="nav-link">
+                                        <i class="nav-icon fas fa-table"></i>
+                                        <p>Danh sách</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{route('admin.create')}}" class="nav-link">
+                                        <i class="nav-icon fas fa-plus"></i>
+                                        <p>Thêm</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-user-tie"></i>
+                                <p>
+                                    Khách hàng
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="" class="nav-link">
+                                        <i class="nav-icon fas fa-table"></i>
+                                        <p>Danh sách</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="pages/forms/advanced.html" class="nav-link">
+                                        <i class="nav-icon fas fa-plus"></i>
+                                        <p>Thêm</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-file-invoice"></i>
+                                <p>
+                                    Hóa đơn
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="" class="nav-link">
+                                        <i class="nav-icon fas fa-table"></i>
+                                        <p>Danh sách</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="pages/forms/advanced.html" class="nav-link">
+                                        <i class="nav-icon fas fa-plus"></i>
+                                        <p>Thêm</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-truck"></i>
+                                <p>
+                                    Nhập hàng
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="" class="nav-link">
+                                        <i class="nav-icon fas fa-table"></i>
+                                        <p>Danh sách</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="pages/forms/advanced.html" class="nav-link">
+                                        <i class="nav-icon fas fa-plus"></i>
+                                        <p>Tạo phiếu nhập</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-ad"></i>
+                                <p>
+                                    Banner
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="" class="nav-link">
+                                        <i class="nav-icon fas fa-table"></i>
+                                        <p>Danh sách</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="pages/forms/advanced.html" class="nav-link">
+                                        <i class="nav-icon fas fa-plus"></i>
+                                        <p>Tạo banner</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                </nav>
             </div>
-        </div>
-        <!-- Spinner End -->
+        </aside>
 
+        @if(session('loginSuccessMsg'))
+            <script>
+                Swal.fire({
+                    title: '{{session('successMsg')}}',
+                    text: 'Xin chào {{Auth::user()->name}}',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                })
+            </script>
+        @endif
 
-        <!-- Sidebar Start -->
-        <div class="sidebar pe-4 pb-3">
-            <nav class="navbar bg-secondary navbar-dark">
-                <a href="index.html" class="navbar-brand mx-4 mb-3">
-                    <h3 class="text-primary">DashBoard</h3>
-                </a>
-                <div class="d-flex align-items-center ms-4 mb-4">
-                    <div class="position-relative">
-                        @if(Auth::user()->avatar != null)
-                            <img class="rounded-circle" src="{{asset('/'.Auth::user()->avatar)}}" alt="" style="width: 40px; height: 40px;">
-                            <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
-                        @else
-                        <img class="rounded-circle" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
-                            <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
-                        @endif
-                    </div>
-                    <div class="ms-3">
-                        <h6 class="mb-0">{{Auth::user()->name}}</h6>
-                        
-                            @if(Auth::user()->role == 1)
-                                <span>Super Admin</span>
-                            @endif
-                            @if(Auth::user()->role == 2)
-                                <span>Admin</span>
-                            @endif
-                            @if(Auth::user()->role == 3)
-                                <span>Sales Agent</span>
-                            @endif
-                        
-                    </div>
-                </div>
-                <div class="navbar-nav w-100">
-                    @if(Auth::user()->role == 3)
-                        <div class="nav-item dropdown">
-                            <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-chart-pie me-2"></i>Thống kê</a>
-                            <div class="dropdown-menu bg-transparent border-0">
-                                <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
-                                <a href="typography.html" class="dropdown-item">Thêm</a>
-                            </div>
-                        </div>
-                        <div class="nav-item dropdown">
-                            <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-file-invoice me-2"></i>Hóa đơn</a>
-                            <div class="dropdown-menu bg-transparent border-0">
-                                <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
-                                <a href="typography.html" class="dropdown-item">Thêm</a>
-                            </div>
-                        </div>
-                    @else
-                        <div class="nav-item dropdown">
-                            <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-user me-2"></i>Nhân viên</a>
-                            <div class="dropdown-menu bg-transparent border-0">
-                                <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
-                                <a href="{{route('admin.create')}}" class="dropdown-item">Thêm</a>
-                            </div>
-                        </div>
-                        <div class="nav-item dropdown">
-                            <a href="" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-user me-2"></i>Khách hàng</a>
-                            <div class="dropdown-menu bg-transparent border-0">
-                                <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
-                                <a href="typography.html" class="dropdown-item">Thêm</a>
-                            </div>
-                        </div>
-                        <div class="nav-item dropdown">
-                            <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-book me-2"></i>Sách</a>
-                            <div class="dropdown-menu bg-transparent border-0">
-                                <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
-                                <a href="typography.html" class="dropdown-item">Thêm</a>
-                            </div>
-                        </div>
-                        <div class="nav-item dropdown">
-                            <a href="{{route('category.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-tags me-2"></i>Thể loại</a>
-                            <div class="dropdown-menu bg-transparent border-0">
-                                <a href="{{route('category.index')}}" class="dropdown-item">Danh sách</a>
-                                <a href="{{route('category.create')}}" class="dropdown-item">Thêm</a>
-                            </div>
-                        </div>
-                        <div class="nav-item dropdown">
-                            <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-pen me-2"></i>Tác giả</a>
-                            <div class="dropdown-menu bg-transparent border-0">
-                                <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
-                                <a href="typography.html" class="dropdown-item">Thêm</a>
-                            </div>
-                        </div>
-                        <div class="nav-item dropdown">
-                            <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-building me-2"></i>Nhà xuất bản</a>
-                            <div class="dropdown-menu bg-transparent border-0">
-                                <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
-                                <a href="typography.html" class="dropdown-item">Thêm</a>
-                            </div>
-                        </div>
-                        <div class="nav-item dropdown">
-                            <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-file-invoice me-2"></i>Hóa đơn</a>
-                            <div class="dropdown-menu bg-transparent border-0">
-                                <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
-                                <a href="typography.html" class="dropdown-item">Thêm</a>
-                            </div>
-                        </div>
-                        <div class="nav-item dropdown">
-                            <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-truck me-2"></i>Nhập hàng</a>
-                            <div class="dropdown-menu bg-transparent border-0">
-                                <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
-                                <a href="typography.html" class="dropdown-item">Thêm</a>
-                            </div>
-                        </div>
-                        <div class="nav-item dropdown">
-                            <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-ad me-2"></i>Slideshow</a>
-                            <div class="dropdown-menu bg-transparent border-0">
-                                <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
-                                <a href="typography.html" class="dropdown-item">Thêm</a>
-                            </div>
-                        </div>
-                        <div class="nav-item dropdown">
-                            <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-chart-pie me-2"></i>Thống kê</a>
-                            <div class="dropdown-menu bg-transparent border-0">
-                                <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
-                                <a href="typography.html" class="dropdown-item">Thêm</a>
-                            </div>
-                        </div>
-                    @endif
-                </div>
-            </nav>
-        </div>
-        <!-- Sidebar End -->
-
-
-        <!-- Content Start -->
-        <div class="content">
-            <!-- Navbar Start -->
-            <nav class="navbar navbar-expand bg-secondary navbar-dark sticky-top px-4 py-0">
-                <a href="index.html" class="navbar-brand d-flex d-lg-none me-4">
-                    <h2 class="text-primary mb-0"><i class="fa fa-user-edit"></i></h2>
-                </a>
-                <a href="#" class="sidebar-toggler flex-shrink-0">
-                    <i class="fa fa-bars"></i>
-                </a>
-                <form class="d-none d-md-flex ms-4">
-                    <input class="form-control bg-dark border-0" type="search" placeholder="Search">
-                </form>
-                <div class="navbar-nav align-items-center ms-auto">
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <i class="fa fa-envelope me-lg-2"></i>
-                            <span class="d-none d-lg-inline-flex">Message</span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
-                            <a href="#" class="dropdown-item">
-                                <div class="d-flex align-items-center">
-                                    <img class="rounded-circle" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
-                                    <div class="ms-2">
-                                        <h6 class="fw-normal mb-0">Jhon send you a message</h6>
-                                        <small>15 minutes ago</small>
-                                    </div>
-                                </div>
-                            </a>
-                            <hr class="dropdown-divider">
-                            <a href="#" class="dropdown-item">
-                                <div class="d-flex align-items-center">
-                                    <img class="rounded-circle" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
-                                    <div class="ms-2">
-                                        <h6 class="fw-normal mb-0">Jhon send you a message</h6>
-                                        <small>15 minutes ago</small>
-                                    </div>
-                                </div>
-                            </a>
-                            <hr class="dropdown-divider">
-                            <a href="#" class="dropdown-item">
-                                <div class="d-flex align-items-center">
-                                    <img class="rounded-circle" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
-                                    <div class="ms-2">
-                                        <h6 class="fw-normal mb-0">Jhon send you a message</h6>
-                                        <small>15 minutes ago</small>
-                                    </div>
-                                </div>
-                            </a>
-                            <hr class="dropdown-divider">
-                            <a href="#" class="dropdown-item text-center">See all message</a>
-                        </div>
-                    </div>
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <i class="fa fa-bell me-lg-2"></i>
-                            <span class="d-none d-lg-inline-flex">Notificatin</span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
-                            <a href="#" class="dropdown-item">
-                                <h6 class="fw-normal mb-0">Profile updated</h6>
-                                <small>15 minutes ago</small>
-                            </a>
-                            <hr class="dropdown-divider">
-                            <a href="#" class="dropdown-item">
-                                <h6 class="fw-normal mb-0">New user added</h6>
-                                <small>15 minutes ago</small>
-                            </a>
-                            <hr class="dropdown-divider">
-                            <a href="#" class="dropdown-item">
-                                <h6 class="fw-normal mb-0">Password changed</h6>
-                                <small>15 minutes ago</small>
-                            </a>
-                            <hr class="dropdown-divider">
-                            <a href="#" class="dropdown-item text-center">See all notifications</a>
-                        </div>
-                    </div>
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            @if(Auth::user()->avatar != null)
-                                <img class="rounded-circle me-lg-2" src="{{asset('/'.Auth::user()->avatar)}}" alt="" style="width: 40px; height: 40px;">
-                            @else
-                                <img class="rounded-circle me-lg-2" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
-                            @endif
-                            <span class="d-none d-lg-inline-flex">{{Auth::user()->name}}</span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
-                            <a href="#" class="dropdown-item">My Profile</a>
-                            <a href="#" class="dropdown-item">Settings</a>
-                            <a href="{{route('admin.logout')}}" class="dropdown-item">Log Out</a>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-            <!-- Navbar End -->
-
-            @if(session('loginSuccessMsg'))
-                <script>
-                    Swal.fire({
-                        title: '{{session('successMsg')}}',
-                        text: 'Xin chào {{Auth::user()->name}}',
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    })
-                </script>
-            @endif
-           
-           
-            <!-- main-content -->
+        <!-- Main content -->
+        <div class="content-wrapper">
             @yield('content')
-            
-
-
-
-
-            <!-- Footer Start -->
-            <div class="container-fluid pt-4 px-4">
-                <div class="bg-secondary rounded-top p-4">
-                    <div class="row">
-                        <div class="col-12 col-sm-6 text-center text-sm-start">
-                            &copy; <a href="#">BookShop</a>, All Right Reserved. 
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Footer End -->
         </div>
-        <!-- Content End -->
 
+        <!-- Footer -->
+        <footer class="main-footer">
+            <strong>Copyright &copy; 2014-2021
+        </footer>
 
-        <!-- Back to Top -->
-        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Control sidebar content goes here -->
+        </aside>
+        <!-- /.control-sidebar -->
     </div>
+    <!-- ./wrapper -->
 
-    <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{asset('lib/chart/chart.min.js')}}"></script>
-    <script src="{{asset('lib/easing/easing.min.js')}}"></script>
-    <script src="{{asset('lib/waypoints/waypoints.min.js')}}"></script>
-    <script src="{{asset('lib/owlcarousel/owl.carousel.min.js')}}"></script>
-    <script src="{{asset('lib/tempusdominus/js/moment.min.js')}}"></script>
-    <script src="{{asset('lib/tempusdominus/js/moment-timezone.min.js')}}"></script>
-    <script src="{{asset('lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js')}}"></script>
-    <script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script>
-    <!-- Template Javascript -->
-    <script src="{{asset('js/main.js')}}"></script>
+    <!-- jQuery -->
+    <script src="{{asset('plugins/jquery/jquery.min.js')}}"></script>
+    <!-- jQuery UI 1.11.4 -->
+    <script src="{{asset('plugins/jquery-ui/jquery-ui.min.js')}}"></script>
+    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+    <script>
+        $.widget.bridge('uibutton', $.ui.button)
+    </script>
+    <!-- Bootstrap 4 -->
+    <script src="{{asset('plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+    <!-- ChartJS -->
+    <script src="{{asset('plugins/chart.js/Chart.min.js')}}"></script>
+    <!-- Sparkline -->
+    <script src="{{asset('plugins/sparklines/sparkline.js')}}"></script>
+    <!-- jQuery Knob Chart -->
+    <script src="{{asset('plugins/jquery-knob/jquery.knob.min.js')}}"></script>
+    <!-- daterangepicker -->
+    <script src="{{asset('plugins/moment/moment.min.js')}}"></script>
+    <script src="{{asset('plugins/daterangepicker/daterangepicker.js')}}"></script>
+    <!-- Tempusdominus Bootstrap 4 -->
+    <script src="{{asset('plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js')}}"></script>
+    <!-- Summernote -->
+    <script src="{{asset('plugins/summernote/summernote-bs4.min.js')}}"></script>
+    <!-- overlayScrollbars -->
+    <script src="{{asset('plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js')}}"></script>
+    <!-- AdminLTE App -->
+    <script src="{{asset('dist/js/adminlte.js')}}"></script>
+    <script src="{{asset('dist/js/pages/dashboard.js')}}"></script>
+    <script src="{{asset('dist/js/demo.js')}}"></script>
+
 
     @yield('js')
 </body>
