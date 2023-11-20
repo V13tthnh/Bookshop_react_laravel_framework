@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use  App\Http\Controllers\AdminsController;
-
+use  App\Http\Controllers\CategoriesController;
 Route::get('/admin/login',[AdminsController::class,'login'])->name('admin.login')->middleware('guest');
 Route::post('/admin/login-handler', [AdminsController::class, 'loginHandler'])->name('admin.loginHandler');
 // admin - viet thanh
@@ -21,3 +21,14 @@ Route::middleware('auth')->group(function(){
         });
     });
 });
+
+
+Route::get('/category',[CategoriesController::class,'index'])->name('category.index');
+Route::get('/category/create',[CategoriesController::class,'create'])->name('category.create');
+Route::post('/category/store',[CategoriesController::class,'store'])->name('category.store');
+Route::get('/category/edit/{id}',[CategoriesController::class,'edit'])->name('category.edit');
+Route::post('/category/edit/{id}',[CategoriesController::class,'update'])->name('category.update');
+Route::post('/category/destroy/{id}', [CategoriesController::class, 'destroy'])->name('category.destroy');
+Route::get('/category/trash', [CategoriesController::class, 'trash'])->name('category.trash');
+Route::get('/category/untrash/{id}', [CategoriesController::class, 'untrash'])->name('category.untrash');
+

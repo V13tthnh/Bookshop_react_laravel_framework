@@ -99,7 +99,7 @@
                             </div>
                         </div>
                         <div class="nav-item dropdown">
-                            <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-user me-2"></i>Khách hàng</a>
+                            <a href="" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-user me-2"></i>Khách hàng</a>
                             <div class="dropdown-menu bg-transparent border-0">
                                 <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
                                 <a href="typography.html" class="dropdown-item">Thêm</a>
@@ -113,10 +113,10 @@
                             </div>
                         </div>
                         <div class="nav-item dropdown">
-                            <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-tags me-2"></i>Thể loại</a>
+                            <a href="{{route('category.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-tags me-2"></i>Thể loại</a>
                             <div class="dropdown-menu bg-transparent border-0">
-                                <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
-                                <a href="typography.html" class="dropdown-item">Thêm</a>
+                                <a href="{{route('category.index')}}" class="dropdown-item">Danh sách</a>
+                                <a href="{{route('category.create')}}" class="dropdown-item">Thêm</a>
                             </div>
                         </div>
                         <div class="nav-item dropdown">
@@ -312,7 +312,7 @@
     <script src="{{asset('lib/tempusdominus/js/moment.min.js')}}"></script>
     <script src="{{asset('lib/tempusdominus/js/moment-timezone.min.js')}}"></script>
     <script src="{{asset('lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js')}}"></script>
-    
+    <script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script>
     <!-- Template Javascript -->
     <script src="{{asset('js/main.js')}}"></script>
 
