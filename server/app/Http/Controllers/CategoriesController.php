@@ -11,7 +11,9 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        return view('admin.categories.detailsCategories');
+        $listCategories = categorie::paginate(5);
+        $id = 0;
+        return view('category.index',compact('listCategories', 'id'));
     }
 
     /**
@@ -19,25 +21,22 @@ class CategoriesController extends Controller
      */
     public function create()
     {
-        $listCategories = categorie::all();
-        return view("admin.categories.categories",compact('listCategories'));
+       
+        return view("category.create");
     }
-    public function actionCreate(Request $rq)
+ 
+    public function store(Request $rq)
     {
+        $name = categorie::where('name', $rq->name)->first();
+        if($name != null){
+            return redirect()->back()->with('errorMsg', 'Tên danh mục đã tồn tại!');
+        }
         $categories = new categorie();
-        $categories->name= $rq->ten_danh_muc;
-        $categories->description=$rq->mo_ta;
-        $categories->slug=$rq->book_slug;
+        $categories->name= $rq->name;
+        $categories->description=$rq->description;
+        $categories->slug=$rq->slug;
         $categories->save();
-        // return redirect()->route('sanpham.trangchu')->with('thong_bao', 'thành công');
-        return 'them thanh cong';
-    }
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store()
-    {
-        //
+        return redirect()->route('category.index')->with('successMsg', 'Thêm thành công!');
     }
 
     /**
@@ -45,19 +44,17 @@ class CategoriesController extends Controller
      */
     public function show()
     {
-        $listCategories = categorie::all();
-        return view("admin.categories.listCategories",compact('listCategories'));
+        
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+
     public function edit($id)
     {
         $editCategories=categorie::find($id);
-        return view("admin.categories.editCategories",compact('editCategories'));
+        return view("category.edit",compact('editCategories'));
     }
-    public function editHandle(Request $rq,$id)
+
+    public function update(Request $rq,$id)
     {
         $editCategories=categorie::find($id);
         if($editCategories)
@@ -70,25 +67,21 @@ class CategoriesController extends Controller
         return 'thanh cong';
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function deleteHandle($id)
-    {
-        $deleteCategories=categorie::find($id);
-        if($deleteCategories)
-        {
-            $deleteCategories->delete();
-            return view('admin.categories.listCategories');
-        }
-        else
-            return 'xoa that bai';
-    }
-    /**
-     * Remove the specified resource from storage.
-     */
+    
     public function destroy(string $id)
     {
-        //
+        categorie::find($id)->delete();
+        return redirect()->route('category.index')->with('successMsg', 'Xóa thành công!');
+    }
+
+    public function trash(){
+        $trash = categorie::onlyTrashed()->get();
+        return view('category.trash', compact('trash'));
+    }
+
+    public function untrash($id)
+    {   
+        categorie::withTrashed()->find($id)->restore();
+        return back()->with('successMsg', 'Khôi phục thành công!');
     }
 }
