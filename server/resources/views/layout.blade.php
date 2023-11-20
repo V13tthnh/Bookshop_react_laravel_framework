@@ -143,8 +143,8 @@
                         <div class="nav-item dropdown">
                             <a href="{{route('admin.index')}}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-truck me-2"></i>Nhập hàng</a>
                             <div class="dropdown-menu bg-transparent border-0">
-                                <a href="{{route('admin.index')}}" class="dropdown-item">Danh sách</a>
-                                <a href="typography.html" class="dropdown-item">Thêm</a>
+                                <a href="{{route('supplier.index')}}" class="dropdown-item">Danh sách</a>
+                                <a href="{{route('supplier.create')}}" class="dropdown-item">Thêm</a>
                             </div>
                         </div>
                         <div class="nav-item dropdown">

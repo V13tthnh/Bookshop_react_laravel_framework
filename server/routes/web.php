@@ -3,6 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use  App\Http\Controllers\AdminsController;
 use  App\Http\Controllers\CategoriesController;
+use  App\Http\Controllers\SuppliersController;
+
+
+
 Route::get('/admin/login',[AdminsController::class,'login'])->name('admin.login')->middleware('guest');
 Route::post('/admin/login-handler', [AdminsController::class, 'loginHandler'])->name('admin.loginHandler');
 // admin - viet thanh
@@ -28,14 +32,25 @@ Route::middleware('auth')->group(function(){
             Route::get('create',[CategoriesController::class,'create'])->name('create');
             Route::post('store',[CategoriesController::class,'store'])->name('store');
             Route::get('edit/{id}',[CategoriesController::class,'edit'])->name('edit');
-            Route::post('edit/{id}',[CategoriesController::class,'update'])->name('.update');
+            Route::post('edit/{id}',[CategoriesController::class,'update'])->name('update');
             Route::post('destroy/{id}', [CategoriesController::class, 'destroy'])->name('destroy');
             Route::get('trash', [CategoriesController::class, 'trash'])->name('trash');
             Route::get('untrash/{id}', [CategoriesController::class, 'untrash'])->name('untrash');
         });
     });
+    Route::prefix('supplier')->group(function(){
+        Route::name('supplier.')->group(function(){
+            Route::get('/',[SuppliersController::class,'index'])->name('index');
+            Route::get('create',[SuppliersController::class,'create'])->name('create');
+            Route::post('store',[SuppliersController::class,'store'])->name('store');
+            Route::get('edit/{id}',[SuppliersController::class,'edit'])->name('edit');
+            Route::post('edit/{id}',[SuppliersController::class,'update'])->name('update');
+            Route::post('destroy/{id}', [SuppliersController::class, 'destroy'])->name('destroy');
+            Route::get('trash', [SuppliersController::class, 'trash'])->name('trash');
+            Route::get('untrash/{id}', [SuppliersController::class, 'untrash'])->name('untrash');
+        });
+    });
+    
 });
-
-
 
 

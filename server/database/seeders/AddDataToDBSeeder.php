@@ -87,7 +87,7 @@ class AddDataToDBSeeder extends Seeder
         //suppliers
         $supplier1=new supplier();
         $supplier1->name='An Lộc Việt';
-        $supplier1->addresss='30 Kha Vạn Cân, Hiệp Bình Chánh, Thủ Đức, Hồ Chí Minh.';
+        $supplier1->address='30 Kha Vạn Cân, Hiệp Bình Chánh, Thủ Đức, Hồ Chí Minh.';
         $supplier1->phone='0899 189 499';
         $supplier1->description='Công ty TNHH MTV An Lộc Việt được thành lập từ tháng 04/2013 ngành nghề kinh doanh chính là phân phối sỉ và lẻ ngành hàng Văn phòng phẩm - Giấy in văn phòng.
                                 Đến tháng 06/2020, An Lộc Việt đã mạnh dạn phát triển thêm một số sản phẩm dịch vụ mới và đã được nhiều khách hàng đón nhận và tin dùng';
@@ -96,7 +96,7 @@ class AddDataToDBSeeder extends Seeder
 
         $supplier2=new supplier();
         $supplier2->name='Nhà xuất bản văn học';
-        $supplier2->addresss='18 Nguyễn Trường Tộ - Ba Đình - Hà Nội';
+        $supplier2->address='18 Nguyễn Trường Tộ - Ba Đình - Hà Nội';
         $supplier2->phone=' 0243 7161 518';
         $supplier2->description='NHÀ XUẤT BẢN VĂN HỌC chuyên cung cấp: Sách mới, Văn học trong nước, Tiểu thuyết, Truyện ngắn, Tản văn – Hồi ký, Thơ, Lý luận phê bình, Sách thiếu nhi, ...';
         $supplier2->slug='Nha-xuat-ban-van-hoc';
