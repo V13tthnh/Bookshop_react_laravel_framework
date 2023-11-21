@@ -15,8 +15,11 @@ return new class extends Migration
             $table->id();
             $table->tinyInteger('rating')->nullable();
             $table->string('comment')->nullable();
-            $table->bigInteger('order_details_id');
+            $table->bigInteger('order_detail_id');
             $table->timestamps();
+
+            // $table->foreign('order_detail_id')->references('id')->on('order_details')->onDelete('cascade');
+
         });
     }
 

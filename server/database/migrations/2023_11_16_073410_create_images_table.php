@@ -13,10 +13,13 @@ return new class extends Migration
     {
         Schema::create('images', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('books_id');
+            $table->bigInteger('book_id');
             $table->string('front_cover')->nullable();
             $table->string('back_cover')->nullable();
             $table->timestamps();
+
+            // $table->foreign('book_id')->references('id')->on('books')->onDelete('cascade');
+
         });
     }
 

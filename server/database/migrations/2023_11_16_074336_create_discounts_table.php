@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('discounts', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('books_id')->nullable();
+            $table->bigInteger('book_id')->nullable();
             $table->Integer('percent')->nullable();
             $table->timestamps();
+
+            // $table->foreign('book_id')->references('id')->on('books')->onDelete('cascade');
         });
     }
 

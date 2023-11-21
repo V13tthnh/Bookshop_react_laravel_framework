@@ -156,12 +156,6 @@
                                         <p>Danh sách</p>
                                     </a>
                                 </li>
-                                <li class="nav-item">
-                                    <a href="pages/forms/advanced.html" class="nav-link">
-                                        <i class="nav-icon fas fa-plus"></i>
-                                        <p>Thêm</p>
-                                    </a>
-                                </li>
                             </ul>
                         </li>
                         <li class="nav-item">
@@ -177,12 +171,6 @@
                                     <a href="{{route('category.index')}}" class="nav-link">
                                         <i class="nav-icon fas fa-table"></i>
                                         <p>Danh sách</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{route('category.index')}}" class="nav-link">
-                                        <i class="nav-icon fas fa-plus"></i>
-                                        <p>Thêm</p>
                                     </a>
                                 </li>
                             </ul>
