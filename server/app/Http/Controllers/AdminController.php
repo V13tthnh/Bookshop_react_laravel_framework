@@ -7,7 +7,7 @@ use Auth;
 use App\Models\admin;
 use Hash;
 
-class AdminsController extends Controller
+class AdminController extends Controller
 {
     public function login()
     {
@@ -30,7 +30,7 @@ class AdminsController extends Controller
      */
     public function index()
     {
-        $admins = admin::paginate(5);
+        $admins = admin::paginate(2);
         $id = 1;
         return view('admin.index', compact('admins', 'id'));
     }
@@ -48,7 +48,6 @@ class AdminsController extends Controller
      */
     public function store(Request $request)
     {
-        //dd($request);
         $email = admin::where('email', $request->email)->first();
         if($email != null){
             return redirect()->back()->with('errorMsg', "Email đã tồn tại!");

@@ -1,7 +1,6 @@
 @extends('layout')
 
 @section('js')
-
 <!-- SweetAlert2 -->
 <script src="{{asset('plugins/sweetalert2/sweetalert2.min.js')}}"></script>
 <!-- Toastr -->
@@ -59,58 +58,6 @@
     })
 </script>
 @endif
-<div class="modal fade" id="modal-default">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Thêm admin</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form action="{{route('admin.store')}}" method="post">
-                @csrf
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="inputName">Tên</label>
-                        <input type="text" name="name" id="inputName" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputProjectLeader">Email</label>
-                        <input type="email" name="email" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputProjectLeader">Mật khẩu</label required>
-                        <input type="password" name="password" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="inputProjectLeader">Ảnh</label>
-                        <div class="input-group">
-                            <div class="custom-file">
-                                <input type="file" name="avatar" class="custom-file-input" id="exampleInputFile">
-                                <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputStatus">Quyền</label>
-                        <select id="inputStatus" name="role" class="form-control custom-select">
-                            <option selected disabled>Select one</option>
-                            <option value="1">Super admin</option>
-                            <option value="2">Admin</option>
-                            <option value="3">Sales Agent</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
@@ -149,11 +96,20 @@
                             <tbody>
                                 @forelse($trash as $item)
                                 <tr>
-                                    <td>{{ $item->id}}</td>
-                                    <td><img src="{{asset('/'.'$item->avatar')}}" alt="" sizes="40" srcset=""></td>
-                                    <td><a href="">{{$item->name}}</a></td>
-                                    <td>{{$item->email}}</td>
-                                    <td>
+                                    <td style="text-align:center;">{{ $item->id}}</td>
+                                    <td style="text-align:center;">
+                                        @if($item->avatar != null)
+                                        <img src="{{asset('/'.$item->avatar)}}" alt="" sizes="40" srcset=""
+                                            style="height:100px;width:100px">
+                                        @else
+                                        <img src="{{asset('dist/img/user.jpg')}}" alt="" sizes="40" srcset=""
+                                            style="height:100px;width:100px">
+                                        @endif
+                                        
+                                    </td>
+                                    <td style="text-align:center;"><a href="">{{$item->name}}</a></td>
+                                    <td style="text-align:center;">{{$item->email}}</td>
+                                    <td style="text-align:center;">
                                         <a href="{{route('admin.untrash', $item->id)}}" class="btn btn-info"
                                             type="submit"><i class="nav-icon fa fa-trash-restore-alt"></i></a>
                                     </td>

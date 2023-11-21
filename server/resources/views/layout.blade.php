@@ -87,12 +87,6 @@
                         <i class="fas fa-sign-out-alt"></i>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true" href="#"
-                        role="button">
-                        <i class="fas fa-th-large"></i>
-                    </a>
-                </li>
             </ul>
         </nav>
         <!-- /.navbar -->
@@ -110,9 +104,15 @@
             <div class="sidebar">
                 <!-- Sidebar user panel (optional) -->
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-                    <div class="image">
-                        <img src="{{asset('/'.Auth::user()->avatar)}}" class="img-circle elevation-2" alt="User Image">
-                    </div>
+                    @if(Auth::user()->avatar != null)
+                        <div class="image">
+                            <img src="{{asset('/'.Auth::user()->avatar)}}" class="img-circle elevation-2" alt="User Image">
+                        </div>
+                    @else
+                        <div class="image">
+                            <img src="{{asset('dist/img/user.jpg')}}" class="img-circle elevation-2" alt="User Image">
+                        </div>
+                    @endif
                     <div class="info">
                         <a href="#" class="d-block">{{Auth::user()->name}}</a>
                     </div>
@@ -303,6 +303,29 @@
                                 </li>
                             </ul>
                         </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-building"></i>
+                                <p>
+                                    Nhà xuất bản
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="" class="nav-link">
+                                        <i class="nav-icon fas fa-table"></i>
+                                        <p>Danh sách</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="pages/forms/advanced.html" class="nav-link">
+                                        <i class="nav-icon fas fa-plus"></i>
+                                        <p>Tạo banner</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
                 </nav>
             </div>
         </aside>
@@ -364,9 +387,7 @@
     <!-- AdminLTE App -->
     <script src="{{asset('dist/js/adminlte.js')}}"></script>
     <script src="{{asset('dist/js/pages/dashboard.js')}}"></script>
-    <script src="{{asset('dist/js/demo.js')}}"></script>
-
-
+    <!-- <script src="{{asset('dist/js/demo.js')}}"></script> -->
     @yield('js')
 </body>
 

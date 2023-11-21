@@ -17,16 +17,17 @@ return new class extends Migration
             $table->string('code')->nullable();
             $table->longText('description')->nullable();
             $table->Integer('unit_price')->nullable();
-            $table->double('weight');
+            $table->double('weight')->nullable();
             $table->string('format')->nullable();
-            $table->year('year');
-            $table->string('language');
-            $table->string('size');
-            $table->Integer('num_pages');
+            $table->year('year')->nullable();
+            $table->string('language')->nullable();
+            $table->string('size')->nullable();
+            $table->Integer('num_pages')->nullable();
             $table->string('slug')->nullable();
             $table->string('translator')->nullable();
             $table->bigInteger('authors_id');
             $table->bigInteger('suppliers_id');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

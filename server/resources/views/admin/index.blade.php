@@ -42,6 +42,7 @@
     $(function () {
         $("#example1").DataTable({
             "responsive": true, "lengthChange": false, "autoWidth": false,
+            "paging": false,
             "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
         }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
     });
@@ -53,14 +54,13 @@
             blah2.src = URL.createObjectURL(file)
         }
     }
-     //Xem trước ảnh edit
+    // Xem trước ảnh edit
     imgInp.onchange = evt => {
         const [file] = imgInp.files
         if (file) {
             blah.src = URL.createObjectURL(file)
         }
     }
-
 </script>
 
 
@@ -228,18 +228,33 @@
                             <tbody>
                                 @forelse($admins as $item)
                                 <tr>
-                                    <td>{{$id++}}</td>
-                                    <td><img src="{{asset('/'.$item->avatar)}}" alt="" sizes="40" srcset="" style="height:100px;width:100px"></td>
-                                    <td><a href="{{route('admin.show', $item->id)}}">{{$item->name}}</a></td>
-                                    <td>{{$item->email}}</td>
-                                    <td>
-                                        <button class="btn btn-warning editBtn" value="{{$item->id}}"><i
-                                                class="nav-icon fa fa-edit"></i></a>
-                                            <form action="{{route('admin.destroy', $item->id)}}" method="post">
+                                    <td style="text-align:center;">{{$id++}}</td>
+                                    <td style="text-align:center;">
+                                        @if($item->avatar != null)
+                                        <img src="{{asset('/'.$item->avatar)}}" alt="" sizes="40" srcset=""
+                                            style="height:100px;width:100px">
+                                        @else
+                                        <img src="{{asset('dist/img/user.jpg')}}" alt="" sizes="40" srcset=""
+                                            style="height:100px;width:100px">
+                                        @endif
+                                    </td>
+                                    <td style="text-align:center;"><a
+                                            href="{{route('admin.show', $item->id)}}">{{$item->name}}</a></td>
+                                    <td style="text-align:center;">{{$item->email}}</td>
+                                    <td style="text-align:center;">
+                                        <button class="btn btn-warning editBtn" value="{{$item->id}}">
+                                            <i class="nav-icon fa fa-edit"></i>
+                                        </button>
+                                        <div class="btn-group btn-group-toggle">
+                                            <form class="d-line" action="{{route('admin.destroy', $item->id)}}"
+                                                onsubmit="return confirm('Xác nhận xóa?');" method="post">
                                                 @csrf
-                                                <button class="btn btn-danger" type="submit"><i
-                                                        class="nav-icon fa fa-trash"></i></a>
+                                                <button class="btn btn-danger">
+                                                    <i class="nav-icon fa fa-trash"></i>
+                                                </button>
                                             </form>
+                                        </div>
+
                                     </td>
                                 </tr>
                                 @empty
@@ -248,9 +263,16 @@
                                 </tr>
                                 @endforelse
                             </tbody>
+                            <tfoot>
+                                <tr >
+                                    <td  colspan=5>
+                                        {{$admins->links()}}
+                                    </td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
-                    {{$admins->links()}}
+                    
                 </div>
             </div>
         </div>
