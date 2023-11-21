@@ -14,11 +14,14 @@ return new class extends Migration
         Schema::create('goods_received_notes', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('supplier_id');
-            $table->bigInteger('fomality');
-            $table->bigInteger('admins_id');
+            $table->bigInteger('formality');
+            $table->bigInteger('admin_id');
             $table->double('total')->nullable();
             $table->tinyInteger('status');
             $table->timestamps();
+
+            // $table->foreign('supplier_id')->references('id')->on('suppliers')->onDelete('cascade');
+            // $table->foreign('admin_id')->references('id')->on('admins')->onDelete('cascade');
         });
     }
 

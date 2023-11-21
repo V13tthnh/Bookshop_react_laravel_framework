@@ -1,7 +1,6 @@
 @extends('layout')
 
 @section('js')
-
 <!-- SweetAlert2 -->
 <script src="{{asset('plugins/sweetalert2/sweetalert2.min.js')}}"></script>
 <!-- Toastr -->
@@ -20,26 +19,30 @@
 <script src="{{asset('plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
 <script src="{{asset('plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
 <script src="{{asset('dist/js/pages/dashboard.js')}}"></script>
+
 <script>
-  $(function () {
-    $("#example1").DataTable({
-      "responsive": true, "lengthChange": false, "autoWidth": false,
-      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-    $('#example2').DataTable({
-      "paging": true,
-      "lengthChange": false,
-      "searching": false,
-      "ordering": true,
-      "info": true,
-      "autoWidth": false,
-      "responsive": true,
+    $(document).ready(function(){
+        $(document).on('Click', '.goodsStatus', function(){
+            $id = $(this).val();
+        });
     });
-  });
+
+
+    $(function () {
+        $("#example1").DataTable({
+            "responsive": true, "lengthChange": false, "autoWidth": false,
+            "paging": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    });
 </script>
+
+
+
 @endsection
 
 @section('content')
+
 @if(session('errorMsg'))
 <script>
     Swal.fire({
@@ -59,17 +62,18 @@
     })
 </script>
 @endif
+
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Chi tiết admin</h1>
+                <h1>Danh sách admin</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <a href="{{route('admin.index')}}" class="btn btn-warning">
-                        <i class="nav-icon fa fa-list"></i> Danh sách
-                    </a>
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-create">
+                        <i class="nav-icon fa fa-plus"></i> Nhập hàng
+                    </button>
                 </ol>
             </div>
         </div>
@@ -95,23 +99,36 @@
                                 </tr>
                             </thead>
                             <tbody>
+                               
                                 <tr>
-                                    <td>{{$admin->id}}</td>
-                                    <td><img src="{{asset('/'.'$item->avatar')}}" alt="" sizes="40" srcset=""></td>
-                                    <td><a href="">{{$admin->name}}</a></td>
-                                    <td>{{$admin->email}}</td>
-                                    <td>
-                                        <form action="{{route('admin.destroy', $admin->id)}}" type="post">
-                                            <a href="{{route('admin.edit', $admin->id)}}" class="btn btn-warning"
-                                                type="submit"><i class="nav-icon fa fa-edit"></i></a>
-                                            <button class="btn btn-danger" type="submit"><i
-                                                    class="nav-icon fa fa-trash"></i></a>
-                                        </form>
+                                    <td style="text-align:center;"></td>
+                                    <td style="text-align:center;">
+                                      
+                                    </td>
+                                    <td style="text-align:center;">
+                                
+                                    <td style="text-align:center;">
+                                        <button class="btn btn-warning editBtn" value="{{$item->id}}">
+                                            <i class="nav-icon fa fa-edit"></i>
+                                        </button>
                                     </td>
                                 </tr>
+                               
+                                <tr>
+                                    <td colspan=5>Không có dữ liệu!</td>
+                                </tr>
+                              
                             </tbody>
+                            <tfoot>
+                                <tr >
+                                    <td  colspan=5>
+                                        
+                                    </td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
+                    
                 </div>
             </div>
         </div>

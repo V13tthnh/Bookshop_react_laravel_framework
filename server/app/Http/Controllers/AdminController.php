@@ -25,9 +25,7 @@ class AdminController extends Controller
         Auth::logout();
         return redirect()->route('admin.login');
     }
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
         $admins = admin::paginate(2);
@@ -35,9 +33,6 @@ class AdminController extends Controller
         return view('admin.index', compact('admins', 'id'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('admin.create');
@@ -76,21 +71,6 @@ class AdminController extends Controller
         return redirect()->route('admin.index')->with('successMsg', "Thêm thành công!");
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        $admin = admin::find($id);
-        if($admin == null){
-            return back()->with('errorMsg', "Dữ liệu không tồn tại!");
-        }
-        return view('admin.show', compact('admin'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {   
         $admin = admin::find($id);
@@ -103,9 +83,6 @@ class AdminController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request)
     {
         //dd($request);       

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('code')->nullable();
             $table->longText('description')->nullable();
             $table->Integer('unit_price')->nullable();
+            $table->bigInteger('quantity')->nullable();
             $table->double('weight')->nullable();
             $table->string('format')->nullable();
             $table->year('year')->nullable();
@@ -25,10 +26,15 @@ return new class extends Migration
             $table->Integer('num_pages')->nullable();
             $table->string('slug')->nullable();
             $table->string('translator')->nullable();
-            $table->bigInteger('authors_id');
-            $table->bigInteger('suppliers_id');
+            $table->bigInteger('author_id');
+            $table->bigInteger('supplier_id');
+            $table->bigInteger('category_id');
             $table->softDeletes();
             $table->timestamps();
+
+            // $table->foreign('author_id')->references('id')->on('authors')->onDelete('cascade');
+            // $table->foreign('supplier_id')->references('id')->on('suppliers')->onDelete('cascade');
+            // $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
         });
     }
 

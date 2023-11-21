@@ -16,7 +16,6 @@ Route::middleware('auth')->group(function(){
         Route::name('admin.')->group(function(){
             Route::get('logout', [AdminController::class, 'logout'])->name('logout');
             Route::get('/',[AdminController::class,'index'])->name('index'); 
-            Route::get('show/{id}',[AdminController::class,'show'])->name('show'); 
             Route::get('create', [AdminController::class, 'create'])->name('create');
             Route::post('store', [AdminController::class, 'store'])->name('store');
             Route::get('edit/{id}', [AdminController::class, 'edit'])->name('edit');   

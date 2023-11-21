@@ -13,11 +13,14 @@ return new class extends Migration
     {
         Schema::create('goods_received_note_details', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('goods_received_notes_id');
-            $table->bigInteger('books_id');
+            $table->bigInteger('goods_received_note_id');
+            $table->bigInteger('book_id');
             $table->Integer('quantity');
             $table->Integer('import_until_price');
             $table->timestamps();
+
+            // $table->foreign('goods_received_note_id')->references('id')->on('goods_received_notes')->onDelete('cascade');
+            // $table->foreign('book_id')->references('id')->on('books')->onDelete('cascade');
         });
     }
 

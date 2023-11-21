@@ -37,12 +37,14 @@
                 }
             });
         });
+        
     });
 
+    // DataTable setting
     $(function () {
         $("#example1").DataTable({
-            "responsive": true, "lengthChange": false, "autoWidth": false,
-            "paging": false,
+            "responsive": true, "lengthChange": true, "autoWidth": true,
+            "paging": false, "ordering": true, "searching": true,
             "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
         }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
     });
@@ -114,7 +116,7 @@
                     <div class="form-group">
                         <label for="inputProjectLeader">Ảnh</label>
                         <input accept="image/*" type='file' name="avatar" id="imgInp2" class="form-control" />
-                        <label>Ảnh của bạn: </label>
+                        <label>Xem trước: </label>
                         <img id="blah2" src="#" alt="your image" style="with: 70px; height: 70px" />
                     </div>
                     <div class="form-group">
@@ -238,8 +240,7 @@
                                             style="height:100px;width:100px">
                                         @endif
                                     </td>
-                                    <td style="text-align:center;"><a
-                                            href="{{route('admin.show', $item->id)}}">{{$item->name}}</a></td>
+                                    <td style="text-align:center;">{{$item->name}}</td>
                                     <td style="text-align:center;">{{$item->email}}</td>
                                     <td style="text-align:center;">
                                         <button class="btn btn-warning editBtn" value="{{$item->id}}">
@@ -264,15 +265,15 @@
                                 @endforelse
                             </tbody>
                             <tfoot>
-                                <tr >
-                                    <td  colspan=5>
+                                <tr>
+                                    <td colspan=5>
                                         {{$admins->links()}}
                                     </td>
                                 </tr>
                             </tfoot>
                         </table>
                     </div>
-                    
+
                 </div>
             </div>
         </div>

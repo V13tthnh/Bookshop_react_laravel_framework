@@ -16,9 +16,11 @@ return new class extends Migration
             $table->string('name');
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
-            $table->bigInteger('books_id');
+            $table->bigInteger('book_id');
             $table->string('image')->nullable();
             $table->timestamps();
+
+            // $table->foreign('book_id')->references('id')->on('books')->onDelete('cascade');
         });
     }
 
