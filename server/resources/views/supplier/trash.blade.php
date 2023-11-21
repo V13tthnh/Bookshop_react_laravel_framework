@@ -59,16 +59,67 @@
     })
 </script>
 @endif
+<div class="modal fade" id="modal-default">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Thêm admin</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{route('supplier.store')}}" method="post">
+                @csrf
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="inputName">Tên</label>
+                        <input type="text" name="name" id="inputName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputProjectLeader">Email</label>
+                        <input type="email" name="email" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputProjectLeader">Mật khẩu</label required>
+                        <input type="password" name="password" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputProjectLeader">Ảnh</label>
+                        <div class="input-group">
+                            <div class="custom-file">
+                                <input type="file" name="avatar" class="custom-file-input" id="exampleInputFile">
+                                <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputStatus">Quyền</label>
+                        <select id="inputStatus" name="role" class="form-control custom-select">
+                            <option selected disabled>Select one</option>
+                            <option value="1">Super admin</option>
+                            <option value="2">Admin</option>
+                            <option value="3">Sales Agent</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Danh sách nhà xuất bản</h1>
+                <h1>Danh sách admin</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <a href="{{route('supplier.index')}}" class="btn btn-warning">
+                    <a href="{{route('admin.index')}}" class="btn btn-warning">
                         <i class="nav-icon fa fa-list"></i> Danh sách
                     </a>
                 </ol>
@@ -82,17 +133,16 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Danh sách nhà xuất bản</h3>
+                        <h3 class="card-title">Danh sách admin</h3>
                     </div>
                     <div class="card-body">
                         <table id="example1" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
                                     <th>Id</th>
+                                    <th>Avatar</th>
                                     <th>Tên</th>
-                                    <th>Địa chỉ</th>
-                                    <th>Điện thoại</th>
-                                    <th>Mô tả</th>
+                                    <th>Email</th>
                                     <th>Thao tác</th>
                                 </tr>
                             </thead>
@@ -100,14 +150,14 @@
                                 @forelse($trash as $item)
                                 <tr>
                                     <td>{{ $item->id}}</td>
-                                    <td>{{$item->name}}</td>
-                                    <td>{{$item->address}}</td>
-                                    <td>{{$item->phone}}</td>
-                                    <td>{{$item->descriptiom}}</td>
-                                    <td>{{$item->slug}}</a></td>                     
+                                    <td><img src="{{asset('/'.'$item->avatar')}}" alt="" sizes="40" srcset=""></td>
+                                    <td><a href="">{{$item->name}}</a></td>
+                                    <td>{{$item->email}}</td>
                                     <td>
                                         <a href="{{route('supplier.untrash', $item->id)}}" class="btn btn-info"
                                             type="submit"><i class="nav-icon fa fa-trash-restore-alt"></i></a>
+                                            <a href="{{route('supplier.delete', $item->id)}}" class="btn btn-danger"
+                                            type="submit"><i class="nav-icon fa fa-trash"></i></a>
                                     </td>
                                 </tr>
                                 @empty

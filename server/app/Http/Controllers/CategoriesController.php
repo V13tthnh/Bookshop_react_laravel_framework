@@ -12,7 +12,7 @@ class CategoriesController extends Controller
     public function index()
     {
         $listCategories = categorie::paginate(5);
-        $id = 0;
+        $id = 1;
         return view('category.index',compact('listCategories', 'id'));
     }
 
@@ -51,20 +51,25 @@ class CategoriesController extends Controller
     public function edit($id)
     {
         $editCategories=categorie::find($id);
-        return view("category.edit",compact('editCategories'));
+        return response()->json([
+            'success' => 200,
+            'category' => $editCategories
+        ]);
     }
 
-    public function update(Request $rq,$id)
+    public function update(Request $rq)
     {
-        $editCategories=categorie::find($id);
-        if($editCategories)
-        {
-            $editCategories->name=$rq->ten_danh_muc;
-            $editCategories->description=$rq->mo_ta;
-            $editCategories->slug=$rq->book_slug;
+           //dd($rq);
+       $category=categorie::where('id', '<>', $rq->id)->where('name', $rq->name)->first();
+       if($category != null){
+        return redirect()->back()->with('errorMsg', 'Tên danh mục đã tồn tại!');
+            }
+            $editCategories=categorie::find($rq->id);
+            $editCategories->name=$rq->name;
+            $editCategories->description=$rq->description;
+            $editCategories->slug=$rq->slug;
             $editCategories->save();
-        }
-        return 'thanh cong';
+            return redirect()->route('category.index')->with('successMsg', 'Sửa thành công!');
     }
 
     
