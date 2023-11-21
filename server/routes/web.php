@@ -1,39 +1,42 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use  App\Http\Controllers\AdminsController;
-use  App\Http\Controllers\CategoriesController;
+use  App\Http\Controllers\AdminController;
+use  App\Http\Controllers\CategoryController;
 use  App\Http\Controllers\AuthorController;
-Route::get('/admin/login',[AdminsController::class,'login'])->name('admin.login')->middleware('guest');
-Route::post('/admin/login-handler', [AdminsController::class, 'loginHandler'])->name('admin.loginHandler');
+use  App\Http\Controllers\SupplierController;
+
+
+Route::get('/admin/login',[AdminController::class,'login'])->name('admin.login')->middleware('guest');
+Route::post('/admin/login-handler', [AdminController::class, 'loginHandler'])->name('admin.loginHandler');
 // admin - viet thanh
 Route::middleware('auth')->group(function(){
     Route::prefix('admin')->group(function(){
         //Viet thanh
         Route::name('admin.')->group(function(){
-            Route::get('logout', [AdminsController::class, 'logout'])->name('logout');
-            Route::get('/',[AdminsController::class,'index'])->name('index'); 
-            Route::get('show/{id}',[AdminsController::class,'show'])->name('show'); 
-            Route::get('create', [AdminsController::class, 'create'])->name('create');
-            Route::post('store', [AdminsController::class, 'store'])->name('store');
-            Route::get('edit/{id}', [AdminsController::class, 'edit'])->name('edit');   
-            Route::post('update', [AdminsController::class, 'update'])->name('update');
-            Route::post('destroy/{id}', [AdminsController::class, 'destroy'])->name('destroy');
-            Route::get('trash', [AdminsController::class, 'trash'])->name('trash');
-            Route::get('untrash/{id}', [AdminsController::class, 'untrash'])->name('untrash');
+            Route::get('logout', [AdminController::class, 'logout'])->name('logout');
+            Route::get('/',[AdminController::class,'index'])->name('index'); 
+            Route::get('show/{id}',[AdminController::class,'show'])->name('show'); 
+            Route::get('create', [AdminController::class, 'create'])->name('create');
+            Route::post('store', [AdminController::class, 'store'])->name('store');
+            Route::get('edit/{id}', [AdminController::class, 'edit'])->name('edit');   
+            Route::post('update', [AdminController::class, 'update'])->name('update');
+            Route::post('destroy/{id}', [AdminController::class, 'destroy'])->name('destroy');
+            Route::get('trash', [AdminController::class, 'trash'])->name('trash');
+            Route::get('untrash/{id}', [AdminController::class, 'untrash'])->name('untrash');
         });
     });
     //Thanh tuan
     Route::prefix('category')->group(function(){
         Route::name('category.')->group(function(){
-            Route::get('/',[CategoriesController::class,'index'])->name('index');
-            Route::get('create',[CategoriesController::class,'create'])->name('create');
-            Route::post('store',[CategoriesController::class,'store'])->name('store');
-            Route::get('edit/{id}',[CategoriesController::class,'edit'])->name('edit');
-            Route::post('edit/{id}',[CategoriesController::class,'update'])->name('.update');
-            Route::post('destroy/{id}', [CategoriesController::class, 'destroy'])->name('destroy');
-            Route::get('trash', [CategoriesController::class, 'trash'])->name('trash');
-            Route::get('untrash/{id}', [CategoriesController::class, 'untrash'])->name('untrash');
+            Route::get('/',[CategoryController::class,'index'])->name('index');
+            Route::get('create',[CategoryController::class,'create'])->name('create');
+            Route::post('store',[CategoryController::class,'store'])->name('store');
+            Route::get('edit/{id}',[CategoryController::class,'edit'])->name('edit');
+            Route::post('edit/{id}',[CategoryController::class,'update'])->name('.update');
+            Route::post('destroy/{id}', [CategoryController::class, 'destroy'])->name('destroy');
+            Route::get('trash', [CategoryController::class, 'trash'])->name('trash');
+            Route::get('untrash/{id}', [CategoryController::class, 'untrash'])->name('untrash');
         });
     });
     //Thanh Nghia
@@ -47,6 +50,19 @@ Route::middleware('auth')->group(function(){
             Route::post('destroy/{id}',[AuthorController::class,'destroy'])->name('destroy');
             Route::get('trash', [AuthorController::class, 'trash'])->name('trash');
             Route::get('untrash/{id}', [AuthorController::class, 'untrash'])->name('untrash');
+        });
+    });
+    // Thanh Tuan
+    Route::prefix('supplier')->group(function(){
+        Route::name('supplier.')->group(function(){
+            Route::get('/',[SupplierController::class,'index'])->name('index');
+            Route::get('create',[SupplierController::class,'create'])->name('create');
+            Route::post('store',[SupplierController::class,'store'])->name('store');
+            Route::get('edit/{id}',[SupplierController::class,'edit'])->name('edit');
+            Route::post('edit/{id}',[SupplierController::class,'update'])->name('update');
+            Route::post('destroy/{id}', [SupplierController::class, 'destroy'])->name('destroy');
+            Route::get('trash', [SupplierController::class, 'trash'])->name('trash');
+            Route::get('untrash/{id}', [SupplierController::class, 'untrash'])->name('untrash');
         });
     });
 });

@@ -4,11 +4,12 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Str;
 use App\Models\admin;
 use App\Models\author;
 use App\Models\book;
-use App\Models\book_categorie;
-use App\Models\categorie;
+use App\Models\book_category;
+use App\Models\category;
 use App\Models\discount;
 use App\Models\image;
 use App\Models\review;
@@ -53,50 +54,50 @@ class AddDataToDBSeeder extends Seeder
 
         
 
-        //categories
-        $categories1=new categorie();
-        $categories1->name='Văn học';
-        $categories1->description=' Sách văn học là một dạng văn bản dưới hình thức nghệ thuật, có giá trị nghệ thuật hoặc trí tuệ, thường sẽ có những cách thức triển khai ngôn ngữ khác với cách sử dụng thông thường. Sách văn học là một trong những loại sách mà chúng ta tiếp xúc khá nhiều trong cuộc sống, đó là một loại hình sáng tác đặc biệt. Chúng có khả năng tái hiện lại bình diện cuộc sống và xã hội, những sự kiện, diễn biến và con người,… dưới ngòi bút văn hoa, trào phúng.';
-        $categories1->slug='Van-hoc';
-        $categories1->save();
+        //categorys
+        $categorys1=new category();
+        $categorys1->name='Văn học';
+        $categorys1->description=' Sách văn học là một dạng văn bản dưới hình thức nghệ thuật, có giá trị nghệ thuật hoặc trí tuệ, thường sẽ có những cách thức triển khai ngôn ngữ khác với cách sử dụng thông thường. Sách văn học là một trong những loại sách mà chúng ta tiếp xúc khá nhiều trong cuộc sống, đó là một loại hình sáng tác đặc biệt. Chúng có khả năng tái hiện lại bình diện cuộc sống và xã hội, những sự kiện, diễn biến và con người,… dưới ngòi bút văn hoa, trào phúng.';
+        $categorys1->slug= Str::slug('Văn học');
+        $categorys1->save();
 
-        $categories2=new categorie();
-        $categories2->name='Sách thiếu nhi';
-        $categories2->description='Sách thiếu nhi là loại sách được viết và thiết kế đặc biệt để dành cho độc giả trẻ em và thiếu nhi. Đây là những tác phẩm văn học, hình ảnh hoặc sách học tập được tạo ra để phù hợp với lứa tuổi, sự phát triển, sở thích của trẻ em, giúp họ phát triển khả năng đọc, tư duy, hiểu biết.';
-        $categories2->slug='Sach-thieu-nhi';
-        $categories2->save();
+        $categorys2=new category();
+        $categorys2->name='Sách thiếu nhi';
+        $categorys2->description='Sách thiếu nhi là loại sách được viết và thiết kế đặc biệt để dành cho độc giả trẻ em và thiếu nhi. Đây là những tác phẩm văn học, hình ảnh hoặc sách học tập được tạo ra để phù hợp với lứa tuổi, sự phát triển, sở thích của trẻ em, giúp họ phát triển khả năng đọc, tư duy, hiểu biết.';
+        $categorys2->slug=Str::slug('Sách thiếu nhi');
+        $categorys2->save();
         
-        $categories3=new categorie();
-        $categories3->name='Kinh tế';
-        $categories3->description='Sách kinh tế là tài liệu về lĩnh vực kinh tế, bao gồm các chủ đề như tài chính, kinh doanh, tiền tệ, thương mại, chính sách kinh tế, quản lý kinh doanh, và các vấn đề kinh tế khác.';
-        $categories3->slug='Kinh-te';
-        $categories3->save();
+        $categorys3=new category();
+        $categorys3->name='Kinh tế';
+        $categorys3->description='Sách kinh tế là tài liệu về lĩnh vực kinh tế, bao gồm các chủ đề như tài chính, kinh doanh, tiền tệ, thương mại, chính sách kinh tế, quản lý kinh doanh, và các vấn đề kinh tế khác.';
+        $categorys3->slug=Str::slug('Kinh tế');
+        $categorys3->save();
 
-        $categories4=new categorie();
-        $categories4->name='Giáo khoa - Tham khảo';
-        $categories4->description='Sách giáo khoa là loại sách cung cấp kiến thức, được biên soạn với mục đích dạy và học tại trường học[1][2]. Thuật ngữ sách giáo khoa còn có nghĩa mở rộng là một loại sách chuẩn cho một ngành học. Sách giáo khoa được phân loại dựa theo đối tượng sử dụng hoặc chủ đề của sách.';
-        $categories4->slug='Giao-khoa-tham-khao';
-        $categories4->save();
+        $categorys4=new category();
+        $categorys4->name='Giáo khoa - Tham khảo';
+        $categorys4->description='Sách giáo khoa là loại sách cung cấp kiến thức, được biên soạn với mục đích dạy và học tại trường học[1][2]. Thuật ngữ sách giáo khoa còn có nghĩa mở rộng là một loại sách chuẩn cho một ngành học. Sách giáo khoa được phân loại dựa theo đối tượng sử dụng hoặc chủ đề của sách.';
+        $categorys4->slug=Str::slug('Giáo khoa - Tham khảo');
+        $categorys4->save();
         
-        $categories5=new categorie();
-        $categories5->name='Sách học ngoại ngữ';
-        $categories5->description='Sách học ngoại ngữ là một loại sách được thiết kế để giúp người học ngoại ngữ cải thiện khả năng của họ. Sách học ngoại ngữ có thể tập trung vào một hoặc nhiều kỹ năng ngoại ngữ, chẳng hạn như nghe, nói, đọc, viết, hoặc ngữ pháp. Chúng có thể được viết cho người học ở mọi trình độ, từ người mới bắt đầu đến người cao cấp.';
-        $categories5->slug='Sach-hoc-ngoai-ngu';
-        $categories5->save();
+        $categorys5=new category();
+        $categorys5->name='Sách học ngoại ngữ';
+        $categorys5->description='Sách học ngoại ngữ là một loại sách được thiết kế để giúp người học ngoại ngữ cải thiện khả năng của họ. Sách học ngoại ngữ có thể tập trung vào một hoặc nhiều kỹ năng ngoại ngữ, chẳng hạn như nghe, nói, đọc, viết, hoặc ngữ pháp. Chúng có thể được viết cho người học ở mọi trình độ, từ người mới bắt đầu đến người cao cấp.';
+        $categorys5->slug=Str::slug('Sách học ngoại ngữ');
+        $categorys5->save();
 
         //suppliers
         $supplier1=new supplier();
         $supplier1->name='An Lộc Việt';
-        $supplier1->addresss='30 Kha Vạn Cân, Hiệp Bình Chánh, Thủ Đức, Hồ Chí Minh.';
+        $supplier1->address='30 Kha Vạn Cân, Hiệp Bình Chánh, Thủ Đức, Hồ Chí Minh.';
         $supplier1->phone='0899 189 499';
         $supplier1->description='Công ty TNHH MTV An Lộc Việt được thành lập từ tháng 04/2013 ngành nghề kinh doanh chính là phân phối sỉ và lẻ ngành hàng Văn phòng phẩm - Giấy in văn phòng.
                                 Đến tháng 06/2020, An Lộc Việt đã mạnh dạn phát triển thêm một số sản phẩm dịch vụ mới và đã được nhiều khách hàng đón nhận và tin dùng';
-        $supplier1->slug='An-Loc-Viet';
+        $supplier1->slug=Str::slug('An Lộc Việt');
         $supplier1->save();
 
         $supplier2=new supplier();
         $supplier2->name='Nhà xuất bản văn học';
-        $supplier2->addresss='18 Nguyễn Trường Tộ - Ba Đình - Hà Nội';
+        $supplier2->address='18 Nguyễn Trường Tộ - Ba Đình - Hà Nội';
         $supplier2->phone=' 0243 7161 518';
         $supplier2->description='NHÀ XUẤT BẢN VĂN HỌC chuyên cung cấp: Sách mới, Văn học trong nước, Tiểu thuyết, Truyện ngắn, Tản văn – Hồi ký, Thơ, Lý luận phê bình, Sách thiếu nhi, ...';
         $supplier2->slug='Nha-xuat-ban-van-hoc';
@@ -162,31 +163,31 @@ class AddDataToDBSeeder extends Seeder
         $author5->image = 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Nguyễn_Ngọc_Tư.jpg/1200px-Nguyễn_Ngọc_Tư.jpg';
         $author5->save();
         
-        //book_categorie
-        $book_categorie1=new book_categorie();
-        $book_categorie1->categories_id=1;
-        $book_categorie1->books_id=1;
-        $book_categorie1->save();
+        //book_category
+        $book_category1=new book_category();
+        $book_category1->categories_id=1;
+        $book_category1->books_id=1;
+        $book_category1->save();
 
-        $book_categorie2=new book_categorie();
-        $book_categorie2->categories_id=2;
-        $book_categorie2->books_id=2;
-        $book_categorie2->save();
+        $book_category2=new book_category();
+        $book_category2->categories_id=2;
+        $book_category2->books_id=2;
+        $book_category2->save();
 
-        $book_categorie3=new book_categorie();
-        $book_categorie3->categories_id=3;
-        $book_categorie3->books_id=3;
-        $book_categorie3->save();
+        $book_category3=new book_category();
+        $book_category3->categories_id=3;
+        $book_category3->books_id=3;
+        $book_category3->save();
         
-        $book_categorie4=new book_categorie();
-        $book_categorie4->categories_id=4;
-        $book_categorie4->books_id=4;
-        $book_categorie4->save();
+        $book_category4=new book_category();
+        $book_category4->categories_id=4;
+        $book_category4->books_id=4;
+        $book_category4->save();
 
-        $book_categorie5=new book_categorie();
-        $book_categorie5->categories_id=5;
-        $book_categorie5->books_id=5;
-        $book_categorie5->save();
+        $book_category5=new book_category();
+        $book_category5->categories_id=5;
+        $book_category5->books_id=5;
+        $book_category5->save();
         
         //book
         $book1=new book();

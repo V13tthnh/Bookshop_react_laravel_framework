@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class dangnhap extends Model
+class category extends Model
 {
+    use SoftDeletes;
     use HasFactory;
-    protected $table= 'dangnhap';
+    protected $table='categories';
 }

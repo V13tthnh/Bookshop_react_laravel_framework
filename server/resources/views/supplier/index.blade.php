@@ -53,10 +53,10 @@
         <div class="col-sm-12 col-xl-6">
             <div class="bg-secondary rounded h-100 p-4">
                 <div class="m-n2">
-                    <a href="{{route('category.create')}}">
+                    <a href="{{route('supplier.create')}}">
                         <button type="button" class="btn btn-success m-2"><i class="fa fa-plus me-2"></i>Thêm</button>
                     </a>
-                    <a href="{{route('category.trash')}}">
+                    <a href="{{route('supplier.trash')}}">
                         <button type="button" class="btn btn-warning m-2"><i class="fa fa-list me-2"></i>Danh sách đã xóa</button>
                     </a>
                 </div>
@@ -68,7 +68,7 @@
 <div class="container-fluid pt-4 px-4">
     <div class="bg-secondary text-center rounded p-4">
         <div class="d-flex align-items-center justify-content-between mb-4">
-            <h6 class="mb-0">Danh Muc</h6>
+            <h6 class="mb-0">Danh Sách Hàng</h6>
             <a href="">Show All</a>
         </div>
         <div class="table-responsive">
@@ -78,24 +78,28 @@
                         <th scope="col"><input class="form-check-input" type="checkbox"></th>
                         <th scope="col">ID</th>
                         <th scope="col">Tên</th>
+                        <th scope="col">addresss</th>
+                        <th scope="col">phone </th>
                         <th scope="col">Mô tả</th>
-                        <th scope="col">Slug</th>
-                        <th scope="col">Thao Tác</th>
+                        <th scope="col">slug</th>
+                        <th scope="col">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
                     
-                    @forelse($listCategories as $item)
+                    @forelse($listSupplier as $item)
                         <tr>
                             <td><input class="form-check-input" type="checkbox"></td>
                             <td>{{$id+=1}}</td>
                             <td>{{$item->name}}</td>
+                            <td>{{$item->address}}</td>
+                            <td>{{$item->phone}}</td>
                             <td>{{$item->description}}</td>
                             <td>{{$item->slug}}</td>
                             <td>   
                             
-                            <a type="button" href="{{route('category.edit', $item->id)}}" class="btn btn-rectangle btn-warning m-2"><i class="fa fa-edit"></i></a>
-                                <form class="d-inline" action="{{route('category.destroy', $item->id)}}" method="post">
+                            <a type="button" href="{{route('supplier.edit', $item->id)}}" class="btn btn-rectangle btn-warning m-2"><i class="fa fa-edit"></i></a>
+                                <form class="d-inline" action="{{route('supplier.destroy', $item->id)}}" method="post">
                                     @csrf
                                     <button type="submit" class="btn btn-rectangle btn-primary m-2"><i class="fa fa-trash"></i></button>
                                 </form>
@@ -109,7 +113,7 @@
         </div>
     </div>
     <div class="d-flex align-items-center justify-content-between mb-4 mt-3 ">
-        {{$listCategories->links()}}
+        {{$listSupplier->links()}}
     </div>
 </div>
 @endsection
