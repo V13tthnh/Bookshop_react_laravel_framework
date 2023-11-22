@@ -37,7 +37,10 @@
     <link rel="stylesheet" href="{{asset('plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css')}}">
     <!-- Toastr -->
     <link rel="stylesheet" href="{{asset('plugins/toastr/toastr.min.css')}}">
-
+      <!-- summernote -->
+  <link rel="stylesheet" href="{{asset('plugins/summernote/summernote-bs4.min.css')}}">
+  <!-- SimpleMDE -->
+  <link rel="stylesheet" href="{{asset('plugins/simplemde/simplemde.min.css')}}">
 
 </head>
 
@@ -87,6 +90,12 @@
                         <i class="fas fa-sign-out-alt"></i>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true" href="#"
+                        role="button">
+                        <i class="fas fa-th-large"></i>
+                    </a>
+                </li>
             </ul>
         </nav>
         <!-- /.navbar -->
@@ -104,15 +113,9 @@
             <div class="sidebar">
                 <!-- Sidebar user panel (optional) -->
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-                    @if(Auth::user()->avatar != null)
-                        <div class="image">
-                            <img src="{{asset('/'.Auth::user()->avatar)}}" class="img-circle elevation-2" alt="User Image">
-                        </div>
-                    @else
-                        <div class="image">
-                            <img src="{{asset('dist/img/user.jpg')}}" class="img-circle elevation-2" alt="User Image">
-                        </div>
-                    @endif
+                    <div class="image">
+                        <img src="{{asset('/'.Auth::user()->avatar)}}" class="img-circle elevation-2" alt="User Image">
+                    </div>
                     <div class="info">
                         <a href="#" class="d-block">{{Auth::user()->name}}</a>
                     </div>
@@ -156,6 +159,12 @@
                                         <p>Danh sách</p>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="pages/forms/advanced.html" class="nav-link">
+                                        <i class="nav-icon fas fa-plus"></i>
+                                        <p>Thêm</p>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                         <li class="nav-item">
@@ -171,6 +180,12 @@
                                     <a href="{{route('category.index')}}" class="nav-link">
                                         <i class="nav-icon fas fa-table"></i>
                                         <p>Danh sách</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{route('category.index')}}" class="nav-link">
+                                        <i class="nav-icon fas fa-plus"></i>
+                                        <p>Thêm</p>
                                     </a>
                                 </li>
                             </ul>
@@ -292,16 +307,16 @@
                             </ul>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="" class="nav-link">
                                 <i class="nav-icon fas fa-building"></i>
                                 <p>
-                                    Nhà xuất bản
+                                    Nhà Xuất Bản
                                     <i class="fas fa-angle-left right"></i>
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="" class="nav-link">
+                                    <a href="{{route('supplier.index')}}" class="nav-link">
                                         <i class="nav-icon fas fa-table"></i>
                                         <p>Danh sách</p>
                                     </a>
@@ -309,7 +324,7 @@
                                 <li class="nav-item">
                                     <a href="pages/forms/advanced.html" class="nav-link">
                                         <i class="nav-icon fas fa-plus"></i>
-                                        <p>Tạo banner</p>
+                                        <p>Thêm </p>
                                     </a>
                                 </li>
                             </ul>
@@ -375,7 +390,10 @@
     <!-- AdminLTE App -->
     <script src="{{asset('dist/js/adminlte.js')}}"></script>
     <script src="{{asset('dist/js/pages/dashboard.js')}}"></script>
-    <!-- <script src="{{asset('dist/js/demo.js')}}"></script> -->
+    <script src="{{asset('dist/js/demo.js')}}"></script>
+    <!-- Summernote -->
+    <script src="{{asset('plugins/summernote/summernote-bs4.min.js')}}"></script>
+
     @yield('js')
 </body>
 

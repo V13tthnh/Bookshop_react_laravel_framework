@@ -11,7 +11,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $listCategories = category::paginate(2);
+        $listCategories = category::paginate(5);
         $id = 1;
         return view('category.index',compact('listCategories', 'id'));
     }
@@ -31,11 +31,11 @@ class CategoryController extends Controller
         if($name != null){
             return redirect()->back()->with('errorMsg', 'Tên danh mục đã tồn tại!');
         }
-        $categorys = new category();
-        $categorys->name= $rq->name;
-        $categorys->description=$rq->description;
-        $categorys->slug=$rq->slug;
-        $categorys->save();
+        $categories = new category();
+        $categories->name= $rq->name;
+        $categories->description=$rq->description;
+        $categories->slug=$rq->slug;
+        $categories->save();
         return redirect()->route('category.index')->with('successMsg', 'Thêm thành công!');
     }
 
@@ -50,21 +50,26 @@ class CategoryController extends Controller
 
     public function edit($id)
     {
-        $editcategorys=category::find($id);
-        return view("category.edit",compact('editcategorys'));
+        $editCategories=category::find($id);
+        return response()->json([
+            'success' => 200,
+            'category' => $editCategories
+        ]);
     }
 
-    public function update(Request $rq,$id)
+    public function update(Request $rq)
     {
-        $editcategories=category::find($id);
-        if($editcategories)
-        {
-            $editcategories->name=$rq->ten_danh_muc;
-            $editcategories->description=$rq->mo_ta;
-            $editcategories->slug=$rq->book_slug;
-            $editcategories->save();
-        }
-        return 'thanh cong';
+           //dd($rq);
+       $category=categorie::where('id', '<>', $rq->id)->where('name', $rq->name)->first();
+       if($category != null){
+        return redirect()->back()->with('errorMsg', 'Tên danh mục đã tồn tại!');
+            }
+            $editCategories=categorie::find($rq->id);
+            $editCategories->name=$rq->name;
+            $editCategories->description=$rq->description;
+            $editCategories->slug=$rq->slug;
+            $editCategories->save();
+            return redirect()->route('category.index')->with('successMsg', 'Sửa thành công!');
     }
 
     

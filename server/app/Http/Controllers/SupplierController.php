@@ -1,15 +1,18 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\supplier;
 use Illuminate\Http\Request;
 
 class SupplierController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
-        $listSupplier = supplier::paginate(2);
-        $id = 0;
+        $listSupplier = supplier::paginate(10);
+        $id = 1;
         return view('supplier.index',compact('listSupplier', 'id'));
     }
 
@@ -49,25 +52,31 @@ class SupplierController extends Controller
     public function edit(string $id)
     {
         $editSuppliers=supplier::find($id);
-        return view("supplier.edit",compact('editSuppliers'));
+        return response()->json([
+            'success' => 200,
+            'supplier' => $editSuppliers
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $rq, string $id)
+    public function update(Request $rq)
     {
-        $editSuppliers=supplier::find($id);
-        if($editSuppliers)
+        //dd($rq);
+       $suppliers=supplier::where('id', '<>', $rq->id)->where('name', $rq->name)->first();
+        if($suppliers!=null)
         {
+            return redirect()->route('supplier.index')->with('successMsg', 'Không thành công!');
+        } 
+            $editSuppliers=supplier::find($rq->id);
             $editSuppliers->name=$rq->name;
             $editSuppliers->address=$rq->address;
             $editSuppliers->phone=$rq->phone;
             $editSuppliers->description=$rq->description;
             $editSuppliers->slug=$rq->slug;
             $editSuppliers->save();
-        }
-        return 'thanh cong';
+            return redirect()->route('supplier.index')->with('successMsg', 'Sửa thành công!');
     }
 
     /**
@@ -87,4 +96,5 @@ class SupplierController extends Controller
         supplier::withTrashed()->find($id)->restore();
         return back()->with('successMsg', 'Khôi phục thành công!');
     }
+
 }

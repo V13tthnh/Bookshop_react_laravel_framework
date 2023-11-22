@@ -10,7 +10,7 @@ class image extends Model
 {
     use HasFactory;
 
-    public function book_id(){
+    public function book(){
         return $this->belongsTo(book::class);
     }
 }

@@ -1,104 +1,126 @@
 @extends('layout')
 
-@section('content')
+@section('js')
 
+<!-- SweetAlert2 -->
+<script src="{{asset('plugins/sweetalert2/sweetalert2.min.js')}}"></script>
+<!-- Toastr -->
+<script src="{{asset('plugins/toastr/toastr.min.js')}}"></script>
+<!-- DataTables  & Plugins -->
+<script src="{{asset('plugins/datatables/jquery.dataTables.min.js')}}"></script>
+<script src="{{asset('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
+<script src="{{asset('plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
+<script src="{{asset('plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
+<script src="{{asset('plugins/datatables-buttons/js/dataTables.buttons.min.js')}}"></script>
+<script src="{{asset('plugins/datatables-buttons/js/buttons.bootstrap4.min.js')}}"></script>
+<script src="{{asset('plugins/jszip/jszip.min.js')}}"></script>
+<script src="{{asset('plugins/pdfmake/pdfmake.min.js')}}"></script>
+<script src="{{asset('plugins/pdfmake/vfs_fonts.js')}}"></script>
+<script src="{{asset('plugins/datatables-buttons/js/buttons.html5.min.js')}}"></script>
+<script src="{{asset('plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
+<script src="{{asset('plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
+<script src="{{asset('dist/js/pages/dashboard.js')}}"></script>
+<script>
+    $(function () {
+        $("#example1").DataTable({
+            "responsive": true, "lengthChange": false, "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+        $('#example2').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+        });
+    });
+</script>
+@endsection
+
+@section('content')
 @if(session('errorMsg'))
-    <script>
+<script>
     Swal.fire({
         title: '{{session('errorMsg')}}',
         icon: 'error',
         confirmButtonText: 'OK'
     })
-    </script>
+</script>
 @endif
 
 @if(session('successMsg'))
-    <script>
+<script>
     Swal.fire({
         title: '{{session('successMsg')}}',
         icon: 'success',
         confirmButtonText: 'OK'
     })
-    </script>
+</script>
 @endif
 
-<div class="container-fluid pt-4 px-4">
-    <div class="row g-4">
-        <div class="col-sm-12 col-xl-6">
-            <div class="bg-secondary rounded h-100 p-4">
-                <div class="m-n2">
-                    <div class="btn-group" role="group">
-                        <a href="#">
-                            <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
-                            <label class="btn btn-outline-primary" for="btnradio1">Import Excel</label>
-                        </a>
-
-                        <a href="#">
-                            <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
-                            <label class="btn btn-outline-primary" for="btnradio2">Export Excel</label>
-                        </a>
-
-                        <a href="#">
-                            <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
-                            <label class="btn btn-outline-primary" for="btnradio3">Export PDF</label>
-                        </a>
-                        <a href="">
-                            <input type="radio" class="btn-check" name="btnradio" id="btnradio4" autocomplete="off">
-                            <label class="btn btn-outline-primary" for="btnradio4">Refresh</label>
-                        </a>
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Danh sách nhà xuất bản</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <a href="{{route('supplier.index')}}" class="btn btn-warning">
+                        <i class="nav-icon fa fa-list"></i> Danh sách
+                    </a>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Danh sách nhà xuất bản</h3>
+                    </div>
+                    <div class="card-body">
+                        <table id="example1" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Tên</th>
+                                    <th>Địa chỉ</th>
+                                    <th>Điện thoại</th>
+                                    <th>Mô tả</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($trash as $item)
+                                <tr>
+                                    <td>{{ $item->id}}</td>
+                                    <td>{{$item->name}}</td>
+                                    <td>{{$item->address}}</td>
+                                    <td>{{$item->phone}}</td>
+                                    <td>{{$item->descriptiom}}</td>
+                                    <td>{{$item->slug}}</a></td>                     
+                                    <td>
+                                        <a href="{{route('supplier.untrash', $item->id)}}" class="btn btn-info"
+                                            type="submit"><i class="nav-icon fa fa-trash-restore-alt"></i></a>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan=5>Không có dữ liệu!</td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-sm-12 col-xl-6">
-            <div class="bg-secondary rounded h-100 p-4">
-                <div class="m-n2">
-                    <a href="{{route('category.index')}}">
-                        <button type="button" class="btn btn-warning m-2"><i class="fa fa-list me-2"></i>Danh sách</button>
-                    </a>
-                </div>
-            </div>
-        </div>
     </div>
-</div>
-
-<div class="container-fluid pt-4 px-4">
-    <div class="bg-secondary text-center rounded p-4">
-        <div class="d-flex align-items-center justify-content-between mb-4">
-            <h6 class="mb-0">All Admin</h6>
-            <a href="">Show All</a>
-        </div>
-        <div class="table-responsive">
-            <table class="table text-start align-middle table-bordered table-hover mb-0">
-                <thead>
-                    <tr class="text-white">
-                        <th scope="col"><input class="form-check-input" type="checkbox"></th>
-                        <th scope="col">ID</th>
-                        <th scope="col">Tên</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($trash as $item)
-                        <tr>
-                            <td><input class="form-check-input" type="checkbox"></td>
-                            <td>{{$item->id}}</td>
-                            <td>{{$item->name}}</td>
-                            <td>{{$item->description}}</td>
-                            <td>{{$item->slug}}</td>
-                            <td>   
-                                <a type="button" href="{{route('category.untrash', $item->id)}}" class="btn btn-rectangle btn-info m-2"><i class="fa fa-trash-restore"></i></a>
-                            </td>  
-                        </tr>
-                    @empty
-                        <td colspan=5><p>Không có dữ liệu!</p></td>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="d-flex align-items-center justify-content-between mb-4 mt-3 ">
-    </div>
-</div>
+</section>
 @endsection

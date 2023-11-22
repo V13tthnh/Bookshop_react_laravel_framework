@@ -9,11 +9,11 @@ class goods_received_note_details extends Model
 {
     use HasFactory;
 
-    public function goods_received_note_id(){
+    public function goods_received_note(){
         return $this->belongsTo(goods_received_note::class);
     }
 
-    public function book_id(){
+    public function book(){
         return $this->belongsTo(book::class);
     }
 }

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('goods_received_notes', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('supplier_id');
-            $table->bigInteger('formality');
+            $table->string('formality');
             $table->bigInteger('admin_id');
             $table->double('total')->nullable();
             $table->tinyInteger('status');

@@ -165,28 +165,28 @@ class AddDataToDBSeeder extends Seeder
         
         //book_category
         $book_category1=new book_category();
-        $book_category1->categories_id=1;
-        $book_category1->books_id=1;
+        $book_category1->category_id=1;
+        $book_category1->book_id=1;
         $book_category1->save();
 
         $book_category2=new book_category();
-        $book_category2->categories_id=2;
-        $book_category2->books_id=2;
+        $book_category2->category_id=2;
+        $book_category2->book_id=2;
         $book_category2->save();
 
         $book_category3=new book_category();
-        $book_category3->categories_id=3;
-        $book_category3->books_id=3;
+        $book_category3->category_id=3;
+        $book_category3->book_id=3;
         $book_category3->save();
         
         $book_category4=new book_category();
-        $book_category4->categories_id=4;
-        $book_category4->books_id=4;
+        $book_category4->category_id=4;
+        $book_category4->book_id=4;
         $book_category4->save();
 
         $book_category5=new book_category();
-        $book_category5->categories_id=5;
-        $book_category5->books_id=5;
+        $book_category5->category_id=5;
+        $book_category5->book_id=5;
         $book_category5->save();
         
         //book
@@ -203,8 +203,9 @@ class AddDataToDBSeeder extends Seeder
         $book1->num_pages=156;
         $book1->slug='Ong-Gia-Va-Bien-Ca';
         $book1->translator='Nguyễn Văn Huyền';
-        $book1->authors_id=1;
-        $book1->suppliers_id=5;
+        $book1->author_id=1;
+        $book1->supplier_id=5;
+        $book1->category_id = 1;
         $book1->save();
 
         $book2 = new Book();
@@ -220,8 +221,9 @@ class AddDataToDBSeeder extends Seeder
         $book2->num_pages = 700;
         $book2->slug = "Truyen-Kieu";
         $book2->translator = "";
-        $book2->authors_id = 2;
-        $book2->suppliers_id = 1;
+        $book2->author_id = 2;
+        $book2->supplier_id = 1;
+        $book2->category_id = 1;
         $book2->save();
 
         $book3 = new Book();
@@ -237,8 +239,9 @@ class AddDataToDBSeeder extends Seeder
         $book3->num_pages = 350;
         $book3->slug = "So-do";
         $book3->translator = "";
-        $book3->authors_id = 3;
-        $book3->suppliers_id = 2;
+        $book3->author_id = 3;
+        $book3->supplier_id = 2;
+        $book3->category_id = 1;
         $book3->save();
 
         $book4 = new Book();
@@ -254,8 +257,9 @@ class AddDataToDBSeeder extends Seeder
         $book4->num_pages = 250;
         $book4->slug = "Song-mon";
         $book4->translator = "";
-        $book4->authors_id = 4;
-        $book4->suppliers_id = 2;
+        $book4->author_id = 4;
+        $book4->supplier_id = 2;
+        $book4->category_id = 1;
         $book4->save();
         //too much
     }

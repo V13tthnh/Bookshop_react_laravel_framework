@@ -11,11 +11,11 @@ class goods_received_note extends Model
 {
     use HasFactory;
 
-    public function supplier_id(){
+    public function supplier(){
         return $this->belongsTo(supplier::class);
     }
 
-    public function admin_id(){
+    public function admin(){
         return $this->belongsTo(admin::class);
     }
 }

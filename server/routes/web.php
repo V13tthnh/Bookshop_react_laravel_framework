@@ -5,7 +5,7 @@ use  App\Http\Controllers\AdminController;
 use  App\Http\Controllers\CategoryController;
 use  App\Http\Controllers\AuthorController;
 use  App\Http\Controllers\SupplierController;
-
+use  App\Http\Controllers\GoodsReceivedNoteController;
 
 Route::get('/admin/login',[AdminController::class,'login'])->name('admin.login')->middleware('guest');
 Route::post('/admin/login-handler', [AdminController::class, 'loginHandler'])->name('admin.loginHandler');
@@ -32,7 +32,7 @@ Route::middleware('auth')->group(function(){
             Route::get('create',[CategoryController::class,'create'])->name('create');
             Route::post('store',[CategoryController::class,'store'])->name('store');
             Route::get('edit/{id}',[CategoryController::class,'edit'])->name('edit');
-            Route::post('edit/{id}',[CategoryController::class,'update'])->name('.update');
+            Route::post('update',[CategoryController::class,'update'])->name('update');
             Route::post('destroy/{id}', [CategoryController::class, 'destroy'])->name('destroy');
             Route::get('trash', [CategoryController::class, 'trash'])->name('trash');
             Route::get('untrash/{id}', [CategoryController::class, 'untrash'])->name('untrash');
@@ -58,10 +58,22 @@ Route::middleware('auth')->group(function(){
             Route::get('create',[SupplierController::class,'create'])->name('create');
             Route::post('store',[SupplierController::class,'store'])->name('store');
             Route::get('edit/{id}',[SupplierController::class,'edit'])->name('edit');
-            Route::post('edit/{id}',[SupplierController::class,'update'])->name('update');
+            Route::post('update',[SupplierController::class,'update'])->name('update');
             Route::post('destroy/{id}', [SupplierController::class, 'destroy'])->name('destroy');
             Route::get('trash', [SupplierController::class, 'trash'])->name('trash');
             Route::get('untrash/{id}', [SupplierController::class, 'untrash'])->name('untrash');
+        });
+    });
+    Route::prefix('goods-received-note')->group(function(){
+        Route::name('goods-received-note.')->group(function(){
+            Route::get('/',[GoodsReceivedNoteController::class,'index'])->name('index');
+            Route::get('create',[GoodsReceivedNoteController::class,'create'])->name('create');
+            Route::post('store',[GoodsReceivedNoteController::class,'store'])->name('store');
+            Route::get('edit/{id}',[GoodsReceivedNoteController::class,'edit'])->name('edit');
+            Route::post('update',[GoodsReceivedNoteController::class,'update'])->name('update');
+            Route::post('destroy/{id}', [GoodsReceivedNoteController::class, 'destroy'])->name('destroy');
+            // Route::get('trash', [GoodsReceivedNoteController::class,'trash'])->name('trash');
+            // Route::get('untrash/{id}', [GoodsReceivedNoteController::class, 'untrash'])->name('untrash');
         });
     });
 });
