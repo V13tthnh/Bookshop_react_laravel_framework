@@ -15,15 +15,15 @@ class book extends Model
     use SoftDeletes;
     use HasFactory;
 
-    public function category_id(){
+    public function category(){
         return $this->belongsTo(category::class);
     }
 
-    public function author_id(){
+    public function author(){
         return $this->belongsTo(author::class);
     }
 
-    public function supplier_id(){
+    public function supplier(){
         return $this->belongsTo(supplier::class);
     }
 
