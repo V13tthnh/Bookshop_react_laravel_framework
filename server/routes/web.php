@@ -76,6 +76,11 @@ Route::middleware('auth')->group(function(){
             // Route::get('untrash/{id}', [GoodsReceivedNoteController::class, 'untrash'])->name('untrash');
         });
     });
+    Roue::prefix('order')->group(function(){
+        Route::name('order.')->group(function(){
+            Route::get('/',[OrderController::class,'index'])->name('index');
+        });
+    });
 });
 
 

@@ -270,13 +270,13 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="" class="nav-link">
+                                    <a href="{{route('goods-received-note.index')}}" class="nav-link">
                                         <i class="nav-icon fas fa-table"></i>
                                         <p>Danh sách</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="pages/forms/advanced.html" class="nav-link">
+                                    <a href="{{route('goods-received-note.create')}}" class="nav-link">
                                         <i class="nav-icon fas fa-plus"></i>
                                         <p>Tạo phiếu nhập</p>
                                     </a>
@@ -390,7 +390,6 @@
     <!-- AdminLTE App -->
     <script src="{{asset('dist/js/adminlte.js')}}"></script>
     <script src="{{asset('dist/js/pages/dashboard.js')}}"></script>
-    <script src="{{asset('dist/js/demo.js')}}"></script>
     <!-- Summernote -->
     <script src="{{asset('plugins/summernote/summernote-bs4.min.js')}}"></script>
 

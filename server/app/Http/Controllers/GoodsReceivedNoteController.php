@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\goods_received_note;
+use App\Models\goods_received_note_details;
 use App\Models\supplier;
 use App\Models\admin;
 use App\Models\book;
@@ -38,14 +39,41 @@ class GoodsReceivedNoteController extends Controller
      */
     public function store(Request $rq)
     {
-        
+        dd($rq);
         $createGoodsReceivedNote=new goods_received_note();
-        $createGoodsReceivedNote->supplier_id=$rq->name;
-        $createGoodsReceivedNote->formality=$rq->formality;
+        $createGoodsReceivedNote->supplier_id=$rq->supplier;
+        $createGoodsReceivedNote->formality=null;
         $createGoodsReceivedNote->admin_id=Auth::user()->id;
-        $createGoodsReceivedNote->total=$rq->total;
+        $createGoodsReceivedNote->total=null;
         $createGoodsReceivedNote->status=1;
         $createGoodsReceivedNote->save();
+
+        $total = 0;
+
+        for($i = 0; $i < count($rq->book_id); $i++){
+            // create goods_received_note_detail
+            $detail = new goods_received_note_details();
+            $detail->goods_received_note_id = $createGoodsReceivedNote->id;
+            $detail->book_id = $rq->book_id[$i];
+            $detail->quantity = $rq->quantity[$i];
+            $detail->import_unit_price = $rq->import_unit_price[$i];
+            $detail->export_unit_price = $rq->export_unit_price[$i];
+            $detail->save();
+
+            
+            $total += $rq->total[$i];
+
+            // update quantity and export price
+            $updateBook = book::find($rq->book_id[$i]);
+            $updateBook->quantity =  $rq->quantity[$i];
+            $updateBook->unit_price =  $rq->export_unit_price[$i];
+            $updateBook->save();
+        }
+        //update total goods_received_note
+        $updateGPN = goods_received_note::find($createGoodsReceivedNote->id);
+        $updateGPN->total = $total;
+        $updateGPN->save();
+
         return redirect()->route('goods-received-note.index')->with('successMsg', 'Thêm thành công!');
     }
 

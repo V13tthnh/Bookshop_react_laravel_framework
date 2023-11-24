@@ -112,10 +112,10 @@
                 @csrf
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="inputName">Tên Nhà Xuất Bản</label>
+                        <label for="inputName">Tên Nguoi Dung</label>
                         <select id="inputStatus" name="name" class="form-control custom-select">
                             <option selected disabled>Select one</option>
-                            @foreach($listSupplier as $items)
+                            @foreach($listUser as $items)
                             <option value="{{$items->id}}">{{$items->name}}</option>
                            @endforeach
                         </select>

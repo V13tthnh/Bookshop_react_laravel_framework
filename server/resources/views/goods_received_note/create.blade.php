@@ -76,13 +76,11 @@
                 "<button type='button' onclick='productDelete(this)'class='btn btn-default'>" + "Xóa" +
                     "<span class='glyphicon glyphicon-remove' />" +
                 "</button>" +
-            
                 "<button type='button' onclick='productDisplay(this);' class='btn btn-default'>" +"Sửa"+
                     "<span class='glyphicon glyphicon-edit' />" +
                 "</button>" +
                 "</td>" +
             "</tr>");   
-
             formClear();
     }
 
@@ -91,22 +89,23 @@ function productDelete(ctl) {
 }
 
 function formClear() {
-    $("#supplier").find("option:first-child");
-    $("#book").find("option:first-child");
+    $("#supplier").val($("#supplier option:first").val());
+    $("#book").val($("#book option:first").val());
     $("#quantity").val("");
     $("#export_unit_price").val("");
     $("#import_unit_price").val("");
 }
 
-function  productBuildTableRow(id){
-    let tt=0;
-    tt = Number( $("#sl").val()) * Number( $("#gb").val())
+function  productBuildTableRow(){
+    let total=0;
+    total = Number( $("#quantity").val()) * Number( $("#export_unit_price").val())
     var ret="<tr>" +
-        "<td>" +`<input type="text" name="san_pham_id[]" value="${$("#book").val()}" /> ` + $("#sp").val() + "</td>" +
-        "<td>" + `<input type="text" name="so_luong[]" value="${$("#sl").val()}" /> `+ $("#sl").val() + "</td>" +
-        "<td>" + `<input type="text" name="gia_nhap[]" value="${$("#gn").val()}" /> `+ $("#gn").val() + "</td>" +
-        "<td>" + `<input type="text" name="gia_ban[]" value="${$("#gb").val()}" /> `+ $("#gb").val() + "</td>" +
-        "<td>" + `<input type="number" name="tong_tien[]" value="${tt}" /> `+tt + "</td>" +
+        "<td>" +`<input  name="book_id[]" value="${$("#book").find(':selected').val()}" type="hidden" /> `+ $("#book").find(':selected').text()+ "</td>" +
+        
+        "<td>" + `<input name="quantity[]" value="${$("#quantity").val()}" type="hidden" /> `+ $("#quantity").val() + "</td>" +
+        "<td>" + `<input  name="import_unit_price[]" value="${$("#import_unit_price").val()}" type="hidden" /> `+ $("#import_unit_price").val() + "</td>" +
+        "<td>" + `<input  name="export_unit_price[]" value="${$("#export_unit_price").val()}" type="hidden" /> `+ $("#export_unit_price").val() + "</td>" +
+        "<td>" + `<input  name="total[]" value="${total}" type="hidden"/> `+ total + "</td>" +
         "<td>" +
         "<button type='button' onclick='productDelete(this)'class='btn btn-default'>" + "Xóa" +
         "<span class='glyphicon glyphicon-remove' />" +
@@ -120,17 +119,18 @@ function  productBuildTableRow(id){
         return ret;
 }
 
-    var _row = null;
+    let _row = null;
     _row = $(ctl).parents("tr");
     var cols = _row.children("td");
 
 function productDisplay(ctl) {
-    _row = $(ctl).parents("tr");
+     _row = $(ctl).parents("tr");
     var cols =_row.children("td");
-    $("#sp").val($(cols[0]).text());
-    $("#sl").val($(cols[1]).text());
-    $("#gn").val($(cols[2]).text());
-    $("#gb").val($(cols[3]).text());
+    $("#su  pplier").val($(cols[0]).val());
+    $("#book").val($(cols[1]).val());
+    $("#quantity").val($(cols[2]).text());
+    $("#import_unit_price").val($(cols[3]).text());
+    $("#export_unit_price").val($(cols[4]).text());
     
     // Change Update Button Text
     $("#updateButton").text("Update");
@@ -149,7 +149,7 @@ function productUpdate() {
     formClear();
     
     // Focus to product name field
-    $("#sp").focus();
+    $("#book").focus();
 }
 
     
@@ -258,7 +258,8 @@ function productUpdateInTable() {
                     <div class="card-header">
                         <h3 class="card-title">Danh sách sản phẩm</h3>
                     </div>
-                <form action="">
+                <form action="{{route('goods-received-note.store')}}" method="post">
+                    @csrf
                     <div class="card-body">
                         <table id="example1" class="table table-bordered table-striped">
                             <thead>
@@ -273,11 +274,11 @@ function productUpdateInTable() {
                                     <th>Thao tác</th>
                                 </tr>
                             </thead>
-                            
                             <tbody>
+
                             </tbody>
                         </table>
-                    <input type="number" id="rq_supplier" hidden/>
+                    <input type="number" id="rq_supplier" name="supplier" hidden/>
                     <div class="card-footer">
                         <button type="submit" class="btn btn-primary">Lưu</button>
                     </div>
