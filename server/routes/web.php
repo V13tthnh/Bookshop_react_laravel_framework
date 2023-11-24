@@ -6,6 +6,7 @@ use  App\Http\Controllers\CategoryController;
 use  App\Http\Controllers\AuthorController;
 use  App\Http\Controllers\SupplierController;
 use  App\Http\Controllers\GoodsReceivedNoteController;
+use  App\Http\Controllers\BookController;
 
 Route::get('/admin/login',[AdminController::class,'login'])->name('admin.login')->middleware('guest');
 Route::post('/admin/login-handler', [AdminController::class, 'loginHandler'])->name('admin.loginHandler');
@@ -76,9 +77,22 @@ Route::middleware('auth')->group(function(){
             // Route::get('untrash/{id}', [GoodsReceivedNoteController::class, 'untrash'])->name('untrash');
         });
     });
-    Roue::prefix('order')->group(function(){
+    Route::prefix('order')->group(function(){
         Route::name('order.')->group(function(){
             Route::get('/',[OrderController::class,'index'])->name('index');
+        });
+    });
+       //Thanh Nghia
+       Route::prefix('book')->group(function(){
+        Route::name('book.')->group(function(){
+            Route::get('/',[BookController::class,'index'])->name('index');
+            Route::get('create',[BookController::class,'create'])->name('create');
+            Route::post('store',[BookController::class,'store'])->name('store');
+            Route::get('edit/{id}',[BookController::class,'edit'])->name('edit');
+            Route::post('update',[BookController::class,'update'])->name('update');
+            Route::post('destroy/{id}', [BookController::class, 'destroy'])->name('destroy');
+            Route::get('trash', [BookController::class, 'trash'])->name('trash');
+            Route::get('untrash/{id}', [BookController::class, 'untrash'])->name('untrash');
         });
     });
 });
