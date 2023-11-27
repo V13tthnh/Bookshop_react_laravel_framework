@@ -11,17 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sliders', function (Blueprint $table) {
+        Schema::create('publishers', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->date('start_date')->nullable();
-            $table->date('end_date')->nullable();
-            $table->bigInteger('book_id');
-            $table->string('image')->nullable();
+            $table->string('description');
             $table->timestamps();
             $table->softDeletes();
-
-            // $table->foreign('book_id')->references('id')->on('books')->onDelete('cascade');
         });
     }
 
@@ -30,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sliders');
+        Schema::dropIfExists('publishers');
     }
 };

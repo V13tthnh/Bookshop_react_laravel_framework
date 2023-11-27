@@ -2,22 +2,7 @@
 
 @section('js')
 
-<!-- DataTables  & Plugins -->
-<script src="{{asset('plugins/datatables/jquery.dataTables.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/dataTables.buttons.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/buttons.bootstrap4.min.js')}}"></script>
-<script src="{{asset('plugins/jszip/jszip.min.js')}}"></script>
-<script src="{{asset('plugins/pdfmake/pdfmake.min.js')}}"></script>
-<script src="{{asset('plugins/pdfmake/vfs_fonts.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/buttons.html5.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
-<script src="{{asset('dist/js/pages/dashboard.js')}}"></script>
-<!-- Summernote -->
-<script src="{{asset('plugins/summernote/summernote-bs4.min.js')}}"></script>
+
 
 <script>
     //Edit ajax
@@ -45,7 +30,8 @@
                     $('#author_id').val(result.data.author_id);
                     $('#supplier_id').val(result.data.supplier_id);
                     $('#category_id').val(result.data.category_id);
-                    $('#summernote1').summnernote('code', result.data.description);
+                    $('#publisher_id').val(result.data.publisher_id);
+                    $('#summernote1').summnernote('code',result.data.description);
                    
                 }
             });
@@ -155,11 +141,20 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="inputStatus">Nhà xuất bản</label>
+                        <label for="inputStatus">Nhà cung cấp</label>
                         <select id="inputStatus" name="supplier_id" class="form-control custom-select">
                         <option selected disabled>Select one</option>
                             @foreach($listSupplier as $supplier)
                             <option value="{{$supplier->id}}">{{$supplier->name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputStatus">Nhà xuất bản</label>
+                        <select id="inputStatus" name="publisher_id" class="form-control custom-select">
+                        <option selected disabled>Select one</option>
+                            @foreach($listPublisher as $publisher)
+                            <option value="{{$publisher->id}}">{{$publisher->name}}</option>
                             @endforeach
                         </select>
                     </div>
@@ -250,11 +245,20 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="inputStatus">Nhà xuất bản</label>
+                        <label for="inputStatus">Nhà cung cấp</label>
                         <select id="supplier_id" name="supplier_id" class="form-control custom-select">
                         <option selected disabled>Select one</option>
                             @foreach($listSupplier as $supplier)
                                 <option value="{{$supplier->id}}">{{$supplier->name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputStatus">Nhà xuất bản</label>
+                        <select id="publisher_id" name="publisher_id" class="form-control custom-select">
+                        <option selected disabled>Select one</option>
+                            @foreach($listPublisher as $publisher)
+                            <option value="{{$publisher->id}}">{{$publisher->name}}</option>
                             @endforeach
                         </select>
                     </div>
@@ -314,6 +318,7 @@
                                     <th>Tên</th>
                                     <th>Giá</th>
                                     <th>Số lượng</th>
+                                    <th>Nhà cung cấp</th>
                                     <th>Nhà xuất bản</th>
                                     <th>Tác giả</th>
                                     <th>Thao tác</th>
@@ -327,6 +332,7 @@
                                     <td>{{$item->unit_price}}</td>
                                     <td>{{$item->quantity}}</td>
                                     <td>{{$item->supplier->name}}</td>
+                                    <td>{{$item->publisher->name}}</td>
                                     <td>{{$item->author->name}}</td>
                                     <td>
                                 

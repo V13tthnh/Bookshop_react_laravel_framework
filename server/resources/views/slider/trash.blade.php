@@ -62,11 +62,11 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Danh sách sách</h1>
+                <h1>Danh sách slider</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <a href="{{route('book.index')}}" class="btn btn-warning">
+                    <a href="{{route('slider.index')}}" class="btn btn-warning">
                         <i class="nav-icon fa fa-list"></i> Danh sách
                     </a>
                 </ol>
@@ -80,7 +80,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Danh sách sách</h3>
+                        <h3 class="card-title">Danh sách slider</h3>
                     </div>
                     <div class="card-body">
                         <table id="example1" class="table table-bordered table-striped">
@@ -88,33 +88,38 @@
                                 <tr>
                                     <th>Id</th>
                                     <th>Tên</th>
-                                    <th>Giá</th>
-                                    <th>Số lượng</th>
-                                    <th>Nhà cung cấp</th>
-                                    <th>Nhà xuất bản</th>
-                                    <th>Tác giả</th>
+                                    <th>Ngày bắt đầu</th>
+                                    <th>Ngày kết thúc</th>
+                                    <th>Sách</th>
+                                    <th>Hình ảnh</th>
                                     <th>Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($trash as $item)
                                 <tr>
-                                    <td>{{$id++}}</td>
+                                <td>{{$id++}}</td>
                                     <td><a href="">{{$item->name}}</a></td>
-                                    <td>{{$item->unit_price}}</td>
-                                    <td>{{$item->quantity}}</td>
-                                    <td>{{$item->supplier->name}}</td>
-                                    <td>{{$item->publisher->name}}</td>
-                                    <td>{{$item->author->name}}</td>
-                                    <td>
+                                    <td>{{$item->start_date}}</td>
+                                    <td>{{$item->end_date}}</td>
+                                    <td>{{$item->book->name}}</td>
                                     <td style="text-align:center;">
-                                        <a href="{{route('book.untrash', $item->id)}}" class="btn btn-info"
+                                        @if($item->image != null)
+                                        <img src="{{asset('/'.$item->image)}}" alt="" sizes="40" srcset=""
+                                            style="height:100px;width:140px">
+                                        @else
+                                        <img src="{{asset('dist/img/user.jpg')}}" alt="" sizes="40" srcset=""
+                                            style="height:100px;width:140px">
+                                        @endif
+                                    </td>
+                                    <td style="text-align:center;">
+                                        <a href="{{route('slider.untrash', $item->id)}}" class="btn btn-info"
                                             type="submit"><i class="nav-icon fa fa-trash-restore-alt"></i></a>
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan=7>Không có dữ liệu!</td>
+                                    <td colspan=5>Không có dữ liệu!</td>
                                 </tr>
                                 @endforelse
                             </tbody>
