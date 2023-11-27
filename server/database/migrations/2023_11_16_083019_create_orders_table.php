@@ -17,10 +17,11 @@ return new class extends Migration
             $table->string('name');
             $table->string('address');
             $table->string('phone');
-            $table->double('total');
+            $table->double('total')->nullable();
             $table->double('shipping_fee');
             $table->string('note')->nullable();
             $table->tinyInteger('status');
+            
             $table->timestamps();
 
             // $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

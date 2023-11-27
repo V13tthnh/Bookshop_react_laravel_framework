@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\users;
 class order extends Model
 {
-    use SoftDeletes;
+
     use HasFactory;
     protected $table = 'orders';
     public function user(){
