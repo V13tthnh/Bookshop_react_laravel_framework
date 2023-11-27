@@ -29,6 +29,7 @@ return new class extends Migration
             $table->bigInteger('author_id');
             $table->bigInteger('supplier_id');
             $table->bigInteger('category_id');
+            $table->bigInteger('publisher_id');
             $table->softDeletes();
             $table->timestamps();
 

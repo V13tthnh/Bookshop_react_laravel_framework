@@ -7,6 +7,7 @@ use App\Models\book;
 use App\Models\author;
 use App\Models\supplier;
 use App\Models\category;
+use App\Models\Publisher;
 class BookController extends Controller
 {
     /**
@@ -19,7 +20,8 @@ class BookController extends Controller
         $listAuthor=author::all();
         $listSupplier=supplier::all();
         $listCategory=category::all();
-        return view('book.index',compact('listBook','id','listAuthor','listSupplier','listCategory'));
+        $listPublisher=Publisher::all();
+        return view('book.index',compact('listBook','id','listAuthor','listSupplier','listCategory','listPublisher'));
     }
 
     /**
@@ -56,6 +58,7 @@ class BookController extends Controller
         $book->author_id=$request->author_id;
         $book->supplier_id=$request->supplier_id;
         $book->category_id=$request->category_id;
+        $book->publisher_id=$request->publisher_id;
         $book->save();
         return redirect()->route('book.index')->with('successMsg', 'Thêm thành công!');
     }
@@ -106,6 +109,7 @@ class BookController extends Controller
         $book->author_id=$request->author_id;
         $book->supplier_id=$request->supplier_id;
         $book->category_id=$request->category_id;
+        $book->publisher_id=$request->publisher_id;
         $book->save();
         return redirect()->route('book.index')->with('successMsg', 'Sửa thành công!');
 
@@ -121,7 +125,8 @@ class BookController extends Controller
     }
     public function trash(){
         $trash = book::onlyTrashed()->get();
-        return view('book.trash', compact('trash'));
+        $id=1;
+        return view('book.trash', compact('trash','id'));
     }
 
     public function untrash($id)

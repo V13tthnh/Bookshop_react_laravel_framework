@@ -7,7 +7,8 @@ use  App\Http\Controllers\AuthorController;
 use  App\Http\Controllers\SupplierController;
 use  App\Http\Controllers\GoodsReceivedNoteController;
 use  App\Http\Controllers\BookController;
-
+use  App\Http\Controllers\SliderController;
+use  App\Http\Controllers\PublisherController;
 Route::get('/admin/login',[AdminController::class,'login'])->name('admin.login')->middleware('guest');
 Route::post('/admin/login-handler', [AdminController::class, 'loginHandler'])->name('admin.loginHandler');
 // admin - viet thanh
@@ -93,6 +94,31 @@ Route::middleware('auth')->group(function(){
             Route::post('destroy/{id}', [BookController::class, 'destroy'])->name('destroy');
             Route::get('trash', [BookController::class, 'trash'])->name('trash');
             Route::get('untrash/{id}', [BookController::class, 'untrash'])->name('untrash');
+        });
+    });
+    Route::prefix('slider')->group(function(){
+        Route::name('slider.')->group(function(){
+            Route::get('/',[SliderController::class,'index'])->name('index');
+            Route::get('/data-table',[SliderController::class,'dataTable'])->name('data.table');
+            Route::get('create',[SliderController::class,'create'])->name('create');
+            Route::post('store',[SliderController::class,'store'])->name('store');
+            Route::get('edit/{id}',[SliderController::class,'edit'])->name('edit');
+            Route::post('update',[SliderController::class,'update'])->name('update');
+            Route::post('destroy/{id}', [SliderController::class, 'destroy'])->name('destroy');
+            Route::get('trash', [SliderController::class, 'trash'])->name('trash');
+            Route::get('untrash/{id}', [SliderController::class, 'untrash'])->name('untrash');
+        });
+    });
+    Route::prefix('publisher')->group(function(){
+        Route::name('publisher.')->group(function(){
+            Route::get('/',[PublisherController::class,'index'])->name('index');
+            Route::get('create',[PublisherController::class,'create'])->name('create');
+            Route::post('store',[PublisherController::class,'store'])->name('store');
+            Route::get('edit/{id}',[PublisherController::class,'edit'])->name('edit');
+            Route::post('update',[PublisherController::class,'update'])->name('update');
+            Route::post('destroy/{id}', [PublisherController::class, 'destroy'])->name('destroy');
+            Route::get('trash', [PublisherController::class, 'trash'])->name('trash');
+            Route::get('untrash/{id}', [PublisherController::class, 'untrash'])->name('untrash');
         });
     });
 });

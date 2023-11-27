@@ -16,6 +16,7 @@ use App\Models\review;
 use App\Models\slider;
 use App\Models\supplier;
 use App\Models\User;
+use App\Models\Publisher;
 use Hash;
 class AddDataToDBSeeder extends Seeder
 {
@@ -189,6 +190,16 @@ class AddDataToDBSeeder extends Seeder
         $book_category5->book_id=5;
         $book_category5->save();
         
+        //publisher
+        $publisher1=new publisher();
+        $publisher1->name="Nhà sản xuất 1";
+        $publisher1->description="Đây là nhà sản xuất 1";
+        $publisher1->save();
+
+        $publisher2=new publisher();
+        $publisher2->name="Nhà sản xuất 2";
+        $publisher2->description="Đây là nhà sản xuất 2";
+        $publisher2->save();
         //book
         $book1=new book();
         $book1->name='Ông Già Và Biển Cả';
@@ -206,6 +217,7 @@ class AddDataToDBSeeder extends Seeder
         $book1->author_id=1;
         $book1->supplier_id=5;
         $book1->category_id = 1;
+        $book1->publisher_id=1;
         $book1->save();
 
         $book2 = new Book();
@@ -224,6 +236,7 @@ class AddDataToDBSeeder extends Seeder
         $book2->author_id = 2;
         $book2->supplier_id = 1;
         $book2->category_id = 1;
+        $book2->publisher_id=1;
         $book2->save();
 
         $book3 = new Book();
@@ -242,6 +255,7 @@ class AddDataToDBSeeder extends Seeder
         $book3->author_id = 3;
         $book3->supplier_id = 2;
         $book3->category_id = 1;
+        $book3->publisher_id=1;
         $book3->save();
 
         $book4 = new Book();
@@ -260,6 +274,7 @@ class AddDataToDBSeeder extends Seeder
         $book4->author_id = 4;
         $book4->supplier_id = 2;
         $book4->category_id = 1;
+        $book4->publisher_id=2;
         $book4->save();
         //too much
     }
