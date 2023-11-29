@@ -5,16 +5,16 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Str;
-use App\Models\admin;
-use App\Models\author;
-use App\Models\book;
-use App\Models\book_category;
-use App\Models\category;
-use App\Models\discount;
-use App\Models\image;
-use App\Models\review;
-use App\Models\slider;
-use App\Models\supplier;
+use App\Models\Admin;
+use App\Models\Author;
+use App\Models\Book;
+use App\Models\BookCategory;
+use App\Models\Category;
+use App\Models\Discount;
+use App\Models\Image;
+use App\Models\Review;
+use App\Models\Slider;
+use App\Models\Supplier;
 use App\Models\User;
 use App\Models\Publisher;
 use Hash;
@@ -26,7 +26,7 @@ class AddDataToDBSeeder extends Seeder
     public function run(): void
     {
         //thêm admin 1
-        $admin1=new admin();
+        $admin1=new Admin;
         $admin1->name='Viết Thành';
         $admin1->email='admin@123';
         $admin1->email_verified_at=null;
@@ -35,7 +35,7 @@ class AddDataToDBSeeder extends Seeder
         $admin1->remember_token='';
         $admin1->save();
 
-        $admin2 = new admin();
+        $admin2 = new Admin;
         $admin2->name = 'Thành Nghĩa';
         $admin2->email = 'admin@456';
         $admin2->email_verified_at =null;
@@ -44,7 +44,7 @@ class AddDataToDBSeeder extends Seeder
         $admin2->remember_token = '';
         $admin2->save(); // Save the admin1 object to the database
 
-        $admin3 = new admin();
+        $admin3 = new Admin;
         $admin3->name = 'Thanh Tuấn';
         $admin3->email = 'admin@789';
         $admin3->email_verified_at =null;
@@ -56,38 +56,38 @@ class AddDataToDBSeeder extends Seeder
         
 
         //categorys
-        $categorys1=new category();
+        $categorys1=new Category;
         $categorys1->name='Văn học';
         $categorys1->description=' Sách văn học là một dạng văn bản dưới hình thức nghệ thuật, có giá trị nghệ thuật hoặc trí tuệ, thường sẽ có những cách thức triển khai ngôn ngữ khác với cách sử dụng thông thường. Sách văn học là một trong những loại sách mà chúng ta tiếp xúc khá nhiều trong cuộc sống, đó là một loại hình sáng tác đặc biệt. Chúng có khả năng tái hiện lại bình diện cuộc sống và xã hội, những sự kiện, diễn biến và con người,… dưới ngòi bút văn hoa, trào phúng.';
         $categorys1->slug= Str::slug('Văn học');
         $categorys1->save();
 
-        $categorys2=new category();
+        $categorys2=new Category;
         $categorys2->name='Sách thiếu nhi';
         $categorys2->description='Sách thiếu nhi là loại sách được viết và thiết kế đặc biệt để dành cho độc giả trẻ em và thiếu nhi. Đây là những tác phẩm văn học, hình ảnh hoặc sách học tập được tạo ra để phù hợp với lứa tuổi, sự phát triển, sở thích của trẻ em, giúp họ phát triển khả năng đọc, tư duy, hiểu biết.';
         $categorys2->slug=Str::slug('Sách thiếu nhi');
         $categorys2->save();
         
-        $categorys3=new category();
+        $categorys3=new Category;
         $categorys3->name='Kinh tế';
         $categorys3->description='Sách kinh tế là tài liệu về lĩnh vực kinh tế, bao gồm các chủ đề như tài chính, kinh doanh, tiền tệ, thương mại, chính sách kinh tế, quản lý kinh doanh, và các vấn đề kinh tế khác.';
         $categorys3->slug=Str::slug('Kinh tế');
         $categorys3->save();
 
-        $categorys4=new category();
+        $categorys4=new Category;
         $categorys4->name='Giáo khoa - Tham khảo';
         $categorys4->description='Sách giáo khoa là loại sách cung cấp kiến thức, được biên soạn với mục đích dạy và học tại trường học[1][2]. Thuật ngữ sách giáo khoa còn có nghĩa mở rộng là một loại sách chuẩn cho một ngành học. Sách giáo khoa được phân loại dựa theo đối tượng sử dụng hoặc chủ đề của sách.';
         $categorys4->slug=Str::slug('Giáo khoa - Tham khảo');
         $categorys4->save();
         
-        $categorys5=new category();
+        $categorys5=new Category;
         $categorys5->name='Sách học ngoại ngữ';
         $categorys5->description='Sách học ngoại ngữ là một loại sách được thiết kế để giúp người học ngoại ngữ cải thiện khả năng của họ. Sách học ngoại ngữ có thể tập trung vào một hoặc nhiều kỹ năng ngoại ngữ, chẳng hạn như nghe, nói, đọc, viết, hoặc ngữ pháp. Chúng có thể được viết cho người học ở mọi trình độ, từ người mới bắt đầu đến người cao cấp.';
         $categorys5->slug=Str::slug('Sách học ngoại ngữ');
         $categorys5->save();
 
         //suppliers
-        $supplier1=new supplier();
+        $supplier1=new Supplier;
         $supplier1->name='An Lộc Việt';
         $supplier1->address='30 Kha Vạn Cân, Hiệp Bình Chánh, Thủ Đức, Hồ Chí Minh.';
         $supplier1->phone='0899 189 499';
@@ -96,7 +96,7 @@ class AddDataToDBSeeder extends Seeder
         $supplier1->slug=Str::slug('An Lộc Việt');
         $supplier1->save();
 
-        $supplier2=new supplier();
+        $supplier2=new Supplier;
         $supplier2->name='Nhà xuất bản văn học';
         $supplier2->address='18 Nguyễn Trường Tộ - Ba Đình - Hà Nội';
         $supplier2->phone=' 0243 7161 518';
@@ -104,7 +104,7 @@ class AddDataToDBSeeder extends Seeder
         $supplier2->slug='Nha-xuat-ban-van-hoc';
         $supplier2->save();
 
-        $supplier3 = new supplier();
+        $supplier3 = new Supplier;
         $supplier3->name = 'Nhà xuất bản Trẻ';
         $supplier3->address = '35B Nguyễn Thị Minh Khai, Bến Nghé, Quận 1, Thành phố Hồ Chí Minh';
         $supplier3->phone = '0283 8229 999';
@@ -112,7 +112,7 @@ class AddDataToDBSeeder extends Seeder
         $supplier3->slug = 'Nha-xuat-ban-tre';
         $supplier3->save();
 
-        $supplier4 = new supplier();
+        $supplier4 = new Supplier;
         $supplier4->name = 'Nhà xuất bản Kim Đồng';
         $supplier4->address = '161 Bà Triệu, Hai Bà Trưng, Hà Nội';
         $supplier4->phone = '0243 8257 288';
@@ -120,7 +120,7 @@ class AddDataToDBSeeder extends Seeder
         $supplier4->slug = 'Nha-xuat-ban-kim-dong';
         $supplier4->save();
 
-        $supplier5 = new supplier();
+        $supplier5 = new Supplier;
         $supplier5->name = 'Fahasa';
         $supplier5->address = '268 Lê Thánh Tôn, Quận 1, Thành phố Hồ Chí Minh';
         $supplier5->phone = '1900 6036';
@@ -129,35 +129,35 @@ class AddDataToDBSeeder extends Seeder
         $supplier5->save();
 
         //author
-        $author1=new author();
+        $author1=new Author;
         $author1->name='Ernest Miller Hemingway';
         $author1->description='Ernest Hemingway (1899 - 1961) là nhà văn, nhà báo người Mỹ. Ông từng tham gia chiến đấu trong Chiến tranh thế giới lần thứ I, sau đó được biết đến qua "Thế hệ đã mất". Ông nhận được giải thưởng báo chí Pulitzer năm 1953 và giải Nobel văn học năm 1954.';
         $author1->slug='Ernest-Miller-Hemingway';
         $author1->image='';
         $author1->save();
 
-        $author2 = new author();
+        $author2 = new Author;
         $author2->name = 'Nguyễn Du';
         $author2->description = 'Nguyễn Du (1765-1820) là nhà thơ, nhà văn, nhà viết kịch, nhà nghiên cứu văn hóa, nhà nhân đạo chủ nghĩa lớn của Việt Nam, được mệnh danh là "Đại thi hào dân tộc", "Nhà thơ của dân tộc". Ông là tác giả của kiệt tác Truyện Kiều, được xem là "thiên trường ca của nền văn học Việt Nam".';
         $author2->slug = 'Nguyen-Du';
         $author2->image = 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Nguyễn_Du.jpg/1200px-Nguyễn_Du.jpg';
         $author2->save();
 
-        $author3 = new author();
+        $author3 = new Author;
         $author3->name = 'Thạch Lam';
         $author3->description = 'Thạch Lam (1910-1942) là nhà văn, nhà báo, nhà viết truyện ngắn nổi tiếng của Việt Nam. Ông được đánh giá là một trong những cây bút xuất sắc nhất của dòng văn học lãng mạn Việt Nam. Các tác phẩm của ông thường viết về những mảnh đời nhỏ bé, những tâm hồn nhạy cảm trong xã hội đương thời.';
         $author3->slug = 'Thach-Lam';
         $author3->image = 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Thạch_Lam.jpg/1200px-Thạch_Lam.jpg';
         $author3->save();
 
-        $author4 = new author();
+        $author4 = new Author;
         $author4->name = 'Nam Cao';
         $author4->description = 'Nam Cao (1915-1951) là nhà văn, nhà báo nổi tiếng của Việt Nam. Ông được mệnh danh là "nhà văn của người cùng khổ". Các tác phẩm của ông thường viết về những người nông dân nghèo khổ, lam lũ trong xã hội Việt Nam trước Cách mạng tháng Tám.';
         $author4->slug = 'Nam-Cao';
         $author4->image = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Nam_Cao_1951.jpg/1200px-Nam_Cao_1951.jpg';
         $author4->save();
 
-        $author5 = new author();
+        $author5 = new Author;
         $author5->name = 'Nguyễn Ngọc Tư';
         $author5->description = 'Nguyễn Ngọc Tư (sinh năm 1976) là nhà văn, nhà báo nổi tiếng của Việt Nam. Bà được mệnh danh là "cây bút của những người vô danh". Các tác phẩm của bà thường viết về những mảnh đời nhỏ bé, những số phận bị bỏ quên trong xã hội.';
         $author5->slug = 'Nguyen-Ngoc-Tu';
@@ -165,38 +165,38 @@ class AddDataToDBSeeder extends Seeder
         $author5->save();
         
         //book_category
-        $book_category1=new book_category();
+        $book_category1=new BookCategory;
         $book_category1->category_id=1;
         $book_category1->book_id=1;
         $book_category1->save();
 
-        $book_category2=new book_category();
+        $book_category2=new BookCategory;
         $book_category2->category_id=2;
         $book_category2->book_id=2;
         $book_category2->save();
 
-        $book_category3=new book_category();
+        $book_category3=new BookCategory;
         $book_category3->category_id=3;
         $book_category3->book_id=3;
         $book_category3->save();
         
-        $book_category4=new book_category();
+        $book_category4=new BookCategory;
         $book_category4->category_id=4;
         $book_category4->book_id=4;
         $book_category4->save();
 
-        $book_category5=new book_category();
+        $book_category5=new BookCategory;
         $book_category5->category_id=5;
         $book_category5->book_id=5;
         $book_category5->save();
         
         //publisher
-        $publisher1=new publisher();
+        $publisher1=new Publisher;
         $publisher1->name="Nhà sản xuất 1";
         $publisher1->description="Đây là nhà sản xuất 1";
         $publisher1->save();
 
-        $publisher2=new publisher();
+        $publisher2=new Publisher;
         $publisher2->name="Nhà sản xuất 2";
         $publisher2->description="Đây là nhà sản xuất 2";
         $publisher2->save();

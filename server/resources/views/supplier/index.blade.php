@@ -1,143 +1,176 @@
 @extends('layout')
 
 @section('js')
-<!-- SUMMERNOTE THEM -->
 <script>
-  $(function () {
-    // Summernote
-    $('#summernote').summernote()
-
-    // CodeMirror
-    CodeMirror.fromTextArea(document.getElementById("codeMirrorDemo"), {
-      mode: "htmlmixed",
-      theme: "monokai"
-    });
-  })
-// SUMMERNOTE SUA
-  $(function () {
-    // Summernote
-    $('#summernote1').summernote()
-
-    // CodeMirror
-    CodeMirror.fromTextArea(document.getElementById("codeMirrorDemo"), {
-      mode: "htmlmixed",
-      theme: "monokai"
-    });
-  })
-</script>
-<!-- SweetAlert2 -->
-<script src="{{asset('plugins/sweetalert2/sweetalert2.min.js')}}"></script>
-<!-- Toastr -->
-<script src="{{asset('plugins/toastr/toastr.min.js')}}"></script>
-<!-- DataTables  & Plugins -->
-<script src="{{asset('plugins/datatables/jquery.dataTables.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/dataTables.buttons.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/buttons.bootstrap4.min.js')}}"></script>
-<script src="{{asset('plugins/jszip/jszip.min.js')}}"></script>
-<script src="{{asset('plugins/pdfmake/pdfmake.min.js')}}"></script>
-<script src="{{asset('plugins/pdfmake/vfs_fonts.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/buttons.html5.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
-<script src="{{asset('dist/js/pages/dashboard.js')}}"></script>
-<script>
-    //Edit ajax
     $(document).ready(function () {
-        $(document).on('click', '.editBtn', function () {
-            var id = $(this).val();
-            $('#modal-edit').modal('show');
+        var table = $('#myTable').DataTable({
+            "responsive": true, "lengthChange": true, "autoWidth": false, //tùy chỉnh kích thước, phân trang
+            "paging": true, "ordering": true, "searching": true, 
+            "pageLength": 10, "dom": 'Bfrtip', "lengthMenu": [10, 25, 50, 75, 100],
+            "buttons": [{extend:"copy", text:"Sao chép"}, //custom các button
+                        {extend:"csv", text:"Xuất csv"}, 
+                        {extend:"excel",text:"Xuất Excel"}, 
+                        {extend:"pdf",text:"Xuất PDF"}, 
+                        {extend:"print",text:"In"}, 
+                        {extend:"colvis",text:"Hiển thị cột"}],
+            "language": { search: "Tìm kiếm:" }, //custom thanh tìm kiếm
+            "ajax": { url: "{{route('supplier.data.table')}}", method: "get", dataType: "json", },
+            "columns": [
+                { data: 'id', name: 'id' },
+                { data: 'name', name: 'name'},
+                { data: 'address', name: 'address' },
+                { data: 'phone', name: 'phone'},
+                {
+                    data: 'id', render: function (data, type, row) {
+                        return '<button class="btn btn-warning editBtn  " value="' + data + '" data-toggle="modal" data-target="#modal-edit"><i class="nav-icon fa fa-edit"></i></button>'
+                                +'<div class="btn-group btn-group-toggle"><button class="btn btn-danger deleteBtn" value="' + data + '"><i class="nav-icon fa fa-trash"></i></button></div>'
+                    }
+                },
+            ],
+        });
+        //clear create form
+        function clearCreateForm(){
+            $('#storeName').val('');
+            $('#storeAddress').val('');
+            $('#storePhone').val('');
+            $('#storeDescription').val('');
+        }
+        //store
+        $('#addBtn').click(function(){
+            var name = $('#storeName').val();
+            var address = $('#storeAddress').val();
+            var phone = $('#storePhone').val();
+            var description = $('#storeDescription').val();
             $.ajax({
-                url: '/supplier/edit/' + id,
-                type: "get",
-                success: function (result) {
-                    //console.log(result.supplier);
-                    $('#id').val(result.supplier.id)
-                    $('#name').val(result.supplier.name);
-                    $('#address').val(result.supplier.address);
-                    $('#phone').val(result.supplier.phone);
-                    $('#summernote1').summernote('code', result.supplier.description);
-                    $('#slug').val(result.supplier.slug);
+                url: "{{route('supplier.store')}}",
+                method: "post",
+                data:{
+                    "_token" : "{{csrf_token()}}",
+                    "name" : name,
+                    "address" : address,
+                    "phone" : phone,
+                    "description":description
+                }
+            }).done(function(res){
+                if (res.success) {
+                    Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
+                    $('#modal-create').modal('hide'); //ẩn model thêm mới
+                    clearCreateForm(); //clear form
+                    table.ajax.reload(); //refresh bảng 
+                }
+                if(!res.success) {
+                    Swal.fire({ title: res.message, icon: 'error', confirmButtonText: 'OK' });
+                    return;
                 }
             });
         });
-    });
-
-    $(function () {
-        $("#example1").DataTable({
-            "responsive": true, "lengthChange": false, "autoWidth": false,
-            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+        //edit
+        $('#myTable').on('click', '.editBtn', function(){
+            var id = $(this).val();
+            $.ajax({
+                url: "supplier/edit/" + id,
+                method: "get"
+            }).done(function(res){
+                $('#updateId').val(res.data.id);
+                $('#updateName').val(res.data.name);
+                $('#updateAddress').val(res.data.address);
+                $('#updatePhone').val(res.data.phone);
+                $('#updateDescription').summernote('code',res.data.description);
+            });
+        });
+        //update
+        $('#updateBtn').click(function(){
+            var id = $('#updateId').val();
+            var name = $('#updateName').val();
+            var address = $('#updateAddress').val();
+            var phone = $('#updatePhone').val();
+            var description = $('#updateDescription').val();
+            $.ajax({
+                url: "supplier/update/" + id,
+                method: "post",
+                data:{
+                    "_token" : "{{csrf_token()}}",
+                    "name" : name,
+                    "address" : address,
+                    "phone" : phone,
+                    "description":description
+                }
+            }).done(function(res){
+                if (res.success) {
+                    Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
+                    $('#modal-edit').modal('hide'); //ẩn model edit
+                    table.ajax.reload(); //refresh bảng 
+                }
+                if(!res.success) {
+                    Swal.fire({ title: res.message, icon: 'error', confirmButtonText: 'OK' });
+                    return;
+                }
+            });
+        });
+        //delete
+        $('#myTable').on('click', '.deleteBtn', function(){
+            var id = $(this).val();
+            $.ajax({
+                url: "supplier/destroy/" + id,
+                method: "post",
+                data:{
+                    "_token" : "{{csrf_token()}}",
+                }
+            }).done(function(res){
+                if (res.success) {
+                    Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
+                    table.ajax.reload(); //refresh bảng 
+                }
+                if(!res.success) {
+                    Swal.fire({ title: res.message, icon: 'error', confirmButtonText: 'OK' });
+                    return;
+                }
+            });
+        });
+        $(function () {
+             // description create
+            $('#storeDescription').summernote()
+            // description edit
+            $('#updateDescription').summernote()
+        });
     });
 
 </script>
-
-
-
 @endsection
 
 @section('content')
-@if(session('errorMsg'))
-<script>
-    Swal.fire({
-        title: '{{session('errorMsg')}}',
-        icon: 'error',
-        confirmButtonText: 'OK'
-    })
-</script>
-@endif
-
-@if(session('successMsg'))
-<script>
-    Swal.fire({
-        title: '{{session('successMsg')}}',
-        icon: 'success',
-        confirmButtonText: 'OK'
-    })
-</script>
-@endif
 <!-- Them -->
 <div class="modal fade" id="modal-create">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Thêm Nhà xuất bản</h4>
+                <h4 class="modal-title">Thêm Nhà cung cấp</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{route('supplier.store')}}" method="post" enctype="multipart/form-data">
-                @csrf
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="inputName">Tên</label>
-                        <input type="text" name="name" id="inputName" class="form-control" required>
+                        <input type="text" id="storeName" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label for="inputProjectLeader">Địa chỉ</label>
-                        <input type="text" name="address" class="form-control" required>
+                        <input type="text" id="storeAddress" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label for="inputProjectLeader">Điện thoại</label>
-                        <input type="text" name="phone" class="form-control" required>
+                        <input type="text" id="storePhone" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label for="inputProjectLeader">Mô tả</label required>
-                        <textarea name="description" id="summernote" cols="30" rows="10"></textarea>
+                        <textarea id="storeDescription" cols="30" rows="10"></textarea>
                     </div>
-                    <div class="form-group">
-                        <label for="inputProjectLeader">Slug</label required>
-                        <input type="text" name="slug" class="form-control" required>
-                    </div>
-                   
                 </div>
                 <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" id="addBtn">Lưu</button>
                 </div>
-            </form>
         </div>
     </div>
 </div>
@@ -146,42 +179,36 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Sửa nhà xuất bản</h4>
+                <h4 class="modal-title">Sửa nhà cung cấp</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{route('supplier.update')}}" method="post" enctype="multipart/form-data">
-                @csrf
-                <input type="text" name="id" id="id" hidden>
+           
+                <input type="text"  id="updateId" hidden>
                 <div class="modal-body">
                 <div class="form-group">
                         <label for="inputName">Tên</label>
-                        <input type="text" name="name" id="name" class="form-control" required>
+                        <input type="text" id="updateName" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label for="inputProjectLeader">Địa chỉ</label>
-                        <input type="text" name="address" id="address" class="form-control" required>
+                        <input type="text" id="updateAddress" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label for="inputProjectLeader">Điện thoại</label>
-                        <input type="text" name="phone" id="phone" class="form-control" required>
+                        <input type="text" id="updatePhone" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label for="inputProjectLeader">Mô tả</label required>
-                        <textarea name="description" id="summernote1" cols="30" rows="10"></textarea>
+                        <textarea id="updateDescription" cols="30" rows="10"></textarea>
                     </div>
-                    <div class="form-group">
-                        <label for="inputProjectLeader">Slug</label required>
-                        <input type="text" name="slug" id="slug" class="form-control" required>
-                    </div>
-                   
                 </div>
                 <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" id="updateBtn">Lưu thay đổi</button>
                 </div>
-            </form>
+            
         </div>
     </div>
 </div>
@@ -191,7 +218,7 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Danh sách nhà xuất bản</h1>
+                <h1>Danh sách nhà cung cấp</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
@@ -215,47 +242,21 @@
                         <h3 class="card-title">Danh sách admin</h3>
                     </div>
                     <div class="card-body">
-                        <table id="example1" class="table table-bordered table-striped">
+                        <table id="myTable" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
                                     <th>Id</th>
                                     <th>Tên</th>
                                     <th>Địa chỉ</th>
                                     <th>Điện thoại</th>
-                                    <th>Mô tả</th>
                                     <th>Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($listSupplier as $item)
-                                <tr>
-                                    <td>{{$id++ }}</td>
-                                  
-                               
-                                 <td><a href="">{{$item->name}}</a></td>
-                                    <td>{{$item->address}}</td>
-                                    <td>{{$item->phone}}</td>
-                                    <td>{{$item->description}}</td>
                               
-                                    <td>
-                                        <button class="btn btn-warning editBtn" value="{{$item->id}}"><i
-                                                class="nav-icon fa fa-edit"></i></a>
-                                            <form action="{{route('supplier.destroy', $item->id)}}" method="post">
-                                                @csrf
-                                                <button class="btn btn-danger" type="submit"><i
-                                                        class="nav-icon fa fa-trash"></i></a>
-                                            </form>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan=5>Không có dữ liệu!</td>
-                                </tr>
-                                @endforelse
                             </tbody>
                         </table>
                     </div>
-                    {{$listSupplier->links()}}
                 </div>
             </div>
         </div>

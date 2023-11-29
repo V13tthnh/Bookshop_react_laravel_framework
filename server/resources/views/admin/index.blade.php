@@ -1,94 +1,203 @@
 @extends('layout')
 
 @section('js')
-<!-- SweetAlert2 -->
-<script src="{{asset('plugins/sweetalert2/sweetalert2.min.js')}}"></script>
-<!-- Toastr -->
-<script src="{{asset('plugins/toastr/toastr.min.js')}}"></script>
-<!-- DataTables  & Plugins -->
-<script src="{{asset('plugins/datatables/jquery.dataTables.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/dataTables.buttons.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/buttons.bootstrap4.min.js')}}"></script>
-<script src="{{asset('plugins/jszip/jszip.min.js')}}"></script>
-<script src="{{asset('plugins/pdfmake/pdfmake.min.js')}}"></script>
-<script src="{{asset('plugins/pdfmake/vfs_fonts.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/buttons.html5.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
-<script src="{{asset('dist/js/pages/dashboard.js')}}"></script>
+
 <script>
-    //Edit ajax
     $(document).ready(function () {
-        $(document).on('click', '.editBtn', function () {
-            var id = $(this).val();
-            $('#modal-edit').modal('show');
+        var table = $('#myTable').DataTable({
+            "responsive": true, "lengthChange": true, "autoWidth": false, //tùy chỉnh kích thước, phân trang
+            "paging": true, "ordering": true, "searching": true,
+            "pageLength": 10, 
+            "dom": 'Bfrtip', 
+            "buttons": [{extend:"copy", text:"Sao chép"}, //custom các button
+                        {extend:"csv", text:"Xuất csv"}, 
+                        {extend:"excel",text:"Xuất Excel"}, 
+                        {extend:"pdf",text:"Xuất PDF"}, 
+                        {extend:"print",text:"In"}, 
+                        {extend:"colvis",text:"Hiển thị cột"}],
+            "language": { search: "Tìm kiếm:" },
+            "lengthMenu": [10, 25, 50, 75, 100],
+            "ajax": { url: "{{route('admin.data.table')}}", method: "get", dataType: "json", },
+            "columns": [
+                { data: 'id', name: 'id' },
+                { data: 'avatar', render: function(data, type, row){ 
+                    if(data != null){
+                        return '<img src="'+data+'" alt="" sizes="40" srcset="" style="height:100px;width:100px">';
+                    }
+                    return `<img src="{{asset('dist/img/user.jpg')}}" alt="" sizes="40" srcset="" style="height:100px;width:100px">`;
+                    } 
+                },
+                { data: 'name', name: 'name' },
+                { data: 'email', name: 'email' },
+                {
+                    data: 'id', render: function (data, type, row) {
+                        return '<button class="btn btn-warning editBtn  " value="' + data + '" data-toggle="modal" data-target="#modal-edit"><i class="nav-icon fa fa-edit"></i></button>'
+                                +'<div class="btn-group btn-group-toggle"><button class="btn btn-danger deleteBtn" value="' + data + '"><i class="nav-icon fa fa-trash"></i></button></div>'
+                    }
+                },
+            ],
+        });
+
+        //clear create form
+        function createFormClear() {
+            $("#storeName").val($("#storeName option:first").val());
+            $("#storeEmail").val($("#storeEmail option:first").val());
+            $("#storePassword").val("");
+            $("#storeAvatar").val("");
+            $("#storeRole").val("");
+        }
+        //clear edit form
+        function editFormClear() {
+            $("#updatePassword").val("");
+            $("#updateAvatar").val("");
+        }
+
+        var formDataCreate = new FormData();
+        var formDataEdit = new FormData();
+        //create image
+        $('#storeAvatar').change(function (e) {
+            var input = e.target;
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    formDataCreate.set("avatar", input.files[0]);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        });
+        //create image
+        $('#updateAvatar').change(function (e) {
+            var input = e.target;
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    formDataEdit.set("avatar", input.files[0]);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        });
+
+        //store
+        $('#addBtn').click(function () {
+            var name = $('#storeName').val();
+            var email = $('#storeEmail').val();
+            var password = $('#storePassword').val();
+            //var avatar = $('#storeAvatar').val().replace("C:\\fakepath\\", "");
+            var role = $('#storeRole').find(':selected').val();
+            formDataCreate.append("_token", "{{csrf_token()}}");
+            formDataCreate.append("name", name);
+            formDataCreate.append("email", email);
+            formDataCreate.append("password", password);
+            formDataCreate.append("role", role);
             $.ajax({
-                url: '/admin/edit/' + id,
-                type: "get",
-                success: function (result) {
-                    //console.log(result.admin);
-                    $('#id').val(result.admin.id);
-                    $('#name').val(result.admin.name);
-                    $('#email').val(result.admin.email);
-                    $("#role").val(result.admin.role);
+                url: "{{route('admin.store')}}",
+                method: "post",
+                data: formDataCreate,
+                contentType: false,
+                processData: false,
+
+            }).done(function (res) {
+                if (res.success) {
+                    Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
+                    $('#modal-create').modal('hide'); //ẩn model thêm mới
+                    createFormClear(); //clear dữ liệu input sau khi thêm thành công
+                    table.ajax.reload(); //refresh bảng 
+                }
+                if(!res.success) {
+                    Swal.fire({ title: res.message, icon: 'error', confirmButtonText: 'OK' });
+                    return;
+                }
+                
+            });
+        });
+
+        //edit
+        $('#myTable').on('click', '.editBtn', function () {
+            var id = $(this).val();
+            //console.log(id);
+            $.ajax({
+                url: "admin/edit/" + id,
+                method: "get",
+            }).done(function (res) {
+                $('#modal-edit').modal('show');
+                $('#updateId').val(res.data.id);
+                $('#updateName').val(res.data.name);
+                $('#updateEmail').val(res.data.email);
+                $('#updateRole').val(res.data.role);
+            });
+        });
+
+        //update
+        $('#updateBtn').click(function () {
+            var id = $('#updateId').val();
+            var name = $('#updateName').val();
+            var email = $('#updateEmail').val();
+            var password = $('#updatePassword').val();
+            //var avatar = $('#updateAvatar').val().replace("C:\\fakepath\\", "");
+            var role = $('#updateRole').find(':selected').val();
+            formDataEdit.append("_token", "{{csrf_token()}}");
+            formDataEdit.append("name", name);
+            formDataEdit.append("email", email);
+            formDataEdit.append("password", password);
+            formDataEdit.append("role", role);
+            $.ajax({
+                url: "admin/update/" + id,
+                method: "post",
+                data: formDataEdit,
+                contentType: false,
+                processData: false,
+            }).done(function (res) {
+                if (res.success) {
+                    Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
+                    $('#modal-edit').modal('hide');
+                    editFormClear();
+                    table.ajax.reload();
+                } if(!res.success) {
+                    Swal.fire({ title: res.message, icon: 'error', confirmButtonText: 'OK' });
+                    return;
                 }
             });
         });
-        
     });
+    //delete
+    $('#myTable').on('click', '.deleteBtn', function () {
+        var id = $(this).val();
+        $.ajax({
+            url: "admin/destroy/" + id,
+            method: "post",
+            data: {
+                "_token": "{{csrf_token()}}"
+            }
+        }).done(function (res) {
+            if (res.success) {
+                Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
+                 table.ajax.reload(); 
+            } 
+            if(!res.success) {
+                Swal.fire({ title: res.message, icon: 'error', confirmButtonText: 'OK' });
+                return;
+            }
+        })
+    })
 
-    // DataTable setting
-    $(function () {
-        $("#example1").DataTable({
-            "responsive": true, "lengthChange": true, "autoWidth": true,
-            "paging": false, "ordering": true, "searching": true,
-            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-    });
-
-    //Xem trước ảnh create
-    imgInp2.onchange = evt => {
-        const [file] = imgInp2.files
+    //review image create
+    storeAvatar.onchange = evt => {
+        const [file] = storeAvatar.files
         if (file) {
             blah2.src = URL.createObjectURL(file)
         }
     }
-    // Xem trước ảnh edit
-    imgInp.onchange = evt => {
-        const [file] = imgInp.files
+    // review image edit
+    updateAvatar.onchange = evt => {
+        const [file] = updateAvatar.files
         if (file) {
             blah.src = URL.createObjectURL(file)
         }
     }
 </script>
-
-
-
 @endsection
 
 @section('content')
-@if(session('errorMsg'))
-<script>
-    Swal.fire({
-        title: '{{session('errorMsg')}}',
-        icon: 'error',
-        confirmButtonText: 'OK'
-    })
-</script>
-@endif
-
-@if(session('successMsg'))
-<script>
-    Swal.fire({
-        title: '{{session('successMsg')}}',
-        icon: 'success',
-        confirmButtonText: 'OK'
-    })
-</script>
-@endif
 <div class="modal fade" id="modal-create">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -98,42 +207,41 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{route('admin.store')}}" method="post" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="inputName">Tên</label>
-                        <input type="text" name="name" id="inputName" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputProjectLeader">Email</label>
-                        <input type="email" name="email" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputProjectLeader">Mật khẩu</label required>
-                        <input type="password" name="password" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="inputProjectLeader">Ảnh</label>
-                        <input accept="image/*" type='file' name="avatar" id="imgInp2" class="form-control" />
-                        <label>Xem trước: </label>
-                        <img id="blah2" src="#" alt="your image" style="with: 70px; height: 70px" />
-                    </div>
-                    <div class="form-group">
-                        <label for="inputStatus">Quyền</label>
-                        <select id="inputStatus" name="role" class="form-control custom-select">
-                            <option selected disabled>Select one</option>
-                            <option value="1">Super admin</option>
-                            <option value="2">Admin</option>
-                            <option value="3">Sales Agent</option>
-                        </select>
-                    </div>
+            <div class="modal-body">
+                <div style="text-align:center">
+                    <img id="blah2" src="#"  style="height:150px;width:150px" />
                 </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
+                <div class="form-group">
+                    <label for="inputName">Tên</label>
+                    <input type="text" name="name" id="storeName" class="form-control" required>
                 </div>
-            </form>
+                <div class="form-group">
+                    <label for="inputProjectLeader">Email</label>
+                    <input type="email" name="email" id="storeEmail" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="inputProjectLeader">Mật khẩu</label required>
+                    <input type="password" name="password" id="storePassword" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="inputProjectLeader">Ảnh</label>
+                    <input accept="image/*" type='file' id="storeAvatar" class="form-control" />
+                    <label>Xem trước: </label>
+                </div>
+                <div class="form-group">
+                    <label for="inputStatus">Quyền</label>
+                    <select name="role" id="storeRole" class="form-control custom-select">
+                        <option selected disabled>Select one</option>
+                        <option value="1">Super admin</option>
+                        <option value="2">Admin</option>
+                        <option value="3">Sales Agent</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" id="addBtn">Lưu</button>
+            </div>
         </div>
     </div>
 </div>
@@ -147,42 +255,40 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{route('admin.update')}}" method="post" enctype="multipart/form-data">
-                @csrf
-                <input type="text" name="id" id="id" hidden>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="inputName">Tên</label>
-                        <input id="name" type="text" name="name" id="inputName" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputProjectLeader">Email</label>
-                        <input id="email" type="email" name="email" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputProjectLeader">Mật khẩu</label required>
-                        <input id="password" type="password" name="password" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputProjectLeader">Ảnh</label>
-                        <input accept="image/*" type='file' name="avatar" id="imgInp" class="form-control" />
-                        <label>Ảnh của bạn: </label>
-                        <img id="blah" src="#" alt="your image" style="with: 70px; height: 70px" />
-                    </div>
-                    <div class="form-group">
-                        <label for="inputStatus">Quyền</label>
-                        <select id="role" name="role" class="form-control custom-select">
-                            <option selected disabled>Select one</option>
-                            <option value="1">Super admin</option>
-                            <option value="2">Admin</option>
-                            <option value="3">Sales Agent</option>
-                        </select>
-                    </div>
+            <input type="text" name="id" id="updateId" hidden>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="inputName">Tên</label>
+                    <input type="text" id="updateName" class="form-control" required>
                 </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
+                <div class="form-group">
+                    <label for="inputProjectLeader">Email</label>
+                    <input type="email" id="updateEmail" class="form-control" required>
                 </div>
+                <div class="form-group">
+                    <label for="inputProjectLeader">Mật khẩu</label required>
+                    <input type="password" id="updatePassword" name="password" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="inputProjectLeader">Ảnh</label>
+                    <input accept="image/*" type='file' id="updateAvatar" class="form-control" />
+                    <label>Ảnh của bạn: </label>
+                    <img id="blah" src="#" alt="your image" style="with: 70px; height: 70px" />
+                </div>
+                <div class="form-group">
+                    <label for="inputStatus">Quyền</label>
+                    <select id="updateRole" class="form-control custom-select">
+                        <option selected disabled>Select one</option>
+                        <option value="1">Super admin</option>
+                        <option value="2">Admin</option>
+                        <option value="3">Sales Agent</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                <button type="submit" id="updateBtn" class="btn btn-primary">Lưu</button>
+            </div>
             </form>
         </div>
     </div>
@@ -217,60 +323,19 @@
                         <h3 class="card-title">Danh sách admin</h3>
                     </div>
                     <div class="card-body">
-                        <table id="example1" class="table table-bordered table-striped">
+                        <table id="myTable" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    <th>Id</th>
-                                    <th>Avatar</th>
-                                    <th>Tên</th>
-                                    <th>Email</th>
-                                    <th>Thao tác</th>
+                                    <td>ID</td>
+                                    <td>Avatar</td>
+                                    <td>Tên</td>
+                                    <td>Email</td>
+                                    <td>Thao tác</td>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($admins as $item)
-                                <tr>
-                                    <td style="text-align:center;">{{$id++}}</td>
-                                    <td style="text-align:center;">
-                                        @if($item->avatar != null)
-                                        <img src="{{asset('/'.$item->avatar)}}" alt="" sizes="40" srcset=""
-                                            style="height:100px;width:100px">
-                                        @else
-                                        <img src="{{asset('dist/img/user.jpg')}}" alt="" sizes="40" srcset=""
-                                            style="height:100px;width:100px">
-                                        @endif
-                                    </td>
-                                    <td style="text-align:center;">{{$item->name}}</td>
-                                    <td style="text-align:center;">{{$item->email}}</td>
-                                    <td style="text-align:center;">
-                                        <button class="btn btn-warning editBtn" value="{{$item->id}}">
-                                            <i class="nav-icon fa fa-edit"></i>
-                                        </button>
-                                        <div class="btn-group btn-group-toggle">
-                                            <form class="d-line" action="{{route('admin.destroy', $item->id)}}"
-                                                onsubmit="return confirm('Xác nhận xóa?');" method="post">
-                                                @csrf
-                                                <button class="btn btn-danger">
-                                                    <i class="nav-icon fa fa-trash"></i>
-                                                </button>
-                                            </form>
-                                        </div>
 
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan=5>Không có dữ liệu!</td>
-                                </tr>
-                                @endforelse
                             </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan=5>
-                                        {{$admins->links()}}
-                                    </td>
-                                </tr>
-                            </tfoot>
                         </table>
                     </div>
 

@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\order;
-use App\Models\users;
+use App\Models\Order;
+use App\Models\User;
 
 use Illuminate\Http\Request;
 
@@ -13,8 +13,8 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $liseUser= users::class();
-        $listOrder = order::paginate(6);
+        $liseUser= User::class();
+        $listOrder = Order::paginate(6);
         return view('order.inddx',compact('listOrder',('liseUser')));
     }
 

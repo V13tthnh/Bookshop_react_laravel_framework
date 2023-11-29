@@ -1,40 +1,18 @@
 @extends('layout')
 
 @section('js')
-
-<!-- DataTables  & Plugins -->
-<script src="{{asset('plugins/datatables/jquery.dataTables.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/dataTables.buttons.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/buttons.bootstrap4.min.js')}}"></script>
-<script src="{{asset('plugins/jszip/jszip.min.js')}}"></script>
-<script src="{{asset('plugins/pdfmake/pdfmake.min.js')}}"></script>
-<script src="{{asset('plugins/pdfmake/vfs_fonts.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/buttons.html5.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
-<script src="{{asset('dist/js/pages/dashboard.js')}}"></script>
-<!-- Summernote -->
-<script src="{{asset('plugins/summernote/summernote-bs4.min.js')}}"></script>
-
 <script>
-
     //Edit ajax
     $(document).ready(function () {
-        // function refresh(){
-        //     $.ajax({
-        //         url:'{{route('slider.data.table')}}',
-        //         method:'get',
-        //     }).done(function(res){
-        //         console.log(res);
-        //     });
-        // }
-        // refresh();
+        $(function () {
+            $("#example1").DataTable({
+                "responsive": true, "lengthChange": false, "autoWidth": false, "paging":true,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+        });
+        
         $(document).on('click', '.editBtn', function () {
             var id = $(this).val();
-            //alert(id)
             $('#modal-edit').modal('show');
             $.ajax({
                 url: '/slider/edit/' + id,
@@ -47,18 +25,12 @@
                     $('#end_date').val(result.data.end_date);
                     $('#book_id').val(result.data.book_id);
                     $('#image').val(result.data.image);
-                   
                 }
             });
         });
     });
 
-    $(function () {
-        $("#example1").DataTable({
-            "responsive": true, "lengthChange": false, "autoWidth": false,
-            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-    });
+    
 
     $(function () {
         // Summernote
@@ -79,7 +51,7 @@
     })
 </script>
 @endif
-
+    
 @if(session('successMsg'))
 <script>
     Swal.fire({

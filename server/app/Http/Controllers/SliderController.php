@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\slider;
-use App\Models\book;
+use App\Models\Slider;
+use App\Models\Book;
 class SliderController extends Controller
 {
     /**
@@ -12,15 +12,15 @@ class SliderController extends Controller
      */
     public function index()
     {
-        $listSlider=slider::all();
-        $listBook=book::all();
+        $listSlider=Slider::all();
+        $listBook=Book::all();
         $id = 1;
         return view('slider.index',compact('listSlider', 'id', 'listBook'));
     }
 
     public function dataTable()
     {
-        $listSlider=slider::all();
+        $listSlider=Slider::all();
         return response()->json([
             'success'=>true,
             'data'=>$listSlider
@@ -44,7 +44,7 @@ class SliderController extends Controller
             $file = $request->image;
             $path = $file->store('uploads');
 
-            $slider=new slider();
+            $slider=new Slider();
             $slider->name=$request->name;
             $slider->start_date=$request->start_date;
             $slider->end_date=$request->end_date;
@@ -53,7 +53,7 @@ class SliderController extends Controller
             $slider->save();
         }
         else{
-            $slider=new slider();
+            $slider=new Slider();
             $slider->name=$request->name;
             $slider->start_date=$request->start_date;
             $slider->end_date=$request->end_date;
@@ -77,7 +77,7 @@ class SliderController extends Controller
      */
     public function edit(string $id)
     {
-        $slider=slider::find($id);
+        $slider=Slider::find($id);
         if($slider == null){
             return redirect()->back()->with('errorMsg', "Dữ liệu không tồn tại!");
         }
@@ -93,7 +93,7 @@ class SliderController extends Controller
     public function update(Request $request)
     {
         if($request->hasFile('image')){ 
-            $slider=slider::find($request->id);
+            $slider=Slider::find($request->id);
             $file = $request->image;
             $path = $file->store('uploads');
             $slider->name=$request->name;
@@ -104,7 +104,7 @@ class SliderController extends Controller
             $slider->save();
         }
         else{
-            $slider=slider::find($request->id);
+            $slider=Slider::find($request->id);
             $slider->name=$request->name;
             $slider->start_date=$request->start_date;
             $slider->end_date=$request->end_date;
@@ -119,18 +119,18 @@ class SliderController extends Controller
      */
     public function destroy(string $id)
     {
-        $slider=slider::find($id)->delete();
+        $slider=Slider::find($id)->delete();
         return redirect()->route('slider.index')->with('successMsg', 'Xoa thành công!');
     }
     public function trash(){
-        $trash = slider::onlyTrashed()->get();
+        $trash = Slider::onlyTrashed()->get();
         $id=1;
         return view('slider.trash', compact('trash','id'));
     }
 
     public function untrash($id)
     {   
-        slider::withTrashed()->find($id)->restore();
+        Slider::withTrashed()->find($id)->restore();
         return back()->with('successMsg', 'Khôi phục thành công!');
     }
 }

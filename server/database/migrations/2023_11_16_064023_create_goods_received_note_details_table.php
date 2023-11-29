@@ -16,8 +16,8 @@ return new class extends Migration
             $table->bigInteger('goods_received_note_id');
             $table->bigInteger('book_id');
             $table->Integer('quantity');
-            $table->Integer('import_unit_price');
-            $table->Integer('export_unit_price');
+            $table->Integer('cost_price');
+            $table->Integer('selling_price');
             $table->timestamps();
 
             // $table->foreign('goods_received_note_id')->references('id')->on('goods_received_notes')->onDelete('cascade');

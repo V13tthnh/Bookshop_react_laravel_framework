@@ -4,18 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\supplier;
-use App\Models\admin;
+use App\Models\Supplier;
+use App\Models\Admin;
 
-class goods_received_note extends Model
+class GoodsReceivedNote extends Model
 {
     use HasFactory;
 
     public function supplier(){
-        return $this->belongsTo(supplier::class);
+        return $this->belongsTo(Supplier::class);
     }
 
     public function admin(){
-        return $this->belongsTo(admin::class);
+        return $this->belongsTo(Admin::class);
     }
 }
