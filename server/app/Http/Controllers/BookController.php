@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\book;
-use App\Models\author;
-use App\Models\supplier;
-use App\Models\category;
+use App\Models\Book;
+use App\Models\Author;
+use App\Models\Supplier;
+use App\Models\Category;
 use App\Models\Publisher;
+use Str;
 class BookController extends Controller
 {
     /**
@@ -15,11 +16,11 @@ class BookController extends Controller
      */
     public function index()
     {
-        $listBook=book::paginate(3);
+        $listBook=Book::all();
         $id=1;
-        $listAuthor=author::all();
-        $listSupplier=supplier::all();
-        $listCategory=category::all();
+        $listAuthor=Author::all();
+        $listSupplier=Supplier::all();
+        $listCategory=Category::all();
         $listPublisher=Publisher::all();
         return view('book.index',compact('listBook','id','listAuthor','listSupplier','listCategory','listPublisher'));
     }
@@ -37,11 +38,11 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
-        $name = book::where('name', $request->name)->first();
+        $name = Book::where('name', $request->name)->first();
         if($name != null){
             return redirect()->back()->with('errorMsg', 'Tên sach đã tồn tại!');
         }
-        $book=new book();
+        $book=new Book();
         $book->name=$request->name;
         $book->code=$request->code;
         $book->description=$request->description;
@@ -53,10 +54,9 @@ class BookController extends Controller
         $book->language=$request->language;
         $book->size=$request->size;
         $book->num_pages=$request->num_pages;
-        $book->slug=$request->slug;
+        $book->slug=Str::slug($request->name);
         $book->translator=$request->translator;
         $book->author_id=$request->author_id;
-        $book->supplier_id=$request->supplier_id;
         $book->category_id=$request->category_id;
         $book->publisher_id=$request->publisher_id;
         $book->save();
@@ -72,7 +72,7 @@ class BookController extends Controller
     }
     public function edit(string $id)
     {
-        $book = book::find($id);
+        $book = Book::find($id);
         if($book == null){
             return redirect()->back()->with('errorMsg', "Dữ liệu không tồn tại!");
         }
@@ -88,11 +88,11 @@ class BookController extends Controller
     public function update(Request $request)
     {
 
-        $name = book::where('id', '<>', $request->id)->where('name', $request->name)->first();
+        $name = Book::where('id', '<>', $request->id)->where('name', $request->name)->first();
         if($name != null){
             return redirect()->back()->with('errorMsg', "Sách đã tồn tại!");
         }
-        $book=book::find($request->id);
+        $book=Book::find($request->id);
         $book->name=$request->name;
         $book->code=$request->code;
         $book->description=$request->description;
@@ -104,7 +104,7 @@ class BookController extends Controller
         $book->language=$request->language;
         $book->size=$request->size;
         $book->num_pages=$request->num_pages;
-        $book->slug=$request->slug;
+        $book->slug=Str::slug($request->name);
         $book->translator=$request->translator;
         $book->author_id=$request->author_id;
         $book->supplier_id=$request->supplier_id;
@@ -120,20 +120,18 @@ class BookController extends Controller
      */
     public function destroy(string $id)
     {
-        $book=book::find($id)->delete();
+        $book=Book::find($id)->delete();
         return redirect()->route('book.index')->with('successMsg', 'Xoa thành công!');
     }
     public function trash(){
-        $trash = book::onlyTrashed()->get();
+        $trash = Book::onlyTrashed()->get();
         $id=1;
         return view('book.trash', compact('trash','id'));
     }
 
     public function untrash($id)
     {   
-        book::withTrashed()->find($id)->restore();
+        Book::withTrashed()->find($id)->restore();
         return back()->with('successMsg', 'Khôi phục thành công!');
     }
-    
-    
 }

@@ -1,63 +1,46 @@
 @extends('layout')
 
 @section('js')
-<!-- SweetAlert2 -->
-<script src="{{asset('plugins/sweetalert2/sweetalert2.min.js')}}"></script>
-<!-- Toastr -->
-<script src="{{asset('plugins/toastr/toastr.min.js')}}"></script>
-<!-- DataTables  & Plugins -->
-<script src="{{asset('plugins/datatables/jquery.dataTables.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/dataTables.buttons.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/buttons.bootstrap4.min.js')}}"></script>
-<script src="{{asset('plugins/jszip/jszip.min.js')}}"></script>
-<script src="{{asset('plugins/pdfmake/pdfmake.min.js')}}"></script>
-<script src="{{asset('plugins/pdfmake/vfs_fonts.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/buttons.html5.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
-<script src="{{asset('dist/js/pages/dashboard.js')}}"></script>
 <script>
-    $(function () {
-        $("#example1").DataTable({
-            "responsive": true, "lengthChange": false, "autoWidth": false,
-            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-        $('#example2').DataTable({
-            "paging": true,
-            "lengthChange": false,
-            "searching": false,
-            "ordering": true,
-            "info": true,
-            "autoWidth": false,
-            "responsive": true,
+   $(document).ready(function(){
+        var table = $('#myTable').DataTable({
+            "responsive": true, "lengthChange": true, "autoWidth": false, //tùy chỉnh kích thước, phân trang
+            "paging": true, "ordering": true, "searching": true,
+            "pageLength": 10, 
+            "dom": 'Bfrtip', 
+            "buttons": [{extend:"copy", text:"Sao chép"}, //custom các button
+                        {extend:"csv", text:"Xuất csv"}, 
+                        {extend:"excel",text:"Xuất Excel"}, 
+                        {extend:"pdf",text:"Xuất PDF"}, 
+                        {extend:"print",text:"In"}, 
+                        {extend:"colvis",text:"Hiển thị cột"}],
+            "language": { search: "Tìm kiếm:" },
+            "lengthMenu": [10, 25, 50, 75, 100],
+            "ajax": { url: "{{route('publisher.data.table.trash')}}", method: "get", dataType: "json", },
+            "columns" : [{ data: 'id', name: 'id' },
+                        { data: 'name', name: 'name' },
+                        { data: 'id', render: function(data, type, row){
+                            return '<button class="btn btn-info restoreBtn" value="' + data + '" data-toggle="modal" data-target="#modal-edit"><i class="nav-icon fa fa-trash-restore-alt"></i></button>';
+                        } },]
+        });
+        //restore
+        $('#myTable').on('click', '.restoreBtn', function(){
+            var id = $(this).val();
+            $.ajax({
+                url: "/publisher/untrash/" + id,
+                method: "get"
+            }).done(function(res){
+                if (res.success) {
+                    Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
+                    table.ajax.reload(); 
+                }
+            });
         });
     });
 </script>
 @endsection
 
 @section('content')
-@if(session('errorMsg'))
-<script>
-    Swal.fire({
-        title: '{{session('errorMsg')}}',
-        icon: 'error',
-        confirmButtonText: 'OK'
-    })
-</script>
-@endif
-
-@if(session('successMsg'))
-<script>
-    Swal.fire({
-        title: '{{session('successMsg')}}',
-        icon: 'success',
-        confirmButtonText: 'OK'
-    })
-</script>
-@endif
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
@@ -83,31 +66,16 @@
                         <h3 class="card-title">Danh sách nhà xuất bản</h3>
                     </div>
                     <div class="card-body">
-                        <table id="example1" class="table table-bordered table-striped">
+                        <table id="myTable" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
                                     <th>Id</th>
                                     <th>Tên</th>
-                                    <th>Mô tả</th>
                                     <th>Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($trash as $item)
-                                <tr>
-                                <td>{{$id++}}</td>
-                                    <td><a href="">{{$item->name}}</a></td>
-                                    <td>{{$item->description}}</td>
-                                    <td style="text-align:center;">
-                                        <a href="{{route('publisher.untrash', $item->id)}}" class="btn btn-info"
-                                            type="submit"><i class="nav-icon fa fa-trash-restore-alt"></i></a>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan=5>Không có dữ liệu!</td>
-                                </tr>
-                                @endforelse
+                               
                             </tbody>
                         </table>
                     </div>

@@ -7,6 +7,9 @@
 <script>
     //Edit ajax
     $(document).ready(function () {
+        $('.select2bs4').select2({
+            theme: 'bootstrap4'
+        });
         $(document).on('click', '.editBtn', function () {
             var id = $(this).val();
             //alert(id)
@@ -28,7 +31,6 @@
                     $('#slug').val(result.data.slug);
                     $('#translator').val(result.data.translator);
                     $('#author_id').val(result.data.author_id);
-                    $('#supplier_id').val(result.data.supplier_id);
                     $('#category_id').val(result.data.category_id);
                     $('#publisher_id').val(result.data.publisher_id);
                     $('#summernote1').summnernote('code',result.data.description);
@@ -40,7 +42,8 @@
 
     $(function () {
         $("#example1").DataTable({
-            "responsive": true, "lengthChange": false, "autoWidth": false,
+            "responsive": true, "lengthChange": true, "autoWidth": true,
+            "paging": true,
             "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
         }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
     });
@@ -50,6 +53,7 @@
         $('#summernote').summernote();
         $('#summernote1').summernote()
   });
+  
 
 </script>
 @endsection
@@ -124,10 +128,6 @@
                         <input type="text" name="num_pages" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <label for="inputName">Slug</label>
-                        <input type="text" name="slug" class="form-control" required>
-                    </div>
-                    <div class="form-group">
                         <label for="inputName">Người phiên dịch</label>
                         <input type="text" name="translator" class="form-control" required>
                     </div>
@@ -137,15 +137,6 @@
                         <option selected disabled>Select one</option>
                             @foreach($listAuthor as $author)
                             <option value="{{$author->id}}">{{$author->name}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputStatus">Nhà cung cấp</label>
-                        <select id="inputStatus" name="supplier_id" class="form-control custom-select">
-                        <option selected disabled>Select one</option>
-                            @foreach($listSupplier as $supplier)
-                            <option value="{{$supplier->id}}">{{$supplier->name}}</option>
                             @endforeach
                         </select>
                     </div>
@@ -167,6 +158,19 @@
                             @endforeach
                         </select>
                     </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputStatus">Minimal</label>
+                    <select class="form-control select2bs4" style="width: 100%;">
+                        <option selected disabled>Select one</option>
+                        <option>Alabama</option>
+                        <option>Alaska</option>
+                        <option>California</option>
+                        <option>Delaware</option>
+                        <option>Tennessee</option>
+                        <option>Texas</option>
+                        <option>Washington</option>
+                    </select>
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -228,10 +232,6 @@
                         <input id="num_pages" type="number" name="num_pages" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <label for="inputName">Slug</label>
-                        <input id="slug" type="text" name="slug" class="form-control" required>
-                    </div>
-                    <div class="form-group">
                         <label for="inputName">Người phiên dịch</label>
                         <input id="translator" type="text" name="translator" class="form-control" required>
                     </div>
@@ -245,20 +245,11 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="inputStatus">Nhà cung cấp</label>
-                        <select id="supplier_id" name="supplier_id" class="form-control custom-select">
-                        <option selected disabled>Select one</option>
-                            @foreach($listSupplier as $supplier)
-                                <option value="{{$supplier->id}}">{{$supplier->name}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputStatus">Nhà xuất bản</label>
+                        <label for="inputStatus">Nhà sản xuất</label>
                         <select id="publisher_id" name="publisher_id" class="form-control custom-select">
                         <option selected disabled>Select one</option>
                             @foreach($listPublisher as $publisher)
-                            <option value="{{$publisher->id}}">{{$publisher->name}}</option>
+                                <option value="{{$publisher->id}}">{{$publisher->name}}</option>
                             @endforeach
                         </select>
                     </div>
@@ -335,7 +326,6 @@
                                     <td>{{$item->publisher->name}}</td>
                                     <td>{{$item->author->name}}</td>
                                     <td>
-                                
                                         <button class="btn btn-warning editBtn" value="{{$item->id}}">
                                             <i class="nav-icon fa fa-edit"></i>
                                         </button>
@@ -355,7 +345,6 @@
                             </tbody>
                         </table>
                     </div>
-                    {{$listBook->links()}}
                 </div>
             </div>
         </div>

@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\category;
 use App\Models\author;
 use App\Models\supplier;
-use App\Models\image;
+use App\Models\Image;
 use App\Models\Publisher;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class book extends Model
+class Book extends Model
 {
     use SoftDeletes;
     use HasFactory;
@@ -32,6 +32,6 @@ class book extends Model
     }
 
     public function image_list(){
-        return $this->hasMany(image::class);
+        return $this->hasMany(Image::class);
     }
 }

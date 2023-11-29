@@ -1,9 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\order;
-use App\Models\order_detail;
-use App\Models\user;
+use App\Models\Order;
+use App\Models\OrderDetail;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class APIOrderController extends Controller
@@ -13,7 +13,7 @@ class APIOrderController extends Controller
      */
     public function index()
     {
-        $listOrder = order::all();
+        $listOrder = Order::all();
         return response()->json([
             'success' => true,
             'data' => $listOrder
@@ -41,7 +41,7 @@ class APIOrderController extends Controller
             ]);
         }
 
-            $listOrder = new order();
+            $listOrder = new Order();
         
             $listOrder->user_id=1;
             $listOrder->name=$rq->name;
@@ -55,7 +55,7 @@ class APIOrderController extends Controller
 
             for($i=0;$i< count($rq->book_id);$i++)
             {
-                $detail= new order_detail();
+                $detail= new OrderDetail();
                 $detail->order_id= $listOrder->id;
                 $detail->book_id=$rq->book_id[$i];
                 $detail->quantity=$rq->quantity[$i];
@@ -69,7 +69,7 @@ class APIOrderController extends Controller
                 'message'=> 'Them loai san pham thanh cong'
             ]);
        
-        $listOrder = order::where('name',$rq->name)->first();
+        $listOrder = Order::where('name',$rq->name)->first();
         if(!empty($listOrder)){
             return response()->json([
                 'success'=> false,
@@ -82,7 +82,7 @@ class APIOrderController extends Controller
     }
     public function details($id)
     {
-        $listOrder=order::with('user')->find($id);
+        $listOrder=Order::with('user')->find($id);
         if(empty($listOrder))
         {
             return response()->json([
@@ -108,7 +108,7 @@ class APIOrderController extends Controller
         //     ]);
         // }
          
-        $findOrder = order_detail::where('order_id',$rq->id)->get();
+        $findOrder = OrderDetail::where('order_id',$rq->id)->get();
         return response()->json([
             'success' => true,
             'data' => $findOrder
@@ -128,7 +128,7 @@ class APIOrderController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // $listOrder=order::find($id);
+        // $listOrder=Order::find($id);
         // if(empty($listOrder)){
         //     return response()->json([
         //         'success' => false,
@@ -143,7 +143,7 @@ class APIOrderController extends Controller
      */
     public function destroy( $id)
     {
-        // $listOrder=order::find($id);
+        // $listOrder=Order::find($id);
         // if(empty($listOrder)){
         //     return reponse()->json([
         //         'success'=>false,

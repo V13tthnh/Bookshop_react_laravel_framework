@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\supplier;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
+use Yajra\Datatables\Datatables;
+use Str;
 
 class SupplierController extends Controller
 {
@@ -11,9 +13,13 @@ class SupplierController extends Controller
      */
     public function index()
     {
-        $listSupplier = supplier::paginate(10);
+        $listSupplier = Supplier::all();
         $id = 1;
         return view('supplier.index',compact('listSupplier', 'id'));
+    }
+
+    public function dataTable(){
+        return Datatables::of(Supplier::query())->make(true);
     }
 
     /**
@@ -28,19 +34,26 @@ class SupplierController extends Controller
      */
     public function store(Request $rq)
     {
-        $createSupplier=new supplier();
+        $name = Supplier::where('name', $rq->name)->first();
+        if(!empty($name)){
+            return response()->json([
+                'success' => false,
+                'message' => "Nhà cung cấp đã tồn tại!"
+            ]);
+        }
+        $createSupplier=new Supplier();
         $createSupplier->name=$rq->name;
         $createSupplier->address=$rq->address;
         $createSupplier->phone=$rq->phone;
         $createSupplier->description=$rq->description;
-        $createSupplier->slug=$rq->slug;
+        $createSupplier->slug=Str::slug($rq->name);
         $createSupplier->save();
-        return redirect()->route('supplier.index')->with('successMsg', 'Thêm thành công!');
+        return response()->json([
+            'success' => true,
+            'message' => "Thêm thành công!"
+        ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         //
@@ -51,32 +64,38 @@ class SupplierController extends Controller
      */
     public function edit(string $id)
     {
-        $editSuppliers=supplier::find($id);
+        $editSuppliers=Supplier::find($id);
         return response()->json([
-            'success' => 200,
-            'supplier' => $editSuppliers
+            'success' => true,
+            'data' => $editSuppliers
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $rq)
+    public function update(Request $rq, $id)
     {
         //dd($rq);
-       $suppliers=supplier::where('id', '<>', $rq->id)->where('name', $rq->name)->first();
+        $suppliers=supplier::where('id', '<>', $id)->where('name', $rq->name)->first();
         if($suppliers!=null)
         {
-            return redirect()->route('supplier.index')->with('successMsg', 'Không thành công!');
+            return response()->json([
+                'success' => false,
+                'message' => "Dữ liệu không tồn tại!"
+            ]);
         } 
-            $editSuppliers=supplier::find($rq->id);
-            $editSuppliers->name=$rq->name;
-            $editSuppliers->address=$rq->address;
-            $editSuppliers->phone=$rq->phone;
-            $editSuppliers->description=$rq->description;
-            $editSuppliers->slug=$rq->slug;
-            $editSuppliers->save();
-            return redirect()->route('supplier.index')->with('successMsg', 'Sửa thành công!');
+        $editSuppliers=Supplier::find($id);
+        $editSuppliers->name=$rq->name;
+        $editSuppliers->address=$rq->address;
+        $editSuppliers->phone=$rq->phone;
+        $editSuppliers->description=$rq->description;
+        $editSuppliers->slug=Str::slug($rq->name);
+        $editSuppliers->save();
+        return response()->json([
+            'success' => true,
+            'message' => "Cập nhật thành công!"
+        ]);
     }
 
     /**
@@ -84,17 +103,27 @@ class SupplierController extends Controller
      */
     public function destroy(string $id)
     {
-        supplier::find($id)->delete();
-        return redirect()->route('supplier.index')->with('successMsg', 'Xóa thành công!');
+        Supplier::find($id)->delete();
+        return response()->json([
+            'success' => true,
+            'message' => "Xóa thành công!"
+        ]);
     }
     public function trash(){
-        $trash = supplier::onlyTrashed()->get();
-        return view('supplier.trash', compact('trash'));
+        return view('supplier.trash');
+    }
+
+    public function dataTableTrash(){
+        $trash = Supplier::onlyTrashed()->get();
+        return Datatables::of($trash)->make(true);
     }
     public function untrash($id)
     {   
-        supplier::withTrashed()->find($id)->restore();
-        return back()->with('successMsg', 'Khôi phục thành công!');
+        Supplier::withTrashed()->find($id)->restore();
+        return response()->json([
+            'success' => true,
+            'message' => "Khôi phục thành công!"
+        ]);
     }
 
 }

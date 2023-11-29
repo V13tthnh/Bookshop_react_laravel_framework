@@ -5,7 +5,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>BookShop Dashboard</title>
-
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -21,8 +20,6 @@
     <link rel="stylesheet" href="{{asset('dist/css/adminlte.min.css')}}">
     <!-- overlayScrollbars -->
     <link rel="stylesheet" href="{{asset('plugins/overlayScrollbars/css/OverlayScrollbars.min.css')}}">
-    <!-- Daterange picker -->
-    <link rel="stylesheet" href="{{asset('plugins/daterangepicker/daterangepicker.css')}}">
     <!-- summernote -->
     <link rel="stylesheet" href="{{asset('plugins/summernote/summernote-bs4.min.css')}}">
     <!-- DataTables -->
@@ -31,16 +28,14 @@
     <link rel="stylesheet" href="{{asset('plugins/datatables-buttons/css/buttons.bootstrap4.min.css')}}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{asset('dist/css/adminlte.min.cs')}}">
+     <!-- Select2 -->
+     <link rel="stylesheet" href="{{asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css')}}">
+    <link rel="stylesheet" href="{{asset('plugins/select2/css/select2.min.css')}}">
     <!-- SweetAlert2 -->
     <link rel="stylesheet" href="{{asset('plugins/sweetalert2/sweetalert2.min.css')}}">
-    <script src="{{asset('plugins/sweetalert2/sweetalert2.min.js')}}"></script>
     <link rel="stylesheet" href="{{asset('plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css')}}">
-    <!-- Toastr -->
-    <link rel="stylesheet" href="{{asset('plugins/toastr/toastr.min.css')}}">
-      <!-- summernote -->
-  <link rel="stylesheet" href="{{asset('plugins/summernote/summernote-bs4.min.css')}}">
-  <!-- SimpleMDE -->
-  <link rel="stylesheet" href="{{asset('plugins/simplemde/simplemde.min.css')}}">
+    <!-- summernote -->
+    <link rel="stylesheet" href="{{asset('plugins/summernote/summernote-bs4.min.css')}}">
 
 </head>
 
@@ -63,37 +58,9 @@
 
             <!-- Right navbar links -->
             <ul class="navbar-nav ml-auto">
-                <!-- Navbar Search -->
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-                        <i class="fas fa-search"></i>
-                    </a>
-                    <div class="navbar-search-block">
-                        <form class="form-inline">
-                            <div class="input-group input-group-sm">
-                                <input class="form-control form-control-navbar" type="search" placeholder="Search"
-                                    aria-label="Search">
-                                <div class="input-group-append">
-                                    <button class="btn btn-navbar" type="submit">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                    <button class="btn btn-navbar" type="button" data-widget="navbar-search">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('admin.logout')}}" role="button">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true" href="#"
-                        role="button">
-                        <i class="fas fa-th-large"></i>
+                        <i class="fas fa-sign-out-alt"></i> Đăng xuất
                     </a>
                 </li>
             </ul>
@@ -114,26 +81,18 @@
                 <!-- Sidebar user panel (optional) -->
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div class="image">
-                        <img src="{{asset('/'.Auth::user()->avatar)}}" class="img-circle elevation-2" alt="User Image">
+                        @if(Auth::user()->avatar != null)
+                            <img src="{{asset('/'.Auth::user()->avatar)}}" class="img-circle elevation-2" alt="User Image">
+                        @else
+                            <img src="{{asset('dist/img/user.jpg')}}" class="img-circle elevation-2" alt="User Image">
+                        @endif
                     </div>
                     <div class="info">
                         <a href="#" class="d-block">{{Auth::user()->name}}</a>
                     </div>
                 </div>
 
-                <!-- SidebarSearch Form -->
-                <div class="form-inline">
-                    <div class="input-group" data-widget="sidebar-search">
-                        <input class="form-control form-control-sidebar" type="search" placeholder="Search"
-                            aria-label="Search">
-                        <div class="input-group-append">
-                            <button class="btn btn-sidebar">
-                                <i class="fas fa-search fa-fw"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
+            
                 <!-- Sidebar Menu -->
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
@@ -145,203 +104,87 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{route('book.index')}}" class="nav-link">
                                 <i class="nav-icon fas fa-book"></i>
                                 <p>
                                     Sách
-                                    <i class="fas fa-angle-left right"></i>
                                 </p>
                             </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="" class="nav-link">
-                                        <i class="nav-icon fas fa-table"></i>
-                                        <p>Danh sách</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="pages/forms/advanced.html" class="nav-link">
-                                        <i class="nav-icon fas fa-plus"></i>
-                                        <p>Thêm</p>
-                                    </a>
-                                </li>
-                            </ul>
                         </li>
                         <li class="nav-item">
-                            <a href="" class="nav-link">
+                            <a href="{{route('category.index')}}" class="nav-link">
                                 <i class="nav-icon fas fa-tag"></i>
                                 <p>
                                     Thể loại
-                                    <i class="fas fa-angle-left right"></i>
                                 </p>
                             </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="{{route('category.index')}}" class="nav-link">
-                                        <i class="nav-icon fas fa-table"></i>
-                                        <p>Danh sách</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{route('category.index')}}" class="nav-link">
-                                        <i class="nav-icon fas fa-plus"></i>
-                                        <p>Thêm</p>
-                                    </a>
-                                </li>
-                            </ul>
                         </li>
 
                         <li class="nav-item">
-                            <a href="" class="nav-link">
+                            <a href="{{route('admin.index')}}" class="nav-link">
                                 <i class="nav-icon fas fa-user"></i>
                                 <p>
                                     Nhân viên
-                                    <i class="fas fa-angle-left right"></i>
+                                  
                                 </p>
                             </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="{{route('admin.index')}}" class="nav-link">
-                                        <i class="nav-icon fas fa-table"></i>
-                                        <p>Danh sách</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{route('admin.create')}}" class="nav-link">
-                                        <i class="nav-icon fas fa-plus"></i>
-                                        <p>Thêm</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-user-tie"></i>
-                                <p>
-                                    Khách hàng
-                                    <i class="fas fa-angle-left right"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="" class="nav-link">
-                                        <i class="nav-icon fas fa-table"></i>
-                                        <p>Danh sách</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="pages/forms/advanced.html" class="nav-link">
-                                        <i class="nav-icon fas fa-plus"></i>
-                                        <p>Thêm</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-file-invoice"></i>
-                                <p>
-                                    Hóa đơn
-                                    <i class="fas fa-angle-left right"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="" class="nav-link">
-                                        <i class="nav-icon fas fa-table"></i>
-                                        <p>Danh sách</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="pages/forms/advanced.html" class="nav-link">
-                                        <i class="nav-icon fas fa-plus"></i>
-                                        <p>Thêm</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-truck"></i>
-                                <p>
-                                    Nhập hàng
-                                    <i class="fas fa-angle-left right"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="{{route('goods-received-note.index')}}" class="nav-link">
-                                        <i class="nav-icon fas fa-table"></i>
-                                        <p>Danh sách</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{route('goods-received-note.create')}}" class="nav-link">
-                                        <i class="nav-icon fas fa-plus"></i>
-                                        <p>Tạo phiếu nhập</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-ad"></i>
-                                <p>
-                                    Banner
-                                    <i class="fas fa-angle-left right"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="" class="nav-link">
-                                        <i class="nav-icon fas fa-table"></i>
-                                        <p>Danh sách</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="pages/forms/advanced.html" class="nav-link">
-                                        <i class="nav-icon fas fa-plus"></i>
-                                        <p>Tạo banner</p>
-                                    </a>
-                                </li>
-                            </ul>
                         </li>
                         <li class="nav-item">
                             <a href="" class="nav-link">
-                                <i class="nav-icon fas fa-building"></i>
+                                <i class="nav-icon fas fa-user-tie"></i>
                                 <p>
-                                    Nhà Xuất Bản
-                                    <i class="fas fa-angle-left right"></i>
+                                    Khách hàng
+                                   
                                 </p>
                             </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="{{route('supplier.index')}}" class="nav-link">
-                                        <i class="nav-icon fas fa-table"></i>
-                                        <p>Danh sách</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="pages/forms/advanced.html" class="nav-link">
-                                        <i class="nav-icon fas fa-plus"></i>
-                                        <p>Thêm </p>
-                                    </a>
-                                </li>
-                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('goods-received-note.index')}}" class="nav-link">
+                                <i class="nav-icon fas fa-file-invoice"></i>
+                                <p>
+                                    Hóa đơn nhập
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('goods-received-note.create')}}" class="nav-link">
+                                <i class="nav-icon fas fa-truck"></i>
+                                <p>
+                                    Nhập hàng
+                                </p>
+                            </a> 
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('slider.index')}}" class="nav-link">
+                                <i class="nav-icon fas fa-ad"></i>
+                                <p>Banner</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('publisher.index')}}" class="nav-link">
+                                <i class="nav-icon fas fa-building"></i>
+                                <p>Nhà Xuất Bản</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('supplier.index')}}" class="nav-link">
+                                <i class="nav-icon fas fa-building"></i>
+                                <p>Nhà Cung Cấp</p>
+                            </a>
                         </li>
                 </nav>
             </div>
         </aside>
 
         @if(session('loginSuccessMsg'))
-            <script>
-                Swal.fire({
-                    title: '{{session('successMsg')}}',
-                    text: 'Xin chào {{Auth::user()->name}}',
-                    icon: 'success',
-                    confirmButtonText: 'OK'
-                })
-            </script>
+        <script>
+            Swal.fire({
+                title: '{{session('successMsg')}}',
+                text: 'Xin chào {{Auth::user()->name}}',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            })
+        </script>
         @endif
 
         <!-- Main content -->
@@ -351,7 +194,7 @@
 
         <!-- Footer -->
         <footer class="main-footer">
-            <strong>Copyright &copy; 2014-2021
+            <strong>Copyright &copy; 2023
         </footer>
 
         <!-- Control Sidebar -->
@@ -392,7 +235,25 @@
     <script src="{{asset('dist/js/pages/dashboard.js')}}"></script>
     <!-- Summernote -->
     <script src="{{asset('plugins/summernote/summernote-bs4.min.js')}}"></script>
+    <!-- SweetAlert2 -->
+    <script src="{{asset('plugins/sweetalert2/sweetalert2.min.js')}}"></script>
+    <!-- Select2 -->
 
+    <script src="{{asset('plugins/select2/js/select2.full.min.js')}}"></script>
+    <!-- DataTables  & Plugins -->
+    <script src="{{asset('plugins/datatables/jquery.dataTables.min.js')}}"></script>
+    <script src="{{asset('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
+    <script src="{{asset('plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
+    <script src="{{asset('plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
+    <script src="{{asset('plugins/datatables-buttons/js/dataTables.buttons.min.js')}}"></script>
+    <script src="{{asset('plugins/datatables-buttons/js/buttons.bootstrap4.min.js')}}"></script>
+    <script src="{{asset('plugins/jszip/jszip.min.js')}}"></script>
+    <script src="{{asset('plugins/pdfmake/pdfmake.min.js')}}"></script>
+    <script src="{{asset('plugins/pdfmake/vfs_fonts.js')}}"></script>
+    <script src="{{asset('plugins/datatables-buttons/js/buttons.html5.min.js')}}"></script>
+    <script src="{{asset('plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
+    <script src="{{asset('plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
+    <script src="{{asset('dist/js/pages/dashboard.js')}}"></script>
     @yield('js')
 </body>
 

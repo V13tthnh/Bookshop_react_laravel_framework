@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\author;
+use App\Models\Author;
 class AuthorController extends Controller
 {
     /**
@@ -13,7 +13,7 @@ class AuthorController extends Controller
      * Show the form for creating a new resource.
      */
     public function index(Request $request){
-        $ListAuthor=author::paginate(3);
+        $ListAuthor=Author::paginate(3);
         $id = 0;
         return view('author.index',compact('ListAuthor', 'id'));
     }
@@ -33,14 +33,14 @@ class AuthorController extends Controller
     public function store(Request $request)
     {
         //dd($request);
-        $author=author::where('name', $request->name)->first();
+        $author=Author::where('name', $request->name)->first();
         if($author != null){
             return redirect()->back()->with('errorMsg', "Ten tac gia da ton tai");
         }
         if($request->hasFile('image')){
             $file = $request->image;
             $path = $file->store('uploads');
-            $author=new author();
+            $author=new Author();
             $author->name=$request->name;
             $author->description=$request->description;
             $author->slug=$request->slug;
@@ -48,7 +48,7 @@ class AuthorController extends Controller
             $author->save();
         }
         else{
-            $author=new author();
+            $author=new Author();
             $author->name=$request->name;
             $author->description=$request->description;
             $author->slug=$request->slug;
@@ -66,7 +66,7 @@ class AuthorController extends Controller
 
     public function edit($id,Request $request)
     {
-        $author=author::find($id);
+        $author=Author::find($id);
         return view('author.edit',compact('author'));
     }
 
@@ -75,7 +75,7 @@ class AuthorController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $author=author::find($id);
+        $author=Author::find($id);
         if($author){
             $author->name=$request->name;
             $author->description=$request->description;
@@ -91,18 +91,18 @@ class AuthorController extends Controller
      */
     public function destroy(string $id)
     {
-        $author = author::find($id);
+        $author = Author::find($id);
         $author->delete();
         return redirect()->route('author.index')->with('successMsg', 'Xóa thành công!');
     }
     public function trash(){
-        $trash = author::onlyTrashed()->get();
+        $trash = Author::onlyTrashed()->get();
         return view('author.trash', compact('trash'));
     }
 
     public function untrash($id)
     {   
-        author::withTrashed()->find($id)->restore();
+        Author::withTrashed()->find($id)->restore();
         return back()->with('successMsg', 'Khôi phục thành công!');
     }
 }

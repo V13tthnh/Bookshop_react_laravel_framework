@@ -4,14 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Publisher;
+use Yajra\Datatables\Datatables;
 class PublisherController extends Controller
 {
     
     public function index()
     {
-        $listPublisher=Publisher::paginate(3);
+        $listPublisher=Publisher::all();
         $id = 1;
         return view('publisher.index',compact('listPublisher', 'id'));
+    }
+
+    public function dataTable(){
+        return Datatables::of(Publisher::query())->make(true);
     }
     /**
      * Show the form for creating a new resource.
@@ -28,13 +33,19 @@ class PublisherController extends Controller
     {
         $name = Publisher::where('name', $request->name)->first();
         if($name != null){
-            return redirect()->back()->with('errorMsg', "Ten đã tồn tại!");
+            return response()->json([
+                'success' => false,
+                'message' => "Tên đã tồn tại!"
+            ]);
         }
         $publisher=new Publisher();
         $publisher->name=$request->name;
         $publisher->description=$request->description;
         $publisher->save();
-        return redirect()->route('publisher.index')->with('successMsg', "Thêm thành công!");
+        return response()->json([
+            'success' => true,
+            'message' => "Thêm thành công!"
+        ]);
     }
 
     /**
@@ -52,10 +63,13 @@ class PublisherController extends Controller
     {
         $publisher=Publisher::find($id);
         if($publisher == null){
-            return redirect()->back()->with('errorMsg', "Dữ liệu không tồn tại!");
+            return response()->json([
+                'success' => false,
+                'message' => "Dữ liệu không tồn tại!"
+            ]);
         }
         return response()->json([
-            'success' => 200,
+            'success' => true,
             'data' => $publisher
         ]);
     }
@@ -63,13 +77,23 @@ class PublisherController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
+        $id = Publisher::where('id', '<>', $id)->where('name', $request->name)->first();
+        if(!empty($id)){
+            return response()->json([
+                'success' => false,
+                'message' => "Tên đã tồn tại!"
+            ]);
+        }
         $publisher=Publisher::find($request->id);
         $publisher->name=$request->name;
         $publisher->description=$request->description;
         $publisher->save();
-        return redirect()->route('publisher.index')->with('successMsg', 'Sửa thành công!');
+        return response()->json([
+            'success' => true,
+            'message' => "Cập nhật thành công!"
+        ]);
     }
 
     /**
@@ -77,18 +101,26 @@ class PublisherController extends Controller
      */
     public function destroy(string $id)
     {
-        $publisher=Publisher::find($id)->delete();
-        return redirect()->route('publisher.index')->with('successMsg', 'Xoa thành công!');
+        Publisher::find($id)->delete();
+        return response()->json([
+            'success' => true,
+            'message' => "Xóa thành công!"
+        ]);
+    }
+    public function dataTableTrash(){
+        $trash = Publisher::onlyTrashed()->get();
+        return Datatables::of($trash)->make(true);
     }
     public function trash(){
-        $trash = Publisher::onlyTrashed()->get();
-        $id=1;
-        return view('publisher.trash', compact('trash','id'));
+        return view('publisher.trash');
     }
 
     public function untrash($id)
     {   
         Publisher::withTrashed()->find($id)->restore();
-        return back()->with('successMsg', 'Khôi phục thành công!');
+        return response()->json([
+            'success' => true,
+            'message' => "Khôi phục thành công!"
+        ]);
     }
 }
