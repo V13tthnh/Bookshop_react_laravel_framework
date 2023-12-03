@@ -50,12 +50,14 @@ Route::middleware('auth')->group(function () {
     Route::prefix('author')->group(function () {
         Route::name('author.')->group(function () {
             Route::get('/', [AuthorController::class, 'index'])->name('index');
+            Route::get('data-table', [AuthorController::class, 'dataTable'])->name('data.table');
             Route::get('create', [AuthorController::class, 'create'])->name('create');
             Route::post('store', [AuthorController::class, 'store'])->name('store');
             Route::get('edit/{id}', [AuthorController::class, 'edit'])->name('edit');
             Route::post('update/{id}', [AuthorController::class, 'update'])->name('update');
             Route::post('destroy/{id}', [AuthorController::class, 'destroy'])->name('destroy');
             Route::get('trash', [AuthorController::class, 'trash'])->name('trash');
+            Route::get('data-table-trash', [AuthorController::class, 'dataTableTrash'])->name('data.table.trash');
             Route::get('untrash/{id}', [AuthorController::class, 'untrash'])->name('untrash');
         });
     });
@@ -99,11 +101,13 @@ Route::middleware('auth')->group(function () {
     Route::prefix('book')->group(function () {
         Route::name('book.')->group(function () {
             Route::get('/', [BookController::class, 'index'])->name('index');
+            Route::get('data-table', [BookController::class, 'dataTable'])->name('data.table');
             Route::get('create', [BookController::class, 'create'])->name('create');
             Route::post('store', [BookController::class, 'store'])->name('store');
             Route::get('edit/{id}', [BookController::class, 'edit'])->name('edit');
-            Route::post('update', [BookController::class, 'update'])->name('update');
+            Route::post('update/{id}', [BookController::class, 'update'])->name('update');
             Route::post('destroy/{id}', [BookController::class, 'destroy'])->name('destroy');
+            Route::get('delete-image/{id}', [BookController::class, 'deleteImage'])->name('delete.image');
             Route::get('trash', [BookController::class, 'trash'])->name('trash');
             Route::get('untrash/{id}', [BookController::class, 'untrash'])->name('untrash');
         });
@@ -116,9 +120,10 @@ Route::middleware('auth')->group(function () {
             Route::get('create', [SliderController::class, 'create'])->name('create');
             Route::post('store', [SliderController::class, 'store'])->name('store');
             Route::get('edit/{id}', [SliderController::class, 'edit'])->name('edit');
-            Route::post('update', [SliderController::class, 'update'])->name('update');
+            Route::post('update/{id}', [SliderController::class, 'update'])->name('update');
             Route::post('destroy/{id}', [SliderController::class, 'destroy'])->name('destroy');
             Route::get('trash', [SliderController::class, 'trash'])->name('trash');
+            Route::get('data-table-trash', [SliderController::class, 'dataTableTrash'])->name('data.table.trash');
             Route::get('untrash/{id}', [SliderController::class, 'untrash'])->name('untrash');
         });
     });

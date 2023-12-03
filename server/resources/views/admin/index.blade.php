@@ -158,27 +158,26 @@
                 }
             });
         });
+        
+        //delete
+        $('#myTable').on('click', '.deleteBtn', function () {
+            var id = $(this).val();
+            $.ajax({
+                url: "admin/destroy/" + id,
+                method: "post",
+                data: {
+                    "_token": "{{csrf_token()}}"
+                }
+            }).done(function(res){
+                if (res.success) {
+                    Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
+                    table.ajax.reload();
+                } 
+            });
+        });
     });
-    //delete
-    $('#myTable').on('click', '.deleteBtn', function () {
-        var id = $(this).val();
-        $.ajax({
-            url: "admin/destroy/" + id,
-            method: "post",
-            data: {
-                "_token": "{{csrf_token()}}"
-            }
-        }).done(function (res) {
-            if (res.success) {
-                Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
-                 table.ajax.reload(); 
-            } 
-            if(!res.success) {
-                Swal.fire({ title: res.message, icon: 'error', confirmButtonText: 'OK' });
-                return;
-            }
-        })
-    })
+
+    
 
     //review image create
     storeAvatar.onchange = evt => {
@@ -213,21 +212,29 @@
                 </div>
                 <div class="form-group">
                     <label for="inputName">Tên</label>
-                    <input type="text" name="name" id="storeName" class="form-control" required>
+                    <input type="text" id="storeName" class="form-control" required>
                 </div>
                 <div class="form-group">
                     <label for="inputProjectLeader">Email</label>
-                    <input type="email" name="email" id="storeEmail" class="form-control" required>
+                    <input type="email" id="storeEmail" class="form-control" required>
                 </div>
                 <div class="form-group">
                     <label for="inputProjectLeader">Mật khẩu</label required>
-                    <input type="password" name="password" id="storePassword" class="form-control">
+                    <input type="password" id="storePassword" class="form-control">
                 </div>
                 <div class="form-group">
-                    <label for="inputProjectLeader">Ảnh</label>
-                    <input accept="image/*" type='file' id="storeAvatar" class="form-control" />
-                    <label>Xem trước: </label>
+                    <label for="exampleInputFile">File input</label>
+                    <div class="input-group">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="storeAvatar">
+                        <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                    </div>
+                    <div class="input-group-append">
+                        <span class="input-group-text">Upload</span>
+                    </div>
+                    </div>
                 </div>
+             
                 <div class="form-group">
                     <label for="inputStatus">Quyền</label>
                     <select name="role" id="storeRole" class="form-control custom-select">
@@ -255,7 +262,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <input type="text" name="id" id="updateId" hidden>
+            <input type="text"  id="updateId" hidden>
             <div class="modal-body">
                 <div class="form-group">
                     <label for="inputName">Tên</label>

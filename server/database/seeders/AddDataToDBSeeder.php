@@ -125,8 +125,48 @@ class AddDataToDBSeeder extends Seeder
         $supplier5->address = '268 Lê Thánh Tôn, Quận 1, Thành phố Hồ Chí Minh';
         $supplier5->phone = '1900 6036';
         $supplier5->description = 'FAHASA là nhà bán lẻ sách lớn nhất Việt Nam, chuyên cung cấp: Sách mới, Văn học trong nước, Văn học nước ngoài, Tiểu thuyết, Truyện ngắn, Thơ, Truyện tranh, Sách thiếu nhi, ...';
-        $supplier5->slug = 'Fahasa';
+        $supplier5->slug = 'fahasa';
         $supplier5->save();
+
+        $supplier6 = new Supplier;
+        $supplier6->name = 'Alpha Books';
+        $supplier6->address = '268 Lê Thánh Tôn, Quận 1, Thành phố Hồ Chí Minh';
+        $supplier6->phone = '1900 6036';
+        $supplier6->description = 'Alpha Books là nhà bán lẻ sách lớn nhất Việt Nam, chuyên cung cấp: Sách mới, Văn học trong nước, Văn học nước ngoài, Tiểu thuyết, Truyện ngắn, Thơ, Truyện tranh, Sách thiếu nhi, ...';
+        $supplier6->slug = 'alpha-books';
+        $supplier6->save();
+
+        $supplier7 = new Supplier;
+        $supplier7->name = 'Kinokuniya Book Stores';
+        $supplier7->address = '268 Lê Thánh Tôn, Quận 1, Thành phố Hồ Chí Minh';
+        $supplier7->phone = '1900 6036';
+        $supplier7->description = 'Kinokuniya Book Stores là nhà bán lẻ sách lớn nhất Việt Nam, chuyên cung cấp: Sách mới, Văn học trong nước, Văn học nước ngoài, Tiểu thuyết, Truyện ngắn, Thơ, Truyện tranh, Sách thiếu nhi, ...';
+        $supplier7->slug = 'kinokuniya-book-stores';
+        $supplier7->save();
+
+        $supplier8 = new Supplier;
+        $supplier8->name = 'Đinh Tỵ';
+        $supplier8->address = '268 Lê Thánh Tôn, Quận 1, Thành phố Hồ Chí Minh';
+        $supplier8->phone = '1900 6036';
+        $supplier8->description = 'Đinh Tỵ là nhà bán lẻ sách lớn nhất Việt Nam, chuyên cung cấp: Sách mới, Văn học trong nước, Văn học nước ngoài, Tiểu thuyết, Truyện ngắn, Thơ, Truyện tranh, Sách thiếu nhi, ...';
+        $supplier8->slug = 'dinh-ty';
+        $supplier8->save();
+
+        $supplier9 = new Supplier;
+        $supplier9->name = 'Nhã Nam';
+        $supplier9->address = '268 Lê Thánh Tôn, Quận 1, Thành phố Hồ Chí Minh';
+        $supplier9->phone = '1900 6036';
+        $supplier9->description = 'Nhã Nam là nhà bán lẻ sách lớn nhất Việt Nam, chuyên cung cấp: Sách mới, Văn học trong nước, Văn học nước ngoài, Tiểu thuyết, Truyện ngắn, Thơ, Truyện tranh, Sách thiếu nhi, ...';
+        $supplier9->slug = 'nha-nam';
+        $supplier9->save();
+
+        $supplier10 = new Supplier;
+        $supplier10->name = 'Tân Việt';
+        $supplier10->address = '268 Lê Thánh Tôn, Quận 1, Thành phố Hồ Chí Minh';
+        $supplier10->phone = '1900 6036';
+        $supplier10->description = 'Tân Việt là nhà bán lẻ sách lớn nhất Việt Nam, chuyên cung cấp: Sách mới, Văn học trong nước, Văn học nước ngoài, Tiểu thuyết, Truyện ngắn, Thơ, Truyện tranh, Sách thiếu nhi, ...';
+        $supplier10->slug = 'tan-viet';
+        $supplier10->save();
 
         //author
         $author1=new Author;
@@ -163,6 +203,13 @@ class AddDataToDBSeeder extends Seeder
         $author5->slug = 'Nguyen-Ngoc-Tu';
         $author5->image = 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Nguyễn_Ngọc_Tư.jpg/1200px-Nguyễn_Ngọc_Tư.jpg';
         $author5->save();
+
+        $author6 = new Author;
+        $author6->name = 'Fujiko F Fujio';
+        $author6->description = null;
+        $author6->slug = 'Fujiko-F-Fujio';
+        $author6->image = null;
+        $author6->save();
         
         //book_category
         $book_category1=new BookCategory;
@@ -192,14 +239,50 @@ class AddDataToDBSeeder extends Seeder
         
         //publisher
         $publisher1=new Publisher;
-        $publisher1->name="Nhà sản xuất 1";
-        $publisher1->description="Đây là nhà sản xuất 1";
+        $publisher1->name="NXB Kim Đồng";
+        $publisher1->description="Đây là NXB Kim Đồng";
         $publisher1->save();
 
-        $publisher2=new Publisher;
-        $publisher2->name="Nhà sản xuất 2";
-        $publisher2->description="Đây là nhà sản xuất 2";
-        $publisher2->save();
+        $publisher3=new Publisher;
+        $publisher3->name="NXB Dân Trí";
+        $publisher3->description="Đây là NXB Dân Trí";
+        $publisher3->save();
+
+        $publisher4=new Publisher;
+        $publisher4->name="NXB Hồng Đức";
+        $publisher4->description="Đây là NXB Hồng Đức";
+        $publisher4->save();
+
+        $publisher5=new Publisher;
+        $publisher5->name="NXB Thanh Niên";
+        $publisher5->description="Đây là NXB Thanh Niên";
+        $publisher5->save();
+
+        $publisher6=new Publisher;
+        $publisher6->name="NXB Dân Trí";
+        $publisher6->description="Đây là NXB Dân Trí";
+        $publisher6->save();
+
+        $publisher7=new Publisher;
+        $publisher7->name="NXB Văn Học";
+        $publisher7->description="Đây là NXB Văn Học";
+        $publisher7->save();
+
+        $publisher8=new Publisher;
+        $publisher8->name="NXB Trẻ";
+        $publisher8->description="Đây là NXB Trẻ";
+        $publisher8->save();
+
+        $publisher9=new Publisher;
+        $publisher9->name="NXB Tổng Hợp TPHCM";
+        $publisher9->description="Đây là NXB Tổng Hợp TPHCM";
+        $publisher9->save();
+
+        $publisher10=new Publisher;
+        $publisher10->name="NXB Lao Động";
+        $publisher10->description="Đây là NXB Lao Động";
+        $publisher10->save();
+
         //book
         $book1=new book();
         $book1->name='Ông Già Và Biển Cả';
@@ -276,6 +359,7 @@ class AddDataToDBSeeder extends Seeder
         $book4->category_id = 1;
         $book4->publisher_id=2;
         $book4->save();
-        //too much
+        
+     
     }
 }

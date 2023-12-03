@@ -19,6 +19,16 @@ class APIUserController extends Controller
         ]);
     }
 
+    public function login()
+    {
+        //
+    }
+
+    public function register()
+    {
+        //
+    }
+
     /**
      * Show the form for creating a new resource.
      */

@@ -85,6 +85,7 @@ class GoodsReceivedNoteController extends Controller
             $updateBook = Book::find($rq->book_id[$i]);
             $updateBook->quantity += $rq->quantity[$i];
             $updateBook->unit_price = $rq->export_unit_price[$i];
+            $updateBook->supplier_id = $rq->supplier;
             $updateBook->save();
         }
         //update total goods_received_note

@@ -4,33 +4,169 @@
 <script>
     //Edit ajax
     $(document).ready(function () {
-        $(function () {
-            $("#example1").DataTable({
-                "responsive": true, "lengthChange": false, "autoWidth": false, "paging":true,
-                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+        var table = $('#myTable').DataTable({
+            "responsive": true, "lengthChange": true, "autoWidth": false, //tùy chỉnh kích thước, phân trang
+            "paging": true, "ordering": true, "searching": true,
+            "pageLength": 10, "dom": 'Bfrtip',
+            "buttons": [{extend:"copy", text:"Sao chép"}, //custom các button
+                        {extend:"csv", text:"Xuất csv"}, 
+                        {extend:"excel",text:"Xuất Excel"}, 
+                        {extend:"pdf",text:"Xuất PDF"}, 
+                        {extend:"print",text:`<i class="fa fa-print"><i/> In`}, 
+                        {extend:"colvis",text:"Hiển thị cột"}],
+            "language": { search: "Tìm kiếm:" },
+            "lengthMenu": [10, 25, 50, 75, 100],
+            "ajax": { url: "{{route('slider.data.table')}}", method: "get", dataType: "json", },
+            "columns": [
+                { data: 'id', name: 'id' },
+                { data: 'name', name: 'name' },
+                { data: 'start_date', name: 'start_date' },
+                { data: 'end_date', name: 'end_date' },
+                { data: 'book_name', name: 'book.name' },   
+                { data: 'image', render: function(data, type, row){ 
+                    if(data != null){
+                        return '<img src="'+data+'" alt="" sizes="40" srcset="" style="height:100px;width:100px">';
+                    }
+                    return "Không có hình ảnh";
+                    } 
+                },
+                {
+                    data: 'id', render: function (data, type, row) {
+                        return '<button class="btn btn-warning editBtn  " value="' + data + '" data-toggle="modal" data-target="#modal-edit"><i class="nav-icon fa fa-edit"></i></button>'
+                                +'<div class="btn-group btn-group-toggle"><button class="btn btn-danger deleteBtn" value="' + data + '"><i class="nav-icon fa fa-trash"></i></button></div>'
+                    }
+                },
+            ],
         });
-        
-        $(document).on('click', '.editBtn', function () {
-            var id = $(this).val();
-            $('#modal-edit').modal('show');
+
+        var formDataCreate = new FormData();
+        var formDataEdit = new FormData();
+        //create image
+        $('#storeImage').change(function (e) {
+            var input = e.target;
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    formDataCreate.set("image", input.files[0]);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        });
+        //create image
+        $('#updateImage').change(function (e) {
+            var input = e.target;
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    formDataEdit.set("image", input.files[0]);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        });
+
+        function createFormClear(){
+            $('#storeName').val("");
+            $('#storeStartDate').val("");
+            $('#storeEndDate').val("");
+            $("#storeBookId").val($("#storeBookId option:first").val());
+            $('#storeImage').attr('src', '');
+        }
+
+        //store
+        $('#addBtn').click(function(){
+            var name = $('#storeName').val();
+            var start_date = $('#storeStartDate').val();
+            var end_date = $('#storeEndDate').val();
+            var book_id = $('#storeBookId').find(':selected').val();
+            formDataCreate.append("_token", "{{csrf_token()}}");
+            formDataCreate.append("name", name);
+            formDataCreate.append("start_date", start_date);
+            formDataCreate.append("end_date", end_date);
+            formDataCreate.append("book_id", book_id);   
             $.ajax({
-                url: '/slider/edit/' + id,
-                type: "get",
-                success: function (result) {
-                    console.log(result.data.year);
-                    $('#id').val(result.data.id);
-                    $('#name').val(result.data.name);
-                    $('#start_date').val(result.data.start_date);
-                    $('#end_date').val(result.data.end_date);
-                    $('#book_id').val(result.data.book_id);
-                    $('#image').val(result.data.image);
+                url: "{{route('slider.store')}}",
+                method: "post",
+                data: formDataCreate,
+                contentType: false,
+                processData: false,
+            }).done(function(res){
+                if (res.success) {
+                    Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
+                    $('#modal-create').modal('hide'); //ẩn model thêm mới
+                    createFormClear();
+                    table.ajax.reload(); //refresh bảng 
+                }
+                if(!res.success) {
+                    Swal.fire({ title: res.message, icon: 'error', confirmButtonText: 'OK' });
+                    return;
+                }
+            });
+        });
+
+        //edit
+        $('#myTable').on('click', '.editBtn', function(){
+            var id = $(this).val();
+            $.ajax({
+                url: "slider/edit/" + id,
+                method: "get",
+            }).done(function(res){
+                console.log(res.data);
+                if(res.data == null){
+                    Swal.fire({ title: "Dữ liệu không tồn tại", icon: 'error', confirmButtonText: 'OK' });
+                    return;
+                }
+                $('#updateId').val(res.data.id);
+                $('#updateName').val(res.data.name);
+                $('#updateStartDate').val(res.data.start_date);
+                $('#updateEndDate').val(res.data.end_date);
+                $('#updateBookId').val(res.data.book_id);
+            })
+        });
+
+        //update
+        $('#updateBtn').click(function(){
+            var id = $('#updateId').val();
+            var name = $('#updateName').val();
+            var start_date = $('#updateStartDate').val();
+            var end_date = $('#updateEndDate').val();
+            var book_id = $('#updateBookId').find(':selected').val();
+            formDataEdit.append("_token", "{{csrf_token()}}");
+            formDataEdit.append("name", name);
+            formDataEdit.append("start_date", start_date);
+            formDataEdit.append("end_date", end_date);
+            formDataEdit.append("book_id", book_id);   
+            $.ajax({
+                url: "slider/update/" + id,
+                method: "post",
+                data: formDataEdit,
+                contentType: false,
+                processData: false,
+            }).done(function(res){
+                if (res.success) {
+                    Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
+                    $('#modal-edit').modal('hide'); //ẩn model thêm mới
+                    table.ajax.reload(); //refresh bảng 
+                }
+            });
+        });
+
+        //delete
+        $('#myTable').on('click', '.deleteBtn', function(){
+            var id = $(this).val();
+            $.ajax({
+                url: "slider/destroy/" + id,
+                method: "post",
+                data: {"_token" : "{{csrf_token()}}"}
+            }).done(function(res){
+                Swal.fire({ title: "Bạn có có muốn xóa", icon: 'info', confirmButtonText: 'OK' });
+                if (res.success) {
+                    Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
+                    table.ajax.reload(); //refresh bảng 
                 }
             });
         });
     });
 
-    
 
     $(function () {
         // Summernote
@@ -42,25 +178,6 @@
 @endsection
 
 @section('content')
-@if(session('errorMsg'))
-<script>
-    Swal.fire({
-        title: '{{session('errorMsg')}}',
-        icon: 'error',
-        confirmButtonText: 'OK'
-    })
-</script>
-@endif
-    
-@if(session('successMsg'))
-<script>
-    Swal.fire({
-        title: '{{session('successMsg')}}',
-        icon: 'success',
-        confirmButtonText: 'OK'
-    })
-</script>
-@endif
 <!-- Them sach -->
 <div class="modal fade" id="modal-create">
     <div class="modal-dialog">
@@ -71,24 +188,22 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{route('slider.store')}}" method="post" enctype="multipart/form-data">
-                @csrf
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="inputName">Tên</label>
-                        <input type="text" name="name" class="form-control" required>
+                        <input type="text" id="storeName" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label for="inputName">Ngày bắt đầu</label>
-                        <input type="date" name="start_date" class="form-control" required>
+                        <input type="date" id="storeStartDate" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label for="inputName">Ngày kết thúc</label>
-                        <input type="date" name="end_date" class="form-control" required>
+                        <input type="date" id="storeEndDate" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label for="inputStatus">Sách</label>
-                        <select id="inputStatus" name="book_id" class="form-control custom-select">
+                        <select id="storeBookId" class="form-control custom-select">
                         <option selected disabled>Select one</option>
                             @foreach($listBook as $book)
                             <option value="{{$book->id}}">{{$book->name}}</option>
@@ -97,14 +212,13 @@
                     </div>
                     <div class="form-group">
                         <label for="inputProjectLeader">Hình ảnh</label>
-                        <input accept="image/*" type='file' name="image" id="imgInp2" class="form-control" />
+                        <input accept="image/*" type='file' id="storeImage" class="form-control" />
                     </div>
                 </div>
                 <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary" id="addBtn">Lưu</button>
                 </div>
-            </form>
         </div>
     </div>
 </div>
@@ -119,25 +233,23 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{route('slider.update')}}" method="post" enctype="multipart/form-data">
-                @csrf
-                <input type="text" name="id" id="id" hidden>
+                <input type="text" id="updateId" hidden>
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="inputName">Tên</label>
-                        <input id="name" type="text" name="name" class="form-control" required>
+                        <input type="text" id="updateName" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label for="inputName">Ngày bắt đầu</label>
-                        <input id="start_date" type="date" name="start_date" class="form-control" required>
+                        <input type="date" id="updateStartDate" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label for="inputName">Ngày kết thúc</label>
-                        <input id="end_date" type="date" name="end_date" class="form-control" required>
+                        <input type="date" id="updateEndDate" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label for="inputStatus">Sách</label>
-                        <select id="book_id" name="book_id" class="form-control custom-select">
+                        <select id="updateBookId" class="form-control custom-select">
                         <option selected disabled>Select one</option>
                             @foreach($listBook as $book)
                             <option value="{{$book->id}}">{{$book->name}}</option>
@@ -146,16 +258,15 @@
                     </div>
                     <div class="form-group">
                         <label for="inputProjectLeader">Hình ảnh</label>
-                        <input accept="image/*" type='file' name="image" id="imgInp2" class="form-control" />
+                        <input accept="image/*" type='file' id="updateImage" class="form-control" />
                       
                     </div>
                   
                 </div>
                 <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary" id="updateBtn">Lưu thay đổi</button>
                 </div>
-            </form>
         </div>
     </div>
 </div>
@@ -189,7 +300,7 @@
                         <h3 class="card-title">Danh sách sách</h3>
                     </div>
                     <div class="card-body">
-                        <table id="example1" class="table table-bordered table-striped">
+                        <table id="myTable" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
                                     <th>Id</th>
@@ -202,40 +313,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($listSlider as $item)
-                                <tr>
-                                    <td>{{$id++}}</td>
-                                    <td><a href="">{{$item->name}}</a></td>
-                                    <td>{{$item->start_date}}</td>
-                                    <td>{{$item->end_date}}</td>
-                                    <td>{{$item->book->name}}</td>
-                                    <td style="text-align:center;">
-                                        @if($item->image != null)
-                                        <img src="{{asset('/'.$item->image)}}" alt="" sizes="40" srcset=""
-                                            style="height:100px;width:140px">
-                                        @else
-                                        <img src="{{asset('dist/img/user.jpg')}}" alt="" sizes="40" srcset=""
-                                            style="height:100px;width:140px">
-                                        @endif
-                                    </td>
-                                    <td>
-                                
-                                        <button class="btn btn-warning editBtn" value="{{$item->id}}">
-                                            <i class="nav-icon fa fa-edit"></i>
-                                        </button>
-                                        <form class="d-line" action="{{route('slider.destroy', $item->id)}}" method="POST">
-                                            @csrf
-                                            <button class="btn btn-danger" type="submit">
-                                                <i class="nav-icon fa fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan=7>Không có dữ liệu!</td>
-                                </tr>
-                                @endforelse
+                            
                             </tbody>
                         </table>
                     </div>

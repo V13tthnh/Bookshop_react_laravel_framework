@@ -7,7 +7,10 @@ use App\Models\Book;
 use App\Models\Author;
 use App\Models\Supplier;
 use App\Models\Category;
+use App\Models\Image;
 use App\Models\Publisher;
+use Yajra\Datatables\Datatables;
+
 use Str;
 class BookController extends Controller
 {
@@ -16,13 +19,24 @@ class BookController extends Controller
      */
     public function index()
     {
-        $listBook=Book::all();
-        $id=1;
         $listAuthor=Author::all();
         $listSupplier=Supplier::all();
         $listCategory=Category::all();
         $listPublisher=Publisher::all();
-        return view('book.index',compact('listBook','id','listAuthor','listSupplier','listCategory','listPublisher'));
+        return view('book.index',compact('listAuthor','listSupplier','listCategory','listPublisher'));
+    }
+
+    public function dataTable(){
+        $listBook=Book::with('category')->with('author')->with('publisher')->with('image_list')->get();
+        return datatables::of($listBook)->addColumn('author_name', function($listBook){
+            return $listBook->author->name;
+        })->addColumn('category_name', function($listBook){
+            return $listBook->category->name;
+        })->addColumn('publisher_name', function($listBook){
+            return $listBook->publisher->name;
+        })->addColumn('image_list', function($listBook){
+            return $listBook->image_list->toArray();
+        })->make(true);
     }
 
     /**
@@ -38,9 +52,13 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
+        //dd($request->images);
         $name = Book::where('name', $request->name)->first();
         if($name != null){
-            return redirect()->back()->with('errorMsg', 'Tên sach đã tồn tại!');
+            return response()->json([
+                'success' => false,
+                'message' => "Tên sách đã tồn tại!"
+            ]);
         }
         $book=new Book();
         $book->name=$request->name;
@@ -59,8 +77,24 @@ class BookController extends Controller
         $book->author_id=$request->author_id;
         $book->category_id=$request->category_id;
         $book->publisher_id=$request->publisher_id;
+        $book->supplier_id=0;
         $book->save();
-        return redirect()->route('book.index')->with('successMsg', 'Thêm thành công!');
+        if($request->hasFile('images')){
+            $files = $request->images;
+            foreach($files as $file){
+                $images = new Image;
+                $path = $file->store('uploads/books');
+                $images->front_cover = $path; 
+                $images->back_cover = $path;
+                $images->book_id = $book->id;
+                $images->save();
+            }   
+        }
+        
+        return response()->json([
+            'success' => true,
+            'message' => "Thêm thành công!"
+        ]);
     }
 
     /**
@@ -72,27 +106,35 @@ class BookController extends Controller
     }
     public function edit(string $id)
     {
-        $book = Book::find($id);
+        $book = Book::with('image_list')->find($id);
+       
         if($book == null){
-            return redirect()->back()->with('errorMsg', "Dữ liệu không tồn tại!");
+            return response()->json([
+                'success' => false,
+                'message' => "Dữ liệu không tồn tại!"
+            ]);
         }
         return response()->json([
-            'success' => 200,
-            'data' => $book
+            'success' => true,
+            'data' => $book,
+           
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
 
-        $name = Book::where('id', '<>', $request->id)->where('name', $request->name)->first();
+        $name = Book::where('id', '<>', $id)->where('name', $request->name)->first();
         if($name != null){
-            return redirect()->back()->with('errorMsg', "Sách đã tồn tại!");
+            return response()->json([
+                'success' => false,
+                'message' => "Tên sách đã tồn tại"
+            ]);
         }
-        $book=Book::find($request->id);
+        $book=Book::find($id);
         $book->name=$request->name;
         $book->code=$request->code;
         $book->description=$request->description;
@@ -107,11 +149,25 @@ class BookController extends Controller
         $book->slug=Str::slug($request->name);
         $book->translator=$request->translator;
         $book->author_id=$request->author_id;
-        $book->supplier_id=$request->supplier_id;
+        $book->supplier_id=0;
         $book->category_id=$request->category_id;
         $book->publisher_id=$request->publisher_id;
         $book->save();
-        return redirect()->route('book.index')->with('successMsg', 'Sửa thành công!');
+        if($request->hasFile('updateImages')){
+            $files = $request->updateImages;
+            foreach($files as $file){
+                $images = new Image;
+                $path = $file->store('uploads/books');
+                $images->front_cover = $path; 
+                $images->back_cover = $path;
+                $images->book_id = $book->id;
+                $images->save();
+            }   
+        }
+        return response()->json([
+            'success' => true,
+            'message' => "Cập nhật thành công!"
+        ]);
 
     }
 
@@ -133,5 +189,16 @@ class BookController extends Controller
     {   
         Book::withTrashed()->find($id)->restore();
         return back()->with('successMsg', 'Khôi phục thành công!');
+    }
+
+    public function deleteImage($id){
+        $image = Image::find($id);
+        if(!$image) abort(404);
+        unlink(public_path($image->front_cover)); 
+        $image->delete();
+        return response()->json([
+            'success' => true,
+            'message' => "Xóa thành công!"
+        ]);
     }
 }

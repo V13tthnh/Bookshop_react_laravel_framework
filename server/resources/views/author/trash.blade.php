@@ -1,104 +1,99 @@
 @extends('layout')
 
+@section('js')
+<script>
+   $(document).ready(function () {
+        var table = $('#myTable').DataTable({
+                "responsive": true, "lengthChange": true, "autoWidth": false, 
+                "paging": true, "ordering": true, "searching": true,
+                "pageLength": 10, "dom": 'Bfrtip', 
+                "buttons": [{extend:"copy", text:"Sao chép"}, 
+                            {extend:"csv", text:"Xuất csv"}, 
+                            {extend:"excel",text:"Xuất Excel"}, 
+                            {extend:"pdf",text:"Xuất PDF"}, 
+                            {extend:"print",text:"In"}, 
+                            {extend:"colvis",text:"Hiển thị cột"}],
+                "language": { search: "Tìm kiếm:" },
+                "lengthMenu": [10, 25, 50, 75, 100],
+                "ajax": { url: "{{route('admin.data.table.trash')}}", method: "get", dataType: "json", },
+                "columns": [
+                    { data: 'id', name: 'id' },
+                    { data: 'image', render: function(data, type, row){
+                        if(data != null){
+                            return '<img src="' + "/" + data+'" alt="" sizes="40" srcset=""style="height:100px;width:100px">';
+                        }
+                        return `<img src="{{asset('dist/img/user.jpg')}}" alt="" sizes="40" srcset="" style="height:100px;width:100px">`;
+                        } 
+                    },
+                    { data: 'name', name: 'name'},
+                    {
+                        data: 'id', render: function (data, type, row) {
+                            return '<button class="btn btn-info restoreBtn" value="' + data + '" data-toggle="modal" data-target="#modal-edit"><i class="nav-icon fa fa-trash-restore-alt"></i></button>';     
+                        }
+                    },
+                ],
+            });
+
+        //untrash
+        $('#myTable').on('click', '.restoreBtn', function(){
+            var id = $(this).val();
+            $.ajax({
+                url: "/author/untrash/" + id,
+                method: "get",
+            }).done(function(res){
+                if (res.success) {
+                    Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
+                    table.ajax.reload(); 
+                }
+            });
+        });
+    });
+</script>
+@endsection
+
 @section('content')
-
-@if(session('errorMsg'))
-    <script>
-    Swal.fire({
-        title: '{{session('errorMsg')}}',
-        icon: 'error',
-        confirmButtonText: 'OK'
-    })
-    </script>
-@endif
-
-@if(session('successMsg'))
-    <script>
-    Swal.fire({
-        title: '{{session('successMsg')}}',
-        icon: 'success',
-        confirmButtonText: 'OK'
-    })
-    </script>
-@endif
-
-<div class="container-fluid pt-4 px-4">
-    <div class="row g-4">
-        <div class="col-sm-12 col-xl-6">
-            <div class="bg-secondary rounded h-100 p-4">
-                <div class="m-n2">
-                    <div class="btn-group" role="group">
-                        <a href="#">
-                            <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
-                            <label class="btn btn-outline-primary" for="btnradio1">Import Excel</label>
-                        </a>
-
-                        <a href="#">
-                            <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
-                            <label class="btn btn-outline-primary" for="btnradio2">Export Excel</label>
-                        </a>
-
-                        <a href="#">
-                            <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
-                            <label class="btn btn-outline-primary" for="btnradio3">Export PDF</label>
-                        </a>
-                        <a href="">
-                            <input type="radio" class="btn-check" name="btnradio" id="btnradio4" autocomplete="off">
-                            <label class="btn btn-outline-primary" for="btnradio4">Refresh</label>
-                        </a>
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Danh sách tác giả</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <a href="{{route('author.index')}}" class="btn btn-warning">
+                        <i class="nav-icon fa fa-list"></i> Danh sách
+                    </a>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Danh sách tác giả</h3>
+                    </div>
+                    <div class="card-body">
+                        <table id="myTable" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Avatar</th>
+                                    <th>Tên</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                               
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-sm-12 col-xl-6">
-            <div class="bg-secondary rounded h-100 p-4">
-                <div class="m-n2">
-                    <a href="{{route('author.index')}}">
-                        <button type="button" class="btn btn-warning m-2"><i class="fa fa-list me-2"></i>Danh sách</button>
-                    </a>
-                </div>
-            </div>
-        </div>
     </div>
-</div>
-
-<div class="container-fluid pt-4 px-4">
-    <div class="bg-secondary text-center rounded p-4">
-        <div class="d-flex align-items-center justify-content-between mb-4">
-            <h6 class="mb-0">All Admin</h6>
-            <a href="">Show All</a>
-        </div>
-        <div class="table-responsive">
-            <table class="table text-start align-middle table-bordered table-hover mb-0">
-                <thead>
-                    <tr class="text-white">
-                        <th scope="col"><input class="form-check-input" type="checkbox"></th>
-                        <th scope="col">ID</th>
-                        <th scope="col">Tên</th>
-                        <th scope="col">Thong tin</th>
-                        <th scope="col">Slug</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($trash as $item)
-                        <tr>
-                            <td><input class="form-check-input" type="checkbox"></td>
-                            <td>{{$item->id}}</td>
-                            <td>{{$item->name}}</td>
-                            <td>{{$item->description}}</td>
-                            <td>{{$item->slug}}</td>
-                            <td>   
-                                <a type="button" href="{{route('author.untrash', $item->id)}}" class="btn btn-rectangle btn-info m-2"><i class="fa fa-trash-restore"></i></a>
-                            </td>  
-                        </tr>
-                    @empty
-                        <td colspan=5><p>Không có dữ liệu!</p></td>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="d-flex align-items-center justify-content-between mb-4 mt-3 ">
-    </div>
-</div>
+</section>
 @endsection
