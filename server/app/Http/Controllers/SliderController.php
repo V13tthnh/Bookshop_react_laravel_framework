@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Slider;
 use App\Models\Book;
+use Yajra\Datatables\Datatables;
 class SliderController extends Controller
 {
     /**
@@ -12,19 +13,17 @@ class SliderController extends Controller
      */
     public function index()
     {
-        $listSlider=Slider::all();
         $listBook=Book::all();
-        $id = 1;
-        return view('slider.index',compact('listSlider', 'id', 'listBook'));
+        return view('slider.index',compact('listBook'));
     }
 
     public function dataTable()
     {
-        $listSlider=Slider::all();
-        return response()->json([
-            'success'=>true,
-            'data'=>$listSlider
-        ]);
+        $listSlider=Slider::with('book')->get();
+        return Datatables::of($listSlider)->addColumn('book_name', function($listSlider){
+            return  $listSlider->book->name;
+        })->make(true);
+        
     }
 
     /**
@@ -40,10 +39,10 @@ class SliderController extends Controller
      */
     public function store(Request $request)
     {
+        //dd($request);
         if($request->hasFile('image')){ 
             $file = $request->image;
-            $path = $file->store('uploads');
-
+            $path = $file->store('uploads/sliders');
             $slider=new Slider();
             $slider->name=$request->name;
             $slider->start_date=$request->start_date;
@@ -60,8 +59,10 @@ class SliderController extends Controller
             $slider->book_id=$request->book_id;
             $slider->save();
         }
-        return redirect()->route('slider.index')->with('successMsg', "Thêm thành công!");
-
+        return response()->json([
+            'success' => true,
+            'message' => "Thêm thành công!"
+        ]);
     }
 
     /**
@@ -78,11 +79,8 @@ class SliderController extends Controller
     public function edit(string $id)
     {
         $slider=Slider::find($id);
-        if($slider == null){
-            return redirect()->back()->with('errorMsg', "Dữ liệu không tồn tại!");
-        }
         return response()->json([
-            'success' => 200,
+            'success' => true,
             'data' => $slider
         ]);
     }
@@ -90,12 +88,12 @@ class SliderController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
         if($request->hasFile('image')){ 
-            $slider=Slider::find($request->id);
+            $slider=Slider::find($id);
             $file = $request->image;
-            $path = $file->store('uploads');
+            $path = $file->store('uploads/sliders');
             $slider->name=$request->name;
             $slider->start_date=$request->start_date;
             $slider->end_date=$request->end_date;
@@ -104,14 +102,17 @@ class SliderController extends Controller
             $slider->save();
         }
         else{
-            $slider=Slider::find($request->id);
+            $slider=Slider::find($id);
             $slider->name=$request->name;
             $slider->start_date=$request->start_date;
             $slider->end_date=$request->end_date;
             $slider->book_id=$request->book_id;
             $slider->save();
         }
-        return redirect()->route('slider.index')->with('successMsg', 'Sửa thành công!');
+        return response()->json([
+            'success' => true,
+            'message' => "Sửa thành công!"
+        ]);
     }
 
     /**
@@ -119,18 +120,29 @@ class SliderController extends Controller
      */
     public function destroy(string $id)
     {
-        $slider=Slider::find($id)->delete();
-        return redirect()->route('slider.index')->with('successMsg', 'Xoa thành công!');
+        Slider::find($id)->delete();
+        return response()->json([
+            'success' => true,
+            'message' => "Xóa thành công!"
+        ]);
     }
     public function trash(){
-        $trash = Slider::onlyTrashed()->get();
-        $id=1;
-        return view('slider.trash', compact('trash','id'));
+        return view('slider.trash');
+    }
+
+    public function dataTableTrash(){
+        $trash = Slider::onlyTrashed()->with('book')->get();
+        return Datatables::of($trash)->addColumn('book_name', function($trash){
+            return $trash->book->name;
+        })->make(true);
     }
 
     public function untrash($id)
     {   
         Slider::withTrashed()->find($id)->restore();
-        return back()->with('successMsg', 'Khôi phục thành công!');
+        return response()->json([
+            'success' => true,
+            'message' => "Khôi phục thành công!"
+        ]);
     }
 }

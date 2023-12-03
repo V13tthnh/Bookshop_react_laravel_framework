@@ -22,7 +22,7 @@
                 { data: 'id', name: 'id' },
                 { data: 'supplier_name', name: 'supplier.name' },
                 { data: 'admin_name', name: 'admin.name' },
-                { data: 'total', name: 'total' },
+                { data: 'total',  render: $.fn.dataTable.render.number('.', 2, '') },
                 { data: 'created_at', name: 'created_at' },
                 {
                     data: 'id', render: function (data, type, row) {
@@ -58,8 +58,8 @@
                     { data: 'goods_received_note_id', name: 'goods_received_note_id' },
                     { data: 'book_name', name: 'book.name' },
                     { data: 'quantity', name: 'quantity' },
-                    { data: 'cost_price', name: 'cost_price' },
-                    { data: 'selling_price', name: 'selling_price' },
+                    { data: 'cost_price', render: $.fn.dataTable.render.number('.', 2, '') },
+                    { data: 'selling_price', render: $.fn.dataTable.render.number('.', 2, '') },
                 ],
             });
         });
@@ -91,7 +91,7 @@
                         <tr>
                             <th>Id</th>
                             <th>Id phiếu nhập</th>
-                            <th>Tên</th>
+                            <th>Sách</th>
                             <th>Số lượng</th>
                             <th>Giá nhập</th>
                             <th>Giá bán</th>

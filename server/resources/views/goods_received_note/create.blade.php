@@ -22,7 +22,7 @@
         }
 
         let total=0;
-        total= Number( $("#quantity").val()) * Number( $("#export_unit_price").val());
+        total= Number( $("#quantity").val()) * Number( $("#import_unit_price").val());
         let id = $('#example1 tbody tr').length + 1;
         // Increment next ID to use
         
@@ -36,10 +36,10 @@
                 "<td>" + `<input  name="export_unit_price[]" value="${$("#export_unit_price").val()}" type="hidden" /> `+ $("#export_unit_price").val() + "</td>" +
                 "<td>" + `<input  name="total[]" value="${total}" type="hidden"/> `+ total + "</td>" +
                 "<td>" +
-                "<button type='button' onclick='productDelete(this)'class='btn btn-default'>" + "Xóa" +
+                "<button type='button' onclick='productDelete(this)'class='btn btn-danger'>" + `<i class="fas fa-trash"></i>` + " Xóa" +
                     "<span class='glyphicon glyphicon-remove' />" +
                 "</button>" +
-                "<button type='button' onclick='productDisplay(this);' class='btn btn-default'>" +"Sửa"+
+                "<button type='button' onclick='productDisplay(this);' class='btn btn-info'>" + `<i class="fas fa-edit"></i>` + "Sửa" +
                     "<span class='glyphicon glyphicon-edit' />" +
                 "</button>" +
                 "</td>" +
@@ -81,14 +81,12 @@
             return ret;
     }
 
-    let _row = null;
-    _row = $(ctl).parents("tr");
-    var cols = _row.children("td");
-
     function productDisplay(ctl) {
+        //console.log(ctl);
         _row = $(ctl).parents("tr");
         var cols =_row.children("td");
-        $("#su  pplier").val($(cols[0]).val());
+        console.log($(cols[1]).val());
+        //$("#supplier").val($(cols[0]).val());
         $("#book").val($(cols[1]).val());
         $("#quantity").val($(cols[2]).text());
         $("#import_unit_price").val($(cols[3]).text());
@@ -129,12 +127,13 @@
         $("#updateButton").text("Add");
     }
 
-    $(function () {
-        $("#example1").DataTable({
-            "responsive": true, "lengthChange": false, "autoWidth": false,
-            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-    });
+    // $(function () {
+    //     $("#example1").DataTable({
+    //         "responsive": true, "lengthChange": false, "autoWidth": false,
+    //         "paging":true, language : {"zeroRecords": " "},
+    //         "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    //     }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    // });
 
 </script>
 

@@ -20,7 +20,7 @@
                     { data: 'id', name: 'id' },
                     { data: 'avatar', render: function(data, type, row){
                         if(data != null){
-                            return '<img src="' + data+'" alt="" sizes="40" srcset=""style="height:100px;width:100px">';
+                            return '<img src="'+ "/" + data+'" alt="" sizes="40" srcset=""style="height:100px;width:100px">';
                         }
                         return `<img src="{{asset('dist/img/user.jpg')}}" alt="" sizes="40" srcset="" style="height:100px;width:100px">`;
                         } 

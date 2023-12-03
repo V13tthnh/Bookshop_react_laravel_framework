@@ -141,7 +141,6 @@ class AdminController extends Controller
     public function destroy(string $id)
     {
         Admin::find($id)->delete();
-        //return redirect()->route('admin.index')->with('successMsg', 'Xóa thành công!');
         return response()->json([
             'success'=> true,
             'message'=> "Xóa thành công!"

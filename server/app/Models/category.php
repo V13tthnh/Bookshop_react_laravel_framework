@@ -11,4 +11,8 @@ class Category extends Model
     use SoftDeletes;
     use HasFactory;
     protected $table='categories';
+
+    public function list_book(){
+        return $this->hasMany(Book::class);
+    }
 }

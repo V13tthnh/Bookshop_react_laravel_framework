@@ -2,49 +2,64 @@
 
 @section('js')
 <script>
-    $(function () {
-        $("#example1").DataTable({
-            "responsive": true, "lengthChange": false, "autoWidth": false,
-            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-        $('#example2').DataTable({
-            "paging": true,
-            "lengthChange": false,
-            "searching": false,
-            "ordering": true,
-            "info": true,
-            "autoWidth": false,
-            "responsive": true,
+   $(document).ready(function () {
+        var table = $('#myTable').DataTable({
+                "responsive": true, "lengthChange": true, "autoWidth": false, 
+                "paging": true, "ordering": true, "searching": true,
+                "pageLength": 10, "dom": 'Bfrtip', 
+                "buttons": [{extend:"copy", text:"Sao chép"}, 
+                            {extend:"csv", text:"Xuất csv"}, 
+                            {extend:"excel",text:"Xuất Excel"}, 
+                            {extend:"pdf",text:"Xuất PDF"}, 
+                            {extend:"print",text:"In"}, 
+                            {extend:"colvis",text:"Hiển thị cột"}],
+                "language": { search: "Tìm kiếm:" },
+                "lengthMenu": [10, 25, 50, 75, 100],
+                "ajax": { url: "{{route('slider.data.table.trash')}}", method: "get", dataType: "json", },
+                "columns": [
+                    { data: 'id', name: 'id' },
+                    { data: 'name', name: 'name' },
+                    { data: 'start_date', name: 'start_date' },
+                    { data: 'end_date', name: 'end_date' },
+                    { data: 'book_name', name: 'book.name' },   
+                    { data: 'image', render: function(data, type, row){ 
+                        if(data != null){
+                            return '<img src="' + "/" + data + '" alt="" sizes="40" srcset="" style="height:100px;width:100px">';
+                        }
+                        return "Không có hình ảnh";
+                        } 
+                    },
+                    {
+                        data: 'id', render: function (data, type, row) {
+                            return '<button class="btn btn-info restoreBtn" value="' + data + '" data-toggle="modal" data-target="#modal-edit"><i class="nav-icon fa fa-trash-restore-alt"></i></button>';     
+                        }
+                    },
+                ],
+            });
+
+        //untrash
+        $('#myTable').on('click', '.restoreBtn', function(){
+            var id = $(this).val();
+            $.ajax({
+                url: "/slider/untrash/" + id,
+                method: "get",
+            }).done(function(res){
+                if (res.success) {
+                    Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
+                    table.ajax.reload(); 
+                }
+            });
         });
     });
 </script>
 @endsection
 
 @section('content')
-@if(session('errorMsg'))
-<script>
-    Swal.fire({
-        title: '{{session('errorMsg')}}',
-        icon: 'error',
-        confirmButtonText: 'OK'
-    })
-</script>
-@endif
-
-@if(session('successMsg'))
-<script>
-    Swal.fire({
-        title: '{{session('successMsg')}}',
-        icon: 'success',
-        confirmButtonText: 'OK'
-    })
-</script>
-@endif
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Danh sách slider</h1>
+                <h1>Danh sách tác giả</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
@@ -65,7 +80,7 @@
                         <h3 class="card-title">Danh sách slider</h3>
                     </div>
                     <div class="card-body">
-                        <table id="example1" class="table table-bordered table-striped">
+                        <table id="myTable" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
                                     <th>Id</th>
@@ -78,32 +93,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($trash as $item)
-                                <tr>
-                                <td>{{$id++}}</td>
-                                    <td><a href="">{{$item->name}}</a></td>
-                                    <td>{{$item->start_date}}</td>
-                                    <td>{{$item->end_date}}</td>
-                                    <td>{{$item->book->name}}</td>
-                                    <td style="text-align:center;">
-                                        @if($item->image != null)
-                                        <img src="{{asset('/'.$item->image)}}" alt="" sizes="40" srcset=""
-                                            style="height:100px;width:140px">
-                                        @else
-                                        <img src="{{asset('dist/img/user.jpg')}}" alt="" sizes="40" srcset=""
-                                            style="height:100px;width:140px">
-                                        @endif
-                                    </td>
-                                    <td style="text-align:center;">
-                                        <a href="{{route('slider.untrash', $item->id)}}" class="btn btn-info"
-                                            type="submit"><i class="nav-icon fa fa-trash-restore-alt"></i></a>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan=5>Không có dữ liệu!</td>
-                                </tr>
-                                @endforelse
+                               
                             </tbody>
                         </table>
                     </div>

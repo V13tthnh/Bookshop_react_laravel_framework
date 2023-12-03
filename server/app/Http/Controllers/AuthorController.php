@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Author;
+use Yajra\Datatables\Datatables;
+use Str;
 class AuthorController extends Controller
 {
     /**
@@ -13,9 +15,12 @@ class AuthorController extends Controller
      * Show the form for creating a new resource.
      */
     public function index(Request $request){
-        $ListAuthor=Author::paginate(3);
-        $id = 0;
-        return view('author.index',compact('ListAuthor', 'id'));
+        return view('author.index');
+    }
+
+    public function dataTable(Request $request){
+        $listAuthor=Author::all();
+        return Datatables::of($listAuthor)->make(true);
     }
     public function create()
     {
@@ -35,26 +40,35 @@ class AuthorController extends Controller
         //dd($request);
         $author=Author::where('name', $request->name)->first();
         if($author != null){
-            return redirect()->back()->with('errorMsg', "Ten tac gia da ton tai");
+            return response()->json([
+                'success' => false,
+                'message' => "Tên tác giả đã tồn tại!"
+            ]);
         }
-        if($request->hasFile('image')){
-            $file = $request->image;
-            $path = $file->store('uploads');
+        if($request->hasFile('avatar')){
+            $file = $request->avatar;
+            $path = $file->store('uploads/authors');
             $author=new Author();
             $author->name=$request->name;
             $author->description=$request->description;
-            $author->slug=$request->slug;
-            $author->image = $file;
+            $author->slug=Str::slug($request->image);
+            $author->image = $path;
             $author->save();
+            return response()->json([
+                'success' => true,
+                'message' => "Thêm thành công!"
+            ]);
         }
-        else{
-            $author=new Author();
-            $author->name=$request->name;
-            $author->description=$request->description;
-            $author->slug=$request->slug;
-            $author->save();
-        }
-        return redirect()->route('author.index')->with('successMsg', "Them thanh cong!");
+        $author=new Author();
+        $author->name=$request->name;
+        $author->description=$request->description;
+        $author->slug=$request->slug;
+        $author->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => "Thêm thành công!"
+        ]);
     }
     /**
      * Display the specified resource.
@@ -76,13 +90,29 @@ class AuthorController extends Controller
     public function update(Request $request, string $id)
     {
         $author=Author::find($id);
-        if($author){
+        if($request->hasFile('avatar')){
+            $file = $request->avatar;
+            $path = $file->store('uploads/authors');
+            $author=new Author();
             $author->name=$request->name;
             $author->description=$request->description;
-            $author->slug=$request->slug;
+            $author->slug=Str::slug($request->image);
+            $author->image = $path;
             $author->save();
+            return response()->json([
+                'success' => true,
+                'message' => "Cập nhật thành công!"
+            ]);
         }
-        return redirect()->route('author.index')->with('successMsg', "Sua thanh cong!");
+        $author=new Author();
+        $author->name=$request->name;
+        $author->description=$request->description;
+        $author->slug=Str::slug($request->image);
+        $author->save();
+        return response()->json([
+            'success' => true,
+                'message' => "Cập nhật thành công!"
+        ]);
       
     }
 
@@ -93,16 +123,27 @@ class AuthorController extends Controller
     {
         $author = Author::find($id);
         $author->delete();
-        return redirect()->route('author.index')->with('successMsg', 'Xóa thành công!');
+        return response()->json([
+            'success' => true,
+            'message' => "Xóa thành công!"
+        ]);
     }
-    public function trash(){
+
+    public function dataTableTrash(){
         $trash = Author::onlyTrashed()->get();
-        return view('author.trash', compact('trash'));
+        return Datatables::of($trash)->make(true);
+    }
+
+    public function trash(){
+        return view('author.trash');
     }
 
     public function untrash($id)
     {   
         Author::withTrashed()->find($id)->restore();
-        return back()->with('successMsg', 'Khôi phục thành công!');
+        return response()->json([
+            'success' => true,
+            'message' => "Khôi phục thành công!"
+        ]);
     }
 }
