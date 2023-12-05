@@ -166,6 +166,12 @@
                             </a> 
                         </li>
                         <li class="nav-item">
+                            <a href="{{route('combo.index')}}" class="nav-link">
+                                <i class="nav-icon fas fa-box"></i>
+                                <p>Combo sách</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{route('slider.index')}}" class="nav-link">
                                 <i class="nav-icon fas fa-ad"></i>
                                 <p>Banner</p>

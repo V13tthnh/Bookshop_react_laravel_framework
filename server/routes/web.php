@@ -9,14 +9,15 @@ use App\Http\Controllers\GoodsReceivedNoteController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\SliderController;
 use App\Http\Controllers\PublisherController;
+use App\Http\Controllers\ComboController;
 
 //auth-Viet Thanh
 Route::get('/admin/login', [AdminController::class, 'login'])->name('admin.login')->middleware('guest');
 Route::post('/admin/login-handler', [AdminController::class, 'loginHandler'])->name('admin.loginHandler');
 
 Route::middleware('auth')->group(function () {
+    //admin-Viet thanh
     Route::prefix('admin')->group(function () {
-        //admin-Viet thanh
         Route::name('admin.')->group(function () {
             Route::get('logout', [AdminController::class, 'logout'])->name('logout');
             Route::get('/', [AdminController::class, 'index'])->name('index');
@@ -29,6 +30,13 @@ Route::middleware('auth')->group(function () {
             Route::get('trash', [AdminController::class, 'trash'])->name('trash');
             Route::get('data-table-trash', [AdminController::class, 'dataTableTrash'])->name('data.table.trash');
             Route::get('untrash/{id}', [AdminController::class, 'untrash'])->name('untrash');
+        });
+    });
+
+    //combo-book-Viet thanh
+    Route::prefix('combo')->group(function () {
+        Route::name('combo.')->group(function () {
+            Route::get('/', [ComboController::class, 'index'])->name('index');
         });
     });
     //category-Thanh tuan
@@ -97,7 +105,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/', [OrderController::class, 'index'])->name('index');
         });
     });
-   //book-Thanh Nghia
+    //book-Thanh Nghia
     Route::prefix('book')->group(function () {
         Route::name('book.')->group(function () {
             Route::get('/', [BookController::class, 'index'])->name('index');

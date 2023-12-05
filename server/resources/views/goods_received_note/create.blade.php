@@ -126,15 +126,6 @@
         // Change Update Button Text
         $("#updateButton").text("Add");
     }
-
-    // $(function () {
-    //     $("#example1").DataTable({
-    //         "responsive": true, "lengthChange": false, "autoWidth": false,
-    //         "paging":true, language : {"zeroRecords": " "},
-    //         "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-    //     }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-    // });
-
 </script>
 
 
