@@ -16,12 +16,16 @@ class Book extends Model
     use SoftDeletes;
     use HasFactory;
 
-    public function category(){
-        return $this->belongsTo(Category::class);
+    public function categories(){
+        return $this->belongsToMany(Category::class);
     }
 
-    public function author(){
-        return $this->belongsTo(Author::class);
+    public function authors(){
+        return $this->belongsToMany(Author::class);
+    }
+
+    public function combos(){
+        return $this->belongsToMany(Combo::class);
     }
 
     public function supplier(){
@@ -31,7 +35,7 @@ class Book extends Model
         return $this->belongsTo(Publisher::class);
     }
 
-    public function image_list(){
+    public function images(){
         return $this->hasMany(Image::class);
     }
 }
