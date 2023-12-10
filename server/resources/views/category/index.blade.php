@@ -68,6 +68,7 @@
                 $('#updateDescription').summernote('code', res.data.description);
             });
         });
+    
         //update
         $('#updateBtn').click(function(){
             var id = $('#updateId').val();
