@@ -26,7 +26,7 @@ return new class extends Migration
             $table->Integer('num_pages')->nullable();
             $table->string('slug')->nullable();
             $table->string('translator')->nullable();
-            $table->bigInteger('e_book_price');
+            $table->bigInteger('e_book_price')->nullable();
             $table->string('link_pdf')->nullable();
             $table->unsignedBigInteger('supplier_id');
             $table->unsignedBigInteger('publisher_id');

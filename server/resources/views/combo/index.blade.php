@@ -4,6 +4,7 @@
 <script>
     var count = 0;
     $(document).ready(function () {
+        $('.select2').select2();
         //Hiển thị input nhập giảm giá
         $('#discount').change(function(){
             var id = $(this).find(':selected').val();
@@ -18,8 +19,8 @@
         });
 
         $('#showBtn').click(function(){
-            if($('#name').val() === null || $('#quantity').val() === null || $('#percent').val() === null){
-                Swal.fire({ title: "Cần nhập đầy đủ thông tin khuyến mãi1", icon: 'error', confirmButtonText: 'OK' });
+            if($('#name').val() === null && $('#quantity').val() === null && $('#percent').val() === null){
+                Swal.fire({ title: "Cần nhập đầy đủ thông tin khuyến mãi!", icon: 'error', confirmButtonText: 'OK' });
                 return;
             }
             //Hiển thị tổng quan combo
@@ -105,8 +106,8 @@
                     <div class="card-body">
                         <div class="form-group">
                             <label for="exampleInputEmail1">Chọn sản phẩm</label>
-                            <select id="book_id" name="name" class="form-control custom-select">
-                                <option value=0 selected disabled>Select one</option>
+                            <select id="book_id" name="name" class="form-control select2">
+                                <option value=0 selected disabled>Chọn sản phẩm</option>
                                 @foreach($books as $item)
                                 <option value="{{$item->id}}" price="{{$item->unit_price}}">{{$item->name}}</option>
                                 @endforeach

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
+use App\Http\Requests\CreateUpdateSupplierRequest;
 use Str;
 
 class SupplierController extends Controller
@@ -13,34 +14,20 @@ class SupplierController extends Controller
      */
     public function index()
     {
-        $listSupplier = Supplier::all();
-        $id = 1;
-        return view('supplier.index',compact('listSupplier', 'id'));
+        return view('supplier.index');
     }
 
     public function dataTable(){
         return Datatables::of(Supplier::query())->make(true);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view("supplier.create");
     }
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $rq)
+
+    public function store(CreateUpdateSupplierRequest $rq)
     {
-        $name = Supplier::where('name', $rq->name)->first();
-        if(!empty($name)){
-            return response()->json([
-                'success' => false,
-                'message' => "Nhà cung cấp đã tồn tại!"
-            ]);
-        }
         $createSupplier=new Supplier();
         $createSupplier->name=$rq->name;
         $createSupplier->address=$rq->address;
@@ -59,9 +46,6 @@ class SupplierController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         $editSuppliers=Supplier::find($id);
@@ -71,20 +55,9 @@ class SupplierController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $rq, $id)
+    public function update(CreateUpdateSupplierRequest $rq, $id)
     {
         //dd($rq);
-        $suppliers=supplier::where('id', '<>', $id)->where('name', $rq->name)->first();
-        if($suppliers!=null)
-        {
-            return response()->json([
-                'success' => false,
-                'message' => "Dữ liệu không tồn tại!"
-            ]);
-        } 
         $editSuppliers=Supplier::find($id);
         $editSuppliers->name=$rq->name;
         $editSuppliers->address=$rq->address;
@@ -98,9 +71,6 @@ class SupplierController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         Supplier::find($id)->delete();

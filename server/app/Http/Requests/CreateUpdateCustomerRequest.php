@@ -4,14 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateCategoryRequest extends FormRequest
+class CreateUpdateCustomerRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -22,15 +22,7 @@ class CreateCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|min:25',
-        ];
-    }
-
-    public function messages(): array
-    {
-        return [
-            'name.required' => "Vui lòng nhập tên danh mục!",
-            'name.min' => "Tên danh mục ít nhất :min ký tự!"
+            //
         ];
     }
 }

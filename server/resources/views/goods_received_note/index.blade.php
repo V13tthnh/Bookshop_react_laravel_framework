@@ -63,14 +63,7 @@
                 ],
             });
         });
-
         var idDetail = $('#idDetail').val();
-
-        
-
-        // $('.close').click(function(){
-        //     $("#tableDetail").dataTable().fnDestroy();
-        // });
     });
 </script>
 @endsection

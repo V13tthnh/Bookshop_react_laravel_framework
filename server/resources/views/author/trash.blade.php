@@ -15,7 +15,7 @@
                             {extend:"colvis",text:"Hiển thị cột"}],
                 "language": { search: "Tìm kiếm:" },
                 "lengthMenu": [10, 25, 50, 75, 100],
-                "ajax": { url: "{{route('admin.data.table.trash')}}", method: "get", dataType: "json", },
+                "ajax": { url: "{{route('author.data.table.trash')}}", method: "get", dataType: "json", },
                 "columns": [
                     { data: 'id', name: 'id' },
                     { data: 'image', render: function(data, type, row){
