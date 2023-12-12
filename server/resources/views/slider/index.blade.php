@@ -4,6 +4,7 @@
 <script>
     //Edit ajax
     $(document).ready(function () {
+        $('.select2').select2();
         var table = $('#myTable').DataTable({
             "responsive": true, "lengthChange": true, "autoWidth": false, //tùy chỉnh kích thước, phân trang
             "paging": true, "ordering": true, "searching": true,
@@ -71,9 +72,26 @@
             $("#storeBookId").val($("#storeBookId option:first").val());
             $('#storeImage').attr('src', '');
         }
+        $('#modal-create').on('hidden.bs.modal', function(){
+            $('#createFormValidate').removeClass('was-validated');
+            $('.create_name_error').text('');
+            $('.create_start_date_error').text('');
+            $('.create_end_date_error').text('');
+            $('.create_book_id_error').text('');
+            $('.create_image_error').text('');
+        });
+        $('#modal-edit').on('hidden.bs.modal', function(){
+            $('#updateFormValidate').removeClass('was-validated');
+            $('.update_name_error').text('');
+            $('.update_start_date_error').text('');
+            $('.update_end_date_error').text('');
+            $('.update_book_id_error').text('');
+            $('.update_image_error').text('');
+        });
 
         //store
-        $('#addBtn').click(function(){
+        $('#addBtn').click(function(e){
+            e.preventDefault();
             var name = $('#storeName').val();
             var start_date = $('#storeStartDate').val();
             var end_date = $('#storeEndDate').val();
@@ -100,6 +118,16 @@
                     Swal.fire({ title: res.message, icon: 'error', confirmButtonText: 'OK' });
                     return;
                 }
+            }).fail(function(res){
+                console.log(res.responseJSON.errors);
+                $('#createFormValidate').addClass('was-validated');
+                $.each(res.responseJSON.errors, function(key, value){
+                    $('.create_' + key + '_error').text(value[0]);
+                    $('.create_' + key + '_error').text(value[1]);
+                    $('.create_' + key + '_error').text(value[2]);
+                    $('.create_' + key + '_error').text(value[3]);
+                    $('.create_' + key + '_error').text(value[4]);
+                });
             });
         });
 
@@ -110,7 +138,6 @@
                 url: "slider/edit/" + id,
                 method: "get",
             }).done(function(res){
-                console.log(res.data);
                 if(res.data == null){
                     Swal.fire({ title: "Dữ liệu không tồn tại", icon: 'error', confirmButtonText: 'OK' });
                     return;
@@ -119,12 +146,14 @@
                 $('#updateName').val(res.data.name);
                 $('#updateStartDate').val(res.data.start_date);
                 $('#updateEndDate').val(res.data.end_date);
-                $('#updateBookId').val(res.data.book_id);
+                $('#updateBookId').val(res.data.book_id); 
+                $('#updateBookId').trigger('change');
             })
         });
 
         //update
-        $('#updateBtn').click(function(){
+        $('#updateBtn').click(function(e){
+            e.preventDefault();
             var id = $('#updateId').val();
             var name = $('#updateName').val();
             var start_date = $('#updateStartDate').val();
@@ -147,6 +176,15 @@
                     $('#modal-edit').modal('hide'); //ẩn model thêm mới
                     table.ajax.reload(); //refresh bảng 
                 }
+            }).fail(function(res){
+                $('#updateFormValidate').addClass('was-validated');
+                $.each(res.responseJSON.errors, function(key, value){
+                    $('.update_' + key + '_error').text(value[0]);
+                    $('.update_' + key + '_error').text(value[1]);
+                    $('.update_' + key + '_error').text(value[2]);
+                    $('.update_' + key + '_error').text(value[3]);
+                    $('.update_' + key + '_error').text(value[4]);
+                });
             });
         });
 
@@ -188,37 +226,44 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
+            <form action="" id="createFormValidate">
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="inputName">Tên</label>
                         <input type="text" id="storeName" class="form-control" required>
+                        <div class="text-danger create_name_error"></div>
                     </div>
                     <div class="form-group">
                         <label for="inputName">Ngày bắt đầu</label>
                         <input type="date" id="storeStartDate" class="form-control" required>
+                        <div class="text-danger create_start_date_error"></div>
                     </div>
                     <div class="form-group">
                         <label for="inputName">Ngày kết thúc</label>
                         <input type="date" id="storeEndDate" class="form-control" required>
+                        <div class="text-danger create_end_date_error"></div>
                     </div>
                     <div class="form-group">
                         <label for="inputStatus">Sách</label>
-                        <select id="storeBookId" class="form-control custom-select">
+                        <select id="storeBookId" class="form-control select2" style="width: 100%;">
                         <option selected disabled>Select one</option>
                             @foreach($listBook as $book)
                             <option value="{{$book->id}}">{{$book->name}}</option>
                             @endforeach
                         </select>
+                        <div class="text-danger create_book_id_error"></div>
                     </div>
                     <div class="form-group">
                         <label for="inputProjectLeader">Hình ảnh</label>
                         <input accept="image/*" type='file' id="storeImage" class="form-control" />
+                        <div class="text-danger create_image_error"></div>
                     </div>
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
                     <button type="submit" class="btn btn-primary" id="addBtn">Lưu</button>
                 </div>
+            </form>
         </div>
     </div>
 </div>
@@ -233,44 +278,48 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
+            <form action="" id="updateFormValidate">
                 <input type="text" id="updateId" hidden>
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="inputName">Tên</label>
                         <input type="text" id="updateName" class="form-control" required>
+                        <div class="text-danger update_name_error"></div>
                     </div>
                     <div class="form-group">
                         <label for="inputName">Ngày bắt đầu</label>
                         <input type="date" id="updateStartDate" class="form-control" required>
+                        <div class="text-danger update_start_date_error"></div>
                     </div>
                     <div class="form-group">
                         <label for="inputName">Ngày kết thúc</label>
                         <input type="date" id="updateEndDate" class="form-control" required>
+                        <div class="text-danger update_end_date_error"></div>
                     </div>
                     <div class="form-group">
                         <label for="inputStatus">Sách</label>
-                        <select id="updateBookId" class="form-control custom-select">
+                        <select id="updateBookId" class="form-control select2" style="width: 100%;"> 
                         <option selected disabled>Select one</option>
                             @foreach($listBook as $book)
                             <option value="{{$book->id}}">{{$book->name}}</option>
                             @endforeach
                         </select>
+                        <div class="text-danger update_book_id_error"></div>
                     </div>
                     <div class="form-group">
                         <label for="inputProjectLeader">Hình ảnh</label>
                         <input accept="image/*" type='file' id="updateImage" class="form-control" />
-                      
+                        <div class="text-danger update_image_error"></div>
                     </div>
-                  
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
                     <button type="submit" class="btn btn-primary" id="updateBtn">Lưu thay đổi</button>
                 </div>
+            </form>
         </div>
     </div>
 </div>
-
 
 <section class="content-header">
     <div class="container-fluid">

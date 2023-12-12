@@ -6,11 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Slider;
 use App\Models\Book;
 use Yajra\Datatables\Datatables;
+use App\Http\Requests\CreateUpdateSliderRequest;
 class SliderController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $listBook=Book::all();
@@ -34,10 +32,7 @@ class SliderController extends Controller
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(CreateUpdateSliderRequest $request)
     {
         //dd($request);
         if($request->hasFile('image')){ 

@@ -4,10 +4,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AdminLTE 3 | Log in (v2)</title>
-
+    <title>BookShop</title>
     <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{asset('plugins/fontawesome-free/css/all.min.css')}}">
     <!-- icheck bootstrap -->
@@ -24,10 +24,19 @@
                 <a class="h1"><b>Admin</b>BookShop</a>
             </div>
             <div class="card-body">
-                @if(session('errorMsg'))
-                    <div class="alert alert-danger">
-                        {{session('errorMsg')}}
-                    </div>
+                @if(session('loginErrorMsg'))
+                <div class="alert alert-danger">
+                    {{session('loginErrorMsg')}}
+                </div>
+                @endif
+                @if($errors->any())
+                <div class="text-danger">
+                    <ul>
+                        @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
                 @endif
 
                 <form action="{{route('admin.loginHandler')}}" method="post">
@@ -42,7 +51,8 @@
                     </div>
                     <p style="color:red" id="errorMsgEmail"></p>
                     <div class="input-group mb-3">
-                        <input type="password" name="password" id="password" class="form-control" placeholder="Password">
+                        <input type="password" name="password" id="password" class="form-control"
+                            placeholder="Password">
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-lock"></span>
@@ -58,25 +68,12 @@
                             </div>
                         </div>
                         <div class="col-4">
-                            <button type="submit" class="btn btn-primary btn-block" >Sign In</button>
+                            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
                         </div>
                     </div>
                 </form>
-
-                <div class="social-auth-links text-center mt-2 mb-3">
-                    <a href="" class="btn btn-block btn-primary" id="loginBtn">
-                        <i class="fab fa-facebook mr-2"></i> Sign in using Facebook
-                    </a>
-                    <a href="" class="btn btn-block btn-danger">
-                        <i class="fab fa-google-plus mr-2"></i> Sign in using Google+
-                    </a>
-                </div>
-
                 <p class="mb-1">
                     <a href="">I forgot my password</a>
-                </p>
-                <p class="mb-0">
-                    <a href="" class="text-center">Register a new membership</a>
                 </p>
             </div>
             <!-- /.card-body -->

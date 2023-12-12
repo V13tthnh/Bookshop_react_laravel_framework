@@ -21,6 +21,7 @@ Route::middleware('auth')->group(function () {
         Route::name('admin.')->group(function () {
             Route::get('logout', [AdminController::class, 'logout'])->name('logout');
             Route::get('/', [AdminController::class, 'index'])->name('index');
+            Route::get('profile', [AdminController::class, 'profile'])->name('profile');
             Route::get('data-table', [AdminController::class, 'dataTable'])->name('data.table');
             Route::get('create', [AdminController::class, 'create'])->name('create');
             Route::post('store', [AdminController::class, 'store'])->name('store');
@@ -117,6 +118,7 @@ Route::middleware('auth')->group(function () {
             Route::post('destroy/{id}', [BookController::class, 'destroy'])->name('destroy');
             Route::get('delete-image/{id}', [BookController::class, 'deleteImage'])->name('delete.image');
             Route::get('trash', [BookController::class, 'trash'])->name('trash');
+            Route::get('data-table-trash', [BookController::class, 'dataTableTrash'])->name('data.table.trash');
             Route::get('untrash/{id}', [BookController::class, 'untrash'])->name('untrash');
         });
     });

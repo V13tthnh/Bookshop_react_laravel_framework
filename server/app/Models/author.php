@@ -10,7 +10,7 @@ class Author extends Model
 {
     use SoftDeletes;
     use HasFactory;
-
+    protected $fillable = ['name', 'description', 'image'];
     public function books(){
         return $this->belongsToMany(Book::class);
     }

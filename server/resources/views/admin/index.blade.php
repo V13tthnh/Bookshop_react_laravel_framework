@@ -1,7 +1,6 @@
 @extends('layout')
 
 @section('js')
-
 <script>
     $(document).ready(function () {
         var table = $('#myTable').DataTable({
@@ -37,35 +36,64 @@
                 },
             ],
         });
-
-        //clear create form
+        //clear create form trong modal sau khi thêm hoàn tất
         function createFormClear() {
             $("#storeName").val($("#storeName option:first").val());
             $("#storeEmail").val($("#storeEmail option:first").val());
+            $("#storeAddress").val("");
+            $("#storePhone").val("");
             $("#storePassword").val("");
-            $("#storeAvatar").val("");
+            $('#storeAvatar').val('');
+            $('#blah2').attr('src', '');
             $("#storeRole").val("");
         }
-        //clear edit form
+        //clear edit form trong modal sau khi cập nhật hoàn tất
         function editFormClear() {
-            $("#updatePassword").val("");
-            $("#updateAvatar").val("");
+            $('#updateAvatar').val('');
+            $('#blah').attr('src', '');
         }
-
+        //Ẩn modal create thì reset các trường validate rỗng
+        $('#modal-create').on('hidden.bs.modal', function(){
+            $('#createFormValidate').removeClass('was-validated');
+            $('.create_name_error').text('');
+            $('.create_address_error').text('');
+            $('.create_phone_error').text('');
+            $('.create_email_error').text('');
+            $('.create_password_error').text('');
+            $('.create_avatar_error').text('');
+            $('.create_role_error').text('');
+        });
+        //Ẩn modal edit thì reset các trường validate rỗng
+        $('#modal-edit').on('hidden.bs.modal', function(){
+            $('#updateFormValidate').removeClass('was-validated');
+            $('.update_name_error').text('');
+            $('.update_address_error').text('');
+            $('.update_phone_error').text('');
+            $('.update_email_error').text('');
+            $('.update_password_error').text('');
+            $('.update_avatar_error').text('');
+            $('.update_role_error').text('')
+        });
+        //tạo 2 đối tượng formData để lưu  giá trị các trường trong modal thêm mới cập nhật
         var formDataCreate = new FormData();
         var formDataEdit = new FormData();
-        //create image
+        //xử lý sự kiện change khi người dùng chọn file từ hộp thoại tìm kiếm file
         $('#storeAvatar').change(function (e) {
-            var input = e.target;
+            var input = e.target; //gán file vừa chọn vào biến input
+            //điều kiện kiểm tra input có tồn tại ko
             if (input.files && input.files[0]) {
+                //nếu có tồn tại tạo đối tượng FileReader() để đọc file
                 var reader = new FileReader();
+                //sau đó 1 hàm callback được đặt cho sự kiện onload của FileReader()
                 reader.onload = function (e) {
+                    //sau khi file đã đọc thành công, hàm callback sẽ đc gọi và thiết lập
+                    //giá trị cho formDataCreate
                     formDataCreate.set("avatar", input.files[0]);
                 }
                 reader.readAsDataURL(input.files[0]);
             }
         });
-        //create image
+        //tương tự ở trên
         $('#updateAvatar').change(function (e) {
             var input = e.target;
             if (input.files && input.files[0]) {
@@ -76,26 +104,23 @@
                 reader.readAsDataURL(input.files[0]);
             }
         });
-
-        //store
-        $('#addBtn').click(function () {
-            var name = $('#storeName').val();
-            var email = $('#storeEmail').val();
-            var password = $('#storePassword').val();
-            //var avatar = $('#storeAvatar').val().replace("C:\\fakepath\\", "");
-            var role = $('#storeRole').find(':selected').val();
+        //Xử lý sự kiện click khi nhấn nào button lưu của modal create
+        $('#addBtn').click(function (e) {
+            e.preventDefault(); //Chỉ focus vào sự kiện click, ngăn ko thực thi sự kiện khác
+            //Thêm các giá trị các trường vào formData
             formDataCreate.append("_token", "{{csrf_token()}}");
-            formDataCreate.append("name", name);
-            formDataCreate.append("email", email);
-            formDataCreate.append("password", password);
-            formDataCreate.append("role", role);
+            formDataCreate.append("name", $('#storeName').val());
+            formDataCreate.append("address", $('#storeAddress').val());
+            formDataCreate.append("phone", $('#storePhone').val());
+            formDataCreate.append("email", $('#storeEmail').val());
+            formDataCreate.append("password", $('#storePassword').val());
+            formDataCreate.append("role",  $('#storeRole').find(':selected').val());
             $.ajax({
                 url: "{{route('admin.store')}}",
                 method: "post",
                 data: formDataCreate,
                 contentType: false,
                 processData: false,
-
             }).done(function (res) {
                 if (res.success) {
                     Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
@@ -107,14 +132,25 @@
                     Swal.fire({ title: res.message, icon: 'error', confirmButtonText: 'OK' });
                     return;
                 }
-                
+            }).fail(function(res){
+                //Hàm fail() được gọi khi có bất kỳ lỗi nào xảy ra trong quá trình thực hiện yêu cầu Ajax.
+                var errors = res.responseJSON.errors; //Lưu 1 mảng các đối tượng lỗi vào biến errors
+                //console.log(errors);
+                $('#createFormValidate').addClass('was-validated'); //Thêm lớp css was-validate của bootstrap để hiển thị lỗi trên input
+                $.each(errors, function(key, value){  //Duyệt mảng errors và gán các giá trị lỗi phía dưới các trường input
+                    $('.create_' + key + '_error').text(value[0]);
+                    $('.create_' + key + '_error').text(value[1]);
+                    $('.create_' + key + '_error').text(value[2]);
+                    $('.create_' + key + '_error').text(value[3]);
+                    $('.create_' + key + '_error').text(value[4]);
+                    $('.create_' + key + '_error').text(value[5]);
+                    $('.create_' + key + '_error').text(value[6]);
+                });
             });
         });
-
-        //edit
+        //hiển thị modal edit và trả về giá trị cho các trường khi nhấn button chỉnh sửa
         $('#myTable').on('click', '.editBtn', function () {
             var id = $(this).val();
-            //console.log(id);
             $.ajax({
                 url: "admin/edit/" + id,
                 method: "get",
@@ -122,24 +158,24 @@
                 $('#modal-edit').modal('show');
                 $('#updateId').val(res.data.id);
                 $('#updateName').val(res.data.name);
+                $('#updateAddress').val(res.data.address);
+                $('#updatePhone').val(res.data.phone);
                 $('#updateEmail').val(res.data.email);
                 $('#updateRole').val(res.data.role);
+                $('#blah').attr('src', res.data.avatar);
             });
         });
-
-        //update
-        $('#updateBtn').click(function () {
+        //Xử lý sự kiện click khi nhấn vào button Lưu thay đổi trên modal edit 
+        $('#updateBtn').click(function (e) {
+            e.preventDefault(); //Ngăn không cho các sự kiện khác phát sinh
             var id = $('#updateId').val();
-            var name = $('#updateName').val();
-            var email = $('#updateEmail').val();
-            var password = $('#updatePassword').val();
-            //var avatar = $('#updateAvatar').val().replace("C:\\fakepath\\", "");
-            var role = $('#updateRole').find(':selected').val();
+            //Thêm giá trị các trường vào formDataEdit
             formDataEdit.append("_token", "{{csrf_token()}}");
-            formDataEdit.append("name", name);
-            formDataEdit.append("email", email);
-            formDataEdit.append("password", password);
-            formDataEdit.append("role", role);
+            formDataEdit.append("name", $('#updateName').val());
+            formDataEdit.append("address", $('#updateAddress').val());
+            formDataEdit.append("phone",  $('#updatePhone').val());
+            formDataEdit.append("email", $('#updateEmail').val());
+            formDataEdit.append("role", $('#updateRole').find(':selected').val());
             $.ajax({
                 url: "admin/update/" + id,
                 method: "post",
@@ -156,37 +192,61 @@
                     Swal.fire({ title: res.message, icon: 'error', confirmButtonText: 'OK' });
                     return;
                 }
+            }).fail(function(res){
+                var errors = res.responseJSON.errors;
+                console.log(errors);
+                $('#updateFormValidate').addClass('was-validated');
+                $.each(errors, function(key, value){
+                    $('.update_' + key + '_error').text(value[0]);
+                    $('.update_' + key + '_error').text(value[1]);
+                    $('.update_' + key + '_error').text(value[2]);
+                    $('.update_' + key + '_error').text(value[3]);
+                    $('.update_' + key + '_error').text(value[4]);
+                    $('.update_' + key + '_error').text(value[5]);
+                    $('.update_' + key + '_error').text(value[6]);
+                });
             });
         });
-        
-        //delete
+        //xử lý sự kiện click khi nhấn button delete
         $('#myTable').on('click', '.deleteBtn', function () {
             var id = $(this).val();
-            $.ajax({
-                url: "admin/destroy/" + id,
-                method: "post",
-                data: {
-                    "_token": "{{csrf_token()}}"
+            //Thông báo xác nhận trước khi xóa
+            Swal.fire({
+                title: 'Bạn chắc chắn chứ?',
+                text: 'Đừng lo, bạn vẫn có thể khôi phục lại dữ liệu đã xóa!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Đồng ý',
+                cancelButtonText: 'Hủy bỏ'
+            }).then((result)=>{
+                //Nấu click button Đồng ý trên thông báo thì giá trị result sẽ là true va ngược lại
+                if(result.value){
+                    //Nếu giá trị là true thực hiện ajax xóa admin
+                    $.ajax({
+                        url: "admin/destroy/" + id,
+                        method: "post",
+                        data: {
+                            "_token": "{{csrf_token()}}"
+                        }
+                    }).done(function(res){
+                        if (res.success) {
+                            Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
+                            table.ajax.reload();
+                        } 
+                    });
                 }
-            }).done(function(res){
-                if (res.success) {
-                    Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
-                    table.ajax.reload();
-                } 
             });
+
         });
     });
-
-    
-
-    //review image create
+    //Xử lý sự kiện onchange hiển thị hình ảnh khi chọn ảnh từ trường input cho modal create
     storeAvatar.onchange = evt => {
         const [file] = storeAvatar.files
         if (file) {
             blah2.src = URL.createObjectURL(file)
         }
     }
-    // review image edit
+    //Xử lý sự kiện onchange hiển thị hình ảnh khi chọn ảnh từ trường input cho modal edit
     updateAvatar.onchange = evt => {
         const [file] = updateAvatar.files
         if (file) {
@@ -206,21 +266,35 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
+            <form action="" id="createFormValidate">
             <div class="modal-body">
                 <div style="text-align:center">
                     <img id="blah2" src="#"  style="height:150px;width:150px" />
                 </div>
                 <div class="form-group">
                     <label for="inputName">Tên</label>
-                    <input type="text" id="storeName" class="form-control" required>
+                    <input type="text" id="storeName" class="form-control" placeholder="Nhập tên" required>
+                    <div class="text-danger create_name_error"></div>
+                </div>
+                <div class="form-group">
+                    <label for="inputProjectLeader">Địa chỉ</label>
+                    <input type="text" id="storeAddress" class="form-control" placeholder="Nhập địa chỉ" required>
+                    <div class="text-danger create_address_error"></div>
+                </div>
+                <div class="form-group">
+                    <label for="inputProjectLeader">Số điện thoại</label>
+                    <input type="phone" id="storePhone" class="form-control" placeholder="(+84)" required>
+                    <div class="text-danger create_phone_error"></div>
                 </div>
                 <div class="form-group">
                     <label for="inputProjectLeader">Email</label>
-                    <input type="email" id="storeEmail" class="form-control" required>
+                    <input type="email" id="storeEmail" class="form-control" placeholder="Nhập email" required>
+                    <div class="text-danger create_email_error"></div>
                 </div>
                 <div class="form-group">
                     <label for="inputProjectLeader">Mật khẩu</label required>
-                    <input type="password" id="storePassword" class="form-control">
+                    <input type="password" id="storePassword" placeholder="Nhập mật khẩu" class="form-control">
+                    <div class="text-danger create_password_error"></div>
                 </div>
                 <div class="form-group">
                     <label for="exampleInputFile">File input</label>
@@ -228,6 +302,7 @@
                     <div class="custom-file">
                         <input type="file" class="custom-file-input" id="storeAvatar">
                         <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                        <div class="text-danger create_avatar_error"></div>
                     </div>
                     <div class="input-group-append">
                         <span class="input-group-text">Upload</span>
@@ -243,12 +318,14 @@
                         <option value="2">Admin</option>
                         <option value="3">Sales Agent</option>
                     </select>
+                    <div class="text-danger create_role_error"></div>
                 </div>
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
                 <button type="button" class="btn btn-primary" id="addBtn">Lưu</button>
             </div>
+            </form>
         </div>
     </div>
 </div>
@@ -263,24 +340,40 @@
                 </button>
             </div>
             <input type="text"  id="updateId" hidden>
+            <form action="" id="updateFormValidate">
             <div class="modal-body">
+                <div style="text-align:center">
+                    <img id="blah" src="#"  style="height:150px;width:150px" />
+                </div>
                 <div class="form-group">
                     <label for="inputName">Tên</label>
-                    <input type="text" id="updateName" class="form-control" required>
+                    <input type="text" id="updateName" class="form-control" placeholder="Nhập tên" required>
+                    <div class="text-danger update_name_error"></div>
                 </div>
                 <div class="form-group">
                     <label for="inputProjectLeader">Email</label>
-                    <input type="email" id="updateEmail" class="form-control" required>
+                    <input type="email" id="updateEmail" class="form-control" placeholder="Nhập email" required>
+                    <div class="text-danger update_email_error"></div>
                 </div>
                 <div class="form-group">
-                    <label for="inputProjectLeader">Mật khẩu</label required>
-                    <input type="password" id="updatePassword" name="password" class="form-control" required>
+                    <label for="inputProjectLeader">Địa chỉ</label>
+                    <input type="text" id="updateAddress" class="form-control" placeholder="Nhập địa chỉ" required>
+                    <div class="text-danger update_address_error"></div>
                 </div>
+                <div class="form-group">
+                    <label for="inputProjectLeader">Số điện thoại</label>
+                    <input type="phone" id="updatePhone" class="form-control" placeholder="Nhập Số điện thoại" required>
+                    <div class="text-danger update_phone_error"></div>
+                </div>
+                <!-- <div class="form-group">
+                    <label for="inputProjectLeader">Mật khẩu</label required>
+                    <input type="password" id="updatePassword" name="password" placeholder="Nhập mật khẩu" class="form-control" required>
+                    <div class="text-danger update_password_error"></div>
+                </div> -->
                 <div class="form-group">
                     <label for="inputProjectLeader">Ảnh</label>
                     <input accept="image/*" type='file' id="updateAvatar" class="form-control" />
-                    <label>Ảnh của bạn: </label>
-                    <img id="blah" src="#" alt="your image" style="with: 70px; height: 70px" />
+                    <div class="text-danger update_avatar_error"></div>
                 </div>
                 <div class="form-group">
                     <label for="inputStatus">Quyền</label>
@@ -290,6 +383,7 @@
                         <option value="2">Admin</option>
                         <option value="3">Sales Agent</option>
                     </select>
+                    <div class="text-danger update_role_error"></div>
                 </div>
             </div>
             <div class="modal-footer justify-content-between">

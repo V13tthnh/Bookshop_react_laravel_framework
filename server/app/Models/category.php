@@ -10,7 +10,7 @@ class Category extends Model
 {
     use SoftDeletes;
     use HasFactory;
-    protected $table='categories';
+    protected $fillable = ['name', 'description'];
     public function books(){
         return $this->belongsToMany(Book::class);
     }

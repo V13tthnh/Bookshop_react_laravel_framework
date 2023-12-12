@@ -5,15 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Author;
 use Yajra\Datatables\Datatables;
+use App\Http\Requests\CreateUpdateAuthorRequest;
 use Str;
 class AuthorController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    /**
-     * Show the form for creating a new resource.
-     */
     public function index(Request $request){
         return view('author.index');
     }
@@ -26,89 +21,66 @@ class AuthorController extends Controller
     {
         return view('author.create');
     }
-    public function handleCreate(Request $request)
+
+    public function store(CreateUpdateAuthorRequest $request)
     {
- 
-        //chua xu ly hinh anh
-        
-    }
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //dd($request);
-        $author=Author::where('name', $request->name)->first();
-        if($author != null){
-            return response()->json([
-                'success' => false,
-                'message' => "Tên tác giả đã tồn tại!"
-            ]);
-        }
         if($request->hasFile('avatar')){
             $file = $request->avatar;
             $path = $file->store('uploads/authors');
-            $author=new Author();
-            $author->name=$request->name;
-            $author->description=$request->description;
-            $author->slug=Str::slug($request->image);
-            $author->image = $path;
-            $author->save();
+            $author = Author::updateOrCreate(
+                ['name' => $request->name], 
+                ['description' => $request->description, 'slug' => Str::slug($request->name),'image' => $path]
+            );
             return response()->json([
                 'success' => true,
                 'message' => "Thêm thành công!"
             ]);
         }
-        $author=new Author();
-        $author->name=$request->name;
-        $author->description=$request->description;
-        $author->slug=$request->slug;
-        $author->save();
-        
+        $author = Author::updateOrCreate(
+            ['name' => $request->name], 
+            ['description' => $request->description, 'slug' => Str::slug($request->name),]
+        );
         return response()->json([
             'success' => true,
             'message' => "Thêm thành công!"
         ]);
     }
-    /**
-     * Display the specified resource.
-     */
+
     public function show(string $id)
     {
         //
     }
 
-    public function edit($id,Request $request)
+    public function edit($id)
     {
         $author=Author::find($id);
-        return view('author.edit',compact('author'));
+        return response()->json([
+            'success' => true,
+            'data' =>  $author
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(CreateUpdateAuthorRequest $request, $id)
     {
-        $author=Author::find($id);
         if($request->hasFile('avatar')){
             $file = $request->avatar;
             $path = $file->store('uploads/authors');
-            $author=new Author();
-            $author->name=$request->name;
-            $author->description=$request->description;
-            $author->slug=Str::slug($request->image);
-            $author->image = $path;
-            $author->save();
+            $author = Author::updateOrCreate(
+                ['id' => $id], 
+                ['name' => $request->name,'description' => $request->description, 'slug' => Str::slug($request->name),'image' => $path]
+            );
             return response()->json([
                 'success' => true,
                 'message' => "Cập nhật thành công!"
             ]);
         }
-        $author=new Author();
-        $author->name=$request->name;
-        $author->description=$request->description;
-        $author->slug=Str::slug($request->image);
-        $author->save();
+        $author = Author::updateOrCreate(
+            ['id' => $id], 
+            ['name' => $request->name, 'description' => $request->description, 'slug' => Str::slug($request->name)]
+        );
         return response()->json([
             'success' => true,
                 'message' => "Cập nhật thành công!"

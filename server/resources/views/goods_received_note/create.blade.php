@@ -4,6 +4,7 @@
 <script>
     
     $(document).ready(function () {
+        $('.select2').select2();
         $('#supplier').change(function(){
             $('#rq_supplier').val(this.value);
         });
@@ -60,10 +61,9 @@
 
     function  productBuildTableRow(){
         let total=0;
-        total = Number( $("#quantity").val()) * Number( $("#export_unit_price").val())
+        total = Number( $("#quantity").val()) * Number( $("#import_unit_price").val())
         var ret="<tr>" +
             "<td>" +`<input  name="book_id[]" value="${$("#book").find(':selected').val()}" type="hidden" /> `+ $("#book").find(':selected').text()+ "</td>" +
-            
             "<td>" + `<input name="quantity[]" value="${$("#quantity").val()}" type="hidden" /> `+ $("#quantity").val() + "</td>" +
             "<td>" + `<input  name="import_unit_price[]" value="${$("#import_unit_price").val()}" type="hidden" /> `+ $("#import_unit_price").val() + "</td>" +
             "<td>" + `<input  name="export_unit_price[]" value="${$("#export_unit_price").val()}" type="hidden" /> `+ $("#export_unit_price").val() + "</td>" +
@@ -104,10 +104,8 @@
         else {
             productAddToTable();
         }
-        
         // Clear form fields
         formClear();
-        
         // Focus to product name field
         $("#book").focus();
     }
@@ -127,9 +125,6 @@
         $("#updateButton").text("Add");
     }
 </script>
-
-
-
 @endsection
 
 @section('content')
@@ -152,12 +147,22 @@
     })
 </script>
 @endif
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Nhập hàng</h1>
+            </div>
+            <div class="col-sm-6">
+                <button class="btn btn-info">Import Excel</button>
+            </div>
+        </div>
+    </div>
+</section>
 <section class="content">
       <div class="container-fluid">
         <div class="row">
-          <!-- left column -->
           <div class="col-md-4">
-            <!-- general form elements -->
             <div class="card card-primary">
               <div class="card-header">
                 <h3 class="card-title">Phiếu nhập</h3>
@@ -165,8 +170,8 @@
                 <div class="card-body">
                   <div class="form-group">
                     <label for="exampleInputEmail1">Nhà cung cấp</label>
-                    <select id="supplier" name="name" class="form-control custom-select">
-                            <option selected disabled>Select one</option>
+                    <select id="supplier" name="name" class="form-control select2">
+                            <option selected disabled>Chọn nhà cung cấp</option>
                             @foreach($listSupplier as $items)
                                 <option value="{{$items->id}}">{{$items->name}}</option>
                             @endforeach
@@ -174,8 +179,8 @@
                   </div>
                   <div class="form-group">
                     <label for="exampleInputPassword1">Sách</label>
-                    <select id="book" name="name" class="form-control custom-select">
-                            <option selected disabled>Select one</option>
+                    <select id="book" name="name" class="form-control select2">
+                            <option selected disabled>Chọn sản phẩm</option>
                             @foreach($listbook as $items)
                                 <option value="{{$items->id}}" price="{{$items->unit_price}}">{{$items->name}}</option>
                             @endforeach
