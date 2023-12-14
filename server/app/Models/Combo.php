@@ -12,4 +12,6 @@ class Combo extends Model
     public function books(){
         return $this->belongsToMany(Book::class);
     }
+
+
 }

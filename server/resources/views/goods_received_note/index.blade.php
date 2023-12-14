@@ -23,6 +23,7 @@
                 { data: 'supplier_name', name: 'supplier.name' },
                 { data: 'admin_name', name: 'admin.name' },
                 { data: 'total',  render: $.fn.dataTable.render.number('.', 2, '') },
+                { data: 'formality', name: 'formality' },
                 { data: 'created_at', name: 'created_at' },
                 {
                     data: 'id', render: function (data, type, row) {
@@ -134,6 +135,7 @@
                                     <th>Tên nhà cung cấp</th>
                                     <th>Tên admin</th>
                                     <th>Tổng tiền</th>
+                                    <th>Hình thức</th>
                                     <th>Ngày lập</th>
                                     <th>Thao tác</th>
                                 </tr>
