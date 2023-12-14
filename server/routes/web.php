@@ -38,6 +38,10 @@ Route::middleware('auth')->group(function () {
     Route::prefix('combo')->group(function () {
         Route::name('combo.')->group(function () {
             Route::get('/', [ComboController::class, 'index'])->name('index');
+            Route::get('data-table', [ComboController::class, 'dataTable'])->name('data.table');
+            Route::get('data-table-detail/{id}', [ComboController::class, 'dataTableDetail'])->name('data.table.detail');
+            Route::get('create', [ComboController::class, 'create'])->name('create');
+            Route::post('store', [ComboController::class, 'store'])->name('store');
         });
     });
     //category-Thanh tuan
@@ -97,8 +101,6 @@ Route::middleware('auth')->group(function () {
             Route::get('edit/{id}', [GoodsReceivedNoteController::class, 'edit'])->name('edit');
             Route::post('update', [GoodsReceivedNoteController::class, 'update'])->name('update');
             Route::post('destroy/{id}', [GoodsReceivedNoteController::class, 'destroy'])->name('destroy');
-            // Route::get('trash', [GoodsReceivedNoteController::class,'trash'])->name('trash');
-            // Route::get('untrash/{id}', [GoodsReceivedNoteController::class, 'untrash'])->name('untrash');
         });
     });
     Route::prefix('order')->group(function () {

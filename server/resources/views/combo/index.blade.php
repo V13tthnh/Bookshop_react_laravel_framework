@@ -2,218 +2,136 @@
 
 @section('js')
 <script>
-    var count = 0;
     $(document).ready(function () {
-        $('.select2').select2();
-        //Hiển thị input nhập giảm giá
-        $('#discount').change(function(){
-            var id = $(this).find(':selected').val();
-            if(id == 1){
-                $('#percent_group').attr("hidden", false);
-                $('#price_group').attr("hidden", true);
-            }
-            if(id == 2){
-                $('#percent_group').attr("hidden", true);
-                $('#price_group').attr("hidden", false);
-            }
+        $('#showDetail').hide();
+        var table = $('#myTable').DataTable({
+            "responsive": true, "lengthChange": true, "autoWidth": false, //tùy chỉnh kích thước, phân trang
+            "paging": true, "ordering": true, "searching": true,
+            "pageLength": 10,
+            "dom": 'Bfrtip',
+            "buttons": [{ extend: "copy", text: "Sao chép" }, //custom các button
+            { extend: "csv", text: "Xuất csv" },
+            { extend: "excel", text: "Xuất Excel" },
+            { extend: "pdf", text: "Xuất PDF" },
+            { extend: "print", text: `<i class="fas fa-print"></i> In` },
+            { extend: "colvis", text: "Hiển thị cột" }],
+            "language": { search: "Tìm kiếm:" },
+            "lengthMenu": [10, 25, 50, 75, 100],
+            "ajax": { url: "{{route('combo.data.table')}}", method: "get", dataType: "json", },
+            "columns": [
+                { data: 'id', name: 'id' },
+                { data: 'name', name: 'name' },
+                { data: 'price', render: $.fn.dataTable.render.number('.', 2, '') },
+                { data: 'quantity', name: 'quantity' },
+                { data: 'image', render: function(data, type, row){ 
+                    if(data != null){
+                        return '<img src="'+data+'" alt="" sizes="40" srcset="" style="height:100px;width:100px">';
+                    }
+                    return "Không có ảnh";
+                    }},
+                {
+                    data: 'id', render: function (data, type, row) {
+                        return '<button class="btn btn-warning showDetail" value="' + data + '" data-toggle="modal" data-target="#modal-detail"><i class="nav-icon fa fa-eye"></i></button>';
+                    }
+                },
+            ],
         });
 
-        $('#showBtn').click(function(){
-            if($('#name').val() === null && $('#quantity').val() === null && $('#percent').val() === null){
-                Swal.fire({ title: "Cần nhập đầy đủ thông tin khuyến mãi!", icon: 'error', confirmButtonText: 'OK' });
-                return;
-            }
-            //Hiển thị tổng quan combo
-            let discount_total = total - (Number($('#price').val()) * count);
-            $('#combo_info').attr("hidden", false);
-            $('#show_combo_name').text($('#name').val());
-            $('#show_combo_discount').text("Giảm " + $('#price').val() + " đ cho " + count + " sản phẩm");
-            
-            $('#discount_total').text("Tổng giá trị combo sau giảm giá: " + discount_total + " đ");
-            //Gán giá trị cho input request
-            $('#combo_name').val($('#name').val());
-            $('#combo_quantity').val($('#quantity').val());
-            $('#combo_percent').val($('#price').val());
+        $('#myTable').on('click', '.showDetail', function(){
+            var id = $(this).val();
+            //alert(id);
+            $.ajax({
+                url: "combo/data-table-detail/" + id, method: "get", dataType: "json",
+            }).done(function(res){
+                //console.log(res.data);
+                res.data.map(item => {
+                    $('#tableDetail').append(
+                        `<tr> 
+                            <td>${item.pivot.combo_id}</td>
+                            <td>${item.name}</td>
+                        </tr>`);
+                });
+            })
+        });
+        
+        $('#modal-detail').on('hidden.bs.modal', function(){
+            $('#tableDetail tbody').text('');
         });
     });
-
-    var total = 0;
-    var price = 0;
-    function addToTable(){
-        count += 1;
-        if($("#book_id").val() === null){
-            Swal.fire({ title: "Chưa chọn sản phẩm", icon: 'error', confirmButtonText: 'OK' });
-            return;
-        }
-        if($('#productTable tbody').length === 0){
-            $("#productTable").append("<tbody></tbody>");
-        }
-        $('#combo_name').val($('#name').val());
-        $('#combo_quantity').val($('#quantity').val());
-        $('#combo_total').val(total);
-        let id = $('#productTable tbody tr').length + 1;
-        //Tính tổng tiền
-        total += Number($('#book_id').find(':selected').attr('price'));
-        price = Number(($('#book_id').find(':selected').attr('price'))); 
-
-        $('#productTable tbody').append(
-            "<tr>" +
-                "<td>" + id + "</td>" +
-                "<td>" + `<input class="book_id" name="book_id[]" value="${$("#book_id").find(':selected').val()}" type="hidden" /> `+ $("#book_id").find(':selected').text() + "</td>" +
-                "<td class='price1' >" + price + "</td>" +
-                `<input  class="total" value="${total}" type="hidden"/>`  +
-                "<td>" +
-                `<button type='button' onclick='productDelete(this)' class='btn btn-danger deleteBtn' value="${price}">` + `<i class="fas fa-trash"></i>` 
-                    +"Xóa" +"<span class='glyphicon glyphicon-remove' />" +
-                "</button>" +
-                "</td>" +
-            "</tr>"     
-        );
-        $('#total').val(total);
-        $('#total').text("Tổng giá trị combo: " + total + " đ");
-        $('#combo_total').val(total);
-        $("#book_id").val($("#book_id option:first").val());
-        console.log(document.getElementsByClassName("deleteBtn")[0].val);
-        
-    }   
-
-    function add(accumulator, a) {
-        return accumulator +  a;
-    }
-
-    function productDelete(ctl) {
-        //Trừ tiền của sản phẩm vừa xóa khỏi tổng tiền
-        total -= Number($('.deleteBtn').val());
-        $('#total').val(total);
-        $('#total').text("Tổng giá trị combo: " + total + " đ");    
-        $('#combo_total').val(total);
-        $(ctl).parents("tr").remove();  
-    }
 </script>
 @endsection
 
 @section('content')
+<div class="modal fade" id="modal-detail" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Chi tiết combo</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table id="tableDetail" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Sách</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="text" id="idDetail" hidden>
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Danh sách Combo</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <a type="button" href="{{route('combo.create')}}" class="btn btn-success" >
+                        <i class="nav-icon fas fa-edit"></i> Thêm Combo
+                    </a>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
 <section class="content">
     <div class="container-fluid">
         <div class="row">
-             <!-- left column -->
-             <div class="col-md-6">
-                <!-- general form elements -->
-                <div class="card card-info">
-                    <div class="card-header">
-                        <h3 class="card-title">Chọn sản phẩm</h3>
-                    </div>
+            <div class="col-12">
+                <div class="card">
                     <div class="card-body">
-                        <div class="form-group">
-                            <label for="exampleInputEmail1">Chọn sản phẩm</label>
-                            <select id="book_id" name="name" class="form-control select2">
-                                <option value=0 selected disabled>Chọn sản phẩm</option>
-                                @foreach($books as $item)
-                                <option value="{{$item->id}}" price="{{$item->unit_price}}">{{$item->name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <!-- /.card-body -->
-                    <div class="card-footer">
-                        <button onclick="addToTable()" class="btn btn-primary">Thêm</button>
-                    </div>
-                </div>
-                <!-- general form elements -->
-                <div class="card card-info" id="combo_info" hidden>
-                    <div class="card-header">
-                        <h3 class="card-title">Tổng quan combo</h3>
-                    </div>
-                    <div class="card-body">
-                        <h2 id="show_combo_name"></h2>
-                        <ul>
-                            <li id="show_combo_discount"></li>
-                            <li id="total"></li>
-                            <li id="discount_total"></li>
-                        </ul>
-                    </div>
-                  
-                </div>
-            </div>
-    
-                
-            <!-- left column -->
-            <div class="col-md-6">
-                <!-- general form elements -->
-                <div class="card card-warning">
-                    <div class="card-header">
-                        <h3 class="card-title">Khuyến mãi</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="form-group">
-                            <label for="exampleInputPassword1">Tên combo</label>
-                            <input type="text" id="name" class="form-control" placeholder="Tên combo" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="inputStatus">Số lượng</label>
-                            <input type="number" id="quantity" class="form-control" placeholder="Số lượng combo" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="inputStatus">Giảm giá theo</label>
-                            <select id="discount" class="form-control custom-select">
-                                <option selected disabled>Select one</option>
-                                <option value="1">Phần trăm mỗi sản phẩm</option>
-                                <option value="2">Giá trị giảm giá toàn bộ combo</option>
-                            </select>
-                        </div>
-                        <div class="form-group" id="percent_group" hidden>
-                            <label for="inputStatus">Giá trị khuyến mãi</label>
-                            <input type="number" id="percent" class="form-control" placeholder="Theo %" required>
-                        </div>
-                        <div class="form-group" id="price_group" hidden>
-                            <label for="inputStatus">Giá trị khuyến mãi</label>
-                            <input type="number" id="price" class="form-control" placeholder="Theo giá tiền" required>
-                        </div>
-                    </div>
-                    <!-- /.card-body -->
-                    <div class="card-footer">
-                        <button id="showBtn" class="btn btn-primary">Lưu</button>
-                    </div>
-                </div>
-            </div>
-            <!--/.col (left) -->
-             
-            <!--/.col (left) -->
-            <!-- right column -->
-            <div class="col-md-12">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-12  ">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h3 class="card-title">Danh sách sản phẩm</h3>
-                                </div>
-                                <form action="" method="post">
-                                    @csrf
-                                    <div class="card-body">
-                                        <table id="productTable" class="table table-bordered table-striped">
-                                            <thead>
-                                                <tr>
-                                                    <th>Id</th>
-                                                    <th>Tên sản phẩm</th>
-                                                    <th>Giá</th>
-                                                    <th>Thao tác</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
+                        <table id="myTable" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Tên</th>
+                                    <th>Tổng tiền</th>
+                                    <th>Số lượng</th>
+                                    <th>Ảnh</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
 
-                                            </tbody>
-                                        </table>
-                                        <input type="text" name="name" id="combo_name"  />
-                                        <input type="number" name="quantity" id="combo_quantity"  />
-                                        <input type="number" name="price" id="combo_total"  />
-                                        <input type="number" name="percent" id="combo_percent"  />
-                                        <div class="card-footer">
-                                            <button type="submit" class="btn btn-primary">Lưu combo</button>
-                                        </div>
-                                </form>
-                            </div>
-                        </div>
+                            </tbody>
+                        </table>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
 @endsection

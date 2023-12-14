@@ -3,38 +3,61 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
+use App\Models\Combo;
 use Illuminate\Http\Request;
+use Yajra\Datatables\Datatables;
 
 class ComboController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $books = Book::all();
-        return view('combo.index', compact('books'));
+        return view('combo.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    public function dataTable(){
+        $combos = Combo::all();
+        return Datatables::of($combos)->make(true);
+    }
+
+    public function dataTableDetail($id){
+        $combo = Combo::find($id);
+        return response()->json([
+            'data' => $combo->books
+        ]);
+    }
+
     public function create()
     {
-        //
+        $books = Book::all();
+        return view('combo.create', compact('books'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        //dd($request->hasFile('image'));
+        if($request->hasFile('image')){
+            $file = $request->image;
+            $path = $file->store('uploads/combos');
+            $combo = new Combo;
+            $combo->name = $request->name;
+            $combo->price = $request->price;
+            $combo->quantity = $request->quantity;
+            $combo->image = $path;
+            $combo->save();
+            $combo->books()->sync($request->book_ids);
+        }
+        else{
+            $combo = new Combo;
+            $combo->name = $request->name;
+            $combo->price = $request->price;
+            $combo->quantity = $request->quantity;
+            $combo->save();
+            $combo->books()->sync($request->book_ids);
+        }
+            
+       return redirect()->route('combo.index')->with('successMsg', "Thêm thành công!");
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         //

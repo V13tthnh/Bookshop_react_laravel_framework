@@ -44,7 +44,6 @@ class BookController extends Controller
 
     public function store(CreateUpdateBookRequest $request)
     {
-        //dd($request->category_ids);
         $book = new Book();
         $book->name = $request->name;
         $book->code = $request->code;
@@ -61,8 +60,16 @@ class BookController extends Controller
         $book->translator = $request->translator;
         $book->publisher_id = $request->publisher_id;
         $book->supplier_id = $request->supplier_id;
+        $book->book_type = $request->book_type;
         $book->e_book_price = null;
-        $book->link_pdf = null;
+        if($request->hasFile('link_pdf')){
+            $files = $request->link_pdf;
+            $path = $files->store('uploads/ebooks');
+            $book->link_pdf = $path;
+        }
+        else{
+            $book->link_pdf = null;
+        }
         $book->save();
         //Thêm vào bảng trung gian author_book
         if(isset($request->author_ids)){
@@ -87,7 +94,7 @@ class BookController extends Controller
                 $images->book_id = $book->id;
                 $images->save();
             }
-        }
+        } 
         return response()->json([
             'success' => true,
             'message' => "Thêm thành công!"
@@ -133,6 +140,16 @@ class BookController extends Controller
         $book->translator = $request->translator;
         $book->publisher_id = $request->publisher_id;
         $book->supplier_id = $request->supplier_id;
+        $book->book_type = $request->book_type;
+        $book->e_book_price = null;
+        if($request->hasFile('link_pdf')){
+            $files = $request->link_pdf;
+            $path = $files->store('uploads/ebooks');
+            $book->link_pdf = $path;
+        }
+        else{
+            $book->link_pdf = null;
+        }
         $book->save();
         //Thêm vào bảng trung gian author_book
         if(isset($request->author_ids)){

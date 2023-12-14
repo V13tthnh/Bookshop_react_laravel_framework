@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('image');
-            $table->unsignedBigInteger('book_id');
             $table->double('price');
             $table->bigInteger('quantity');
             $table->timestamps();

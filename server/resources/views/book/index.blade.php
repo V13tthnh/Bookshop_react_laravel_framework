@@ -5,14 +5,11 @@
     $(document).ready(function () {
         //Initialize Select2 Elements
         $('.select2').select2();
-        var idImage = 0;
         $(function () {
-            // Summernote
-            $('#storeDescription').summernote();
-            $('#updateDescription').summernote()
+            //Mô tả modal thêm                   //Mô tả update        
+            $('#storeDescription').summernote(); $('#updateDescription').summernote();
         });
-        //book datatable
-        var table = $('#myTable').DataTable({
+        var table = $('#myTable').DataTable({ //book datatable
             "responsive": true, "lengthChange": true, "autoWidth": false, //tùy chỉnh kích thước, phân trang
             "paging": true, "ordering": true, "searching": true,
             "pageLength": 10, "dom": 'Bfrtip',
@@ -28,16 +25,15 @@
             "columns": [
                 { data: 'id', name: 'id' },
                 { data: 'name', name: 'name' },
+                { data: 'book_type', render: function(data, type, row){
+                    return data === 0 ? "Sách in" : "Ebook";
+                } },
                 { data: 'unit_price', name: 'unit_price' },
                 { data: 'quantity', name: 'quantity' },
-                { data: 'publisher_name', name: 'publisher.name' },
                 { data: 'supplier_name', name: 'supplier.name' },
+                { data: 'publisher_name', name: 'publisher.name' },
                 { data: 'images', render: function(data, type, row){
-                    if(data != null){
-                        return '<img src="' + data[0]?.front_cover + '" alt="" sizes="40" srcset="" style="height:100px;width:100px">';
-                    }
-                    return "Không có ảnh";
-                     
+                    return data !== null ? '<img src="' + data[0]?.front_cover + '" alt="" sizes="40" srcset="" style="height:100px;width:100px">' : "Không có ảnh";
                 } },
                 {
                     data: 'id', render: function (data, type, row) {
@@ -50,14 +46,20 @@
         //clear create form
         function createFormClear(){
             $('#storeName').val(''); $('#storeYear').val(''); $('#storeSize').val('');
-            $('#storeCode').val('');  $('#storeLanguage').val(''); $('#storeNumPages').val('');
+            $('#storeCode').val('');  $('#storeLanguage').val($("#storeLanguage option:first").val()); $('#storeNumPages').val('');
             $('#storeTranslator').val('');  $('#storeWeight').val(''); $('#storeFormat').val('');
             $("#storePublisherId").val($("#storePublisherId option:first").val());
-            $("#storeCategoryId").val($("#storeCategoryId option:first").val());
-            $("#storeAuthorId").val($("#storeAuthorId option:first").val());
+            $('#storeBookType').val($("#storeBookType option:first").val())
+            $("#storePublisherId").trigger('change');
+            $("#storeSupplierId").val($("#storeSupplierId option:first").val())
+            $("#storeSupplierId").trigger('change');
+            $("#storeCategoryId").val('');
+            $("#storeCategoryId").trigger('change');
+            $("#storeAuthorId").val('');
+            $("#storeAuthorId").trigger('change');
             $('#storeDescription').summernote('code', "");
         }
-        //xử lý sự kiện ẩn modal edit thì reset các trường validate modal create
+        //xử lý sự kiện ẩn modal create thì reset các trường validate modal
         $('#modal-create').on('hidden.bs.modal', function(){
             $('#createFormValidate').removeClass('was-validated');
             $('.create_name_error').text('');
@@ -73,7 +75,7 @@
             $('.create_publisher_id_error').text('');
             $('.create_supplier_id_error').text('');
         });
-        //xử lý sự kiện ẩn modal edit thì reset các trường validate modal edit
+        //xử lý sự kiện ẩn modal create thì reset các trường validate modal 
         $('#modal-edit').on('hidden.bs.modal', function(){
             $('#listFile').text(''); //Sau khi tắt modal-edit thì danh sách hình ảnh về rỗng
             $('#updateFormValidate').removeClass('was-validated');
@@ -90,6 +92,7 @@
             $('.update_supplier_id_error').text('');
             $('.update_publisher_id_error').text('');
         });
+
         //xử lý sự kiêm thêm mới
         $('#addBtn').click(function (e) {
             e.preventDefault(); //Ngăn không cho sự kiện khác ngoài sự kiện click phát sinh
@@ -97,13 +100,15 @@
             var files = $('#storeImages')[0].files; //gán danh sách ảnh đã chọn vào biến files
             for (var i = 0; i < files.length; i++) { //Duyệt ảnh
                 formData.append('images[]', files[i]); //Thêm từng files[i] vào $request->images[]
-            }
-            formData.append("_token", "{{csrf_token()}}"); //@csrf
+            }   
+            var filePDF = $('#storeFilePdf')[0].files;
+            formData.append("link_pdf", filePDF[0]);
+            formData.append("_token", "{{csrf_token()}}"); //Thêm csrf
             formData.append("name", $('#storeName').val()); //$request->name = giá trị #storeName
             formData.append("code", $('#storeCode').val()); //$request->code = giá trị #storeCode
             formData.append("translator", $('#storeTranslator').val()); //...phía dưới tương tự
             formData.append("year", $('#storeYear').val());
-            formData.append("language", $('#storeLanguage').val());
+            formData.append("language", $('#storeLanguage').find(':selected').val());
             formData.append("weight", $('#storeWeight').val());
             formData.append("size", $('#storeSize').val());
             formData.append("num_pages", $('#storeNumPages').val());
@@ -113,6 +118,7 @@
             formData.append("category_ids", $('#storeCategoryId').val());
             formData.append("author_ids", $('#storeAuthorId').val());
             formData.append("description", $('#storeDescription').val());
+            formData.append("book_type", $('#storeBookType').val());
             $.ajax({ //Xử lý ajax sau khi thêm hoàn tất toàn bộ dữ liệu cần thiết vào formdata
                 url: "{{route('book.store')}}",
                 method: "post",
@@ -132,9 +138,9 @@
                 }
             }).fail(function(res){ //Hàm fail() đc gọi khi xử lý ajax bị bất cứ lỗi gì 
                 var errors = res.responseJSON.errors; //Gán mảng các đối tượng lỗi vào biến errors
-                //console.log(errors); //có thể console ra để xem lỗi
+                console.log(errors); //có thể console ra để xem lỗi
                 $('#createFormValidate').addClass('was-validated'); //Thêm lớp css was-validate của bootstrap để hiển thị lỗi trên input
-                $.each(errors, function(key, value){  //Duyệt mảng errors và gán các giá trị lỗi phía dưới các trường input
+                $.each(res.responseJSON.errors, function(key, value){  //Duyệt mảng errors và gán các giá trị lỗi phía dưới các trường input
                     $('.create_' + key + '_error').text(value[0]);
                     $('.create_' + key + '_error').text(value[1]);
                     $('.create_' + key + '_error').text(value[2]);
@@ -177,6 +183,7 @@
                 $('#updateLanguage').val(res.data.language); $('#updateWeight').val(res.data.weight);
                 $('#updateSize').val(res.data.size); $('#updateNumPages').val(res.data.num_pages); 
                 $('#updateFormat').val(res.data.format); 
+                $('#updateBookType').val(res.data.book_type); 
                 //lấy các giá trị của publisher và gán vào select2
                 $('#updatePublisherId').val(res.data.publisher_id);
                 $('#updatePublisherId').trigger('change');  
@@ -218,6 +225,8 @@
             for (var i = 0; i < files.length; i++) {
                 formData.append('updateImages[]', files[i]);
             }
+            var filePDF = $('#updateFilePdf')[0].files;
+            formData.append("link_pdf", filePDF[0]);
             formData.append("_token", "{{csrf_token()}}");
             formData.append("name", $('#updateName').val());
             formData.append("code", $('#updateCode').val());
@@ -233,6 +242,7 @@
             formData.append("category_ids", $('#updateCategoryId').val());
             formData.append("author_ids", $('#updateAuthorId').val());
             formData.append("description", $('#updateDescription').val());
+            formData.append("book_type", $('#updateBookType').val());
             $.ajax({ //xử lý cập nhật
                 url: "book/update/" + id,
                 method: "post", 
@@ -292,7 +302,6 @@
                     });
                 }
             });
-           
         });
     });
 </script>
@@ -326,7 +335,7 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="form-group">
-                                        <label for="storeName">Tên</label>
+                                        <label>Tên</label>
                                         <input type="text" id="storeName" class="form-control" placeholder="Tên sách">
                                         <div class="text-danger create_name_error"></div>
                                     </div>
@@ -337,27 +346,26 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="storeTranslator">Người dịch</label>
-                                        <input type="text" id="storeTranslator" class="form-control"
-                                            placeholder="Người dịch">
+                                        <input type="text" id="storeTranslator" class="form-control" placeholder="Người dịch">
                                         <div class="text-danger create_translator_error"></div>
                                     </div>
-
                                     <div class="form-group">
                                         <label for="storeYear">Năm xuất bản</label>
-                                        <input type="number" id="storeYear" class="form-control"
-                                            placeholder="Năm xuất bản">
+                                        <input type="number" id="storeYear" class="form-control" placeholder="Năm xuất bản">
                                         <div class="text-danger create_year_error"></div>
                                     </div>
                                     <div class="form-group">
                                         <label for="storeLanguage">Ngôn ngữ</label>
-                                        <input type="text" id="storeLanguage" class="form-control"
-                                            placeholder="Ngôn ngữ">
-                                        <div class="text-danger create_language_error"></div>
+                                        <select id="storeLanguage" class="form-control custom-select" style="width: 100%;">
+                                            <option value="Tiếng Việt" selected>Tiếng Việt</option>
+                                            <option value="Tiếng Anh">Tiếng Anh</option>
+                                            <option value="Tiếng Nhật">Tiếng Nhật</option>
+                                        </select>
+                                        <div class="text-danger create_language_id_error"></div>
                                     </div>
                                     <div class="form-group">
                                         <label for="storeWeight">Trọng lượng</label>
-                                        <input type="number" id="storeWeight" class="form-control"
-                                            placeholder="Trọng lượng">
+                                        <input type="number" id="storeWeight" class="form-control" placeholder="Trọng lượng">
                                         <div class="text-danger create_weight_error"></div>
                                     </div>
                                     <div class="form-group">
@@ -367,14 +375,12 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="storeNumPages">Số trang</label>
-                                        <input type="number" id="storeNumPages" class="form-control"
-                                            placeholder="Số trang">
+                                        <input type="number" id="storeNumPages" class="form-control" placeholder="Số trang">
                                         <div class="text-danger create_num_pages_error"></div>
                                     </div>
                                     <div class="form-group">
                                         <label for="storeFormat">Hình thức</label>
-                                        <input type="text" id="storeFormat" class="form-control"
-                                            placeholder="Hình thức">
+                                        <input type="text" id="storeFormat" class="form-control" placeholder="Hình thức">
                                         <div class="text-danger create_format_error"></div>
                                     </div>
                                 </div>
@@ -407,8 +413,8 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Nhà cung cấp</label>
-                                        <select id="storeSupplierId" class="form-control select2" data-placeholder="Chọn nhà xuất bản" style="width: 100%;">
-                                            <option value="0" selected disabled>Chọn 1 NXB</option>
+                                        <select id="storeSupplierId" class="form-control select2" data-placeholder="Chọn nhà cung cấp" style="width: 100%;">
+                                            <option value="0" selected disabled>Chọn 1 NCC</option>
                                             @forelse($listSupplier as $item)
                                             <option value="{{$item->id}}">{{$item->name}}</option>
                                             @empty
@@ -446,6 +452,20 @@
                                         <textarea id="storeDescription" type="text" name="description"
                                             class="form-control"></textarea>
                                         <div class="text-danger create_description_error"></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Loại sách</label>
+                                        <select id="storeBookType" class="form-control custom-select" style="width: 100%;">
+                                            <option value="0" selected>Sách in</option>
+                                            <option value="1">Ebook</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" id="store_pdf">
+                                        <label for="storeImage">Link PDF Ebook</label>
+                                        <div class="custom-file">
+                                        <input type="file" accept=".pdf*" id="storeFilePdf" class="custom-file-input">
+                                        <label class="custom-file-label" for="customFile">Choose file</label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -512,7 +532,7 @@
                                 <div class="card-body">
                                 <input type="text" id="updateId" class="form-control" hidden>
                                     <div class="form-group">
-                                        <label for="storeName">Tên</label>
+                                        <label>Tên</label>
                                         <input type="text" id="updateName" class="form-control" placeholder="Tên sách">
                                         <div class="text-danger update_name_error"></div>
                                     </div>
@@ -534,10 +554,15 @@
                                         <div class="text-danger update_year_error"></div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="storeLanguage">Ngôn ngữ</label>
-                                        <input type="text" id="updateLanguage" class="form-control"
-                                            placeholder="Ngôn ngữ">
-                                        <div class="text-danger update_language_error"></div>
+                                        <div class="form-group">
+                                            <label for="storeLanguage">Ngôn ngữ</label>
+                                            <select id="updateLanguage" class="form-control custom-select" style="width: 100%;">
+                                                <option value="Tiếng Việt" selected>Tiếng Việt</option>
+                                                <option value="Tiếng Anh">Tiếng Anh</option>
+                                                <option value="Tiếng Nhật">Tiếng Nhật</option>
+                                            </select>
+                                            <div class="text-danger update_language_error"></div>
+                                        </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="storeWeight">Trọng lượng</label>
@@ -591,7 +616,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Nhà cung cấp</label>
-                                        <select id="updateSupplierId" class="form-control select2" data-placeholder="Chọn nhà xuất bản" style="width: 100%;">
+                                        <select id="updateSupplierId" class="form-control select2" data-placeholder="Chọn nhà cung cấp" style="width: 100%;">
                                             <option value="0" selected disabled>Chọn 1 NCC</option>
                                             @forelse($listSupplier as $item)
                                             <option value="{{$item->id}}">{{$item->name}}</option>
@@ -630,6 +655,20 @@
                                         <textarea id="updateDescription" type="text" name="description"
                                             class="form-control"></textarea>
                                         <div class="text-danger update_description_error"></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Loại sách</label>
+                                        <select id="updateBookType" class="form-control custom-select" style="width: 100%;">
+                                            <option value="0" selected>Sách in</option>
+                                            <option value="1">Ebook</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" id="update_pdf">
+                                        <label for="storeImage">Link PDF Ebook</label>
+                                        <div class="custom-file">
+                                        <input type="file" accept=".pdf*" id="updateFilePdf" class="custom-file-input">
+                                        <label class="custom-file-label" for="customFile">Choose file</label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -705,6 +744,7 @@
                                 <tr>
                                     <th>Id</th>
                                     <th>Tên</th>
+                                    <th>Loại</th>
                                     <th>Giá</th>
                                     <th>Số lượng</th>
                                     <th>Nhà cung cấp</th>
@@ -714,7 +754,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-
                             </tbody>
                         </table>
                     </div>

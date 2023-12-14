@@ -14,7 +14,7 @@ class CreateUpdateCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|min:4|max:50|unique:categories,id,'.$this->id.',id',
+            'name' => 'required|min:4|max:50|unique:categories,name,'.$this->id.',id',
             'description' => 'required|min:50',
         ];
     }

@@ -23,10 +23,6 @@ return new class extends Migration
             $table->foreign('author_id')->references('id')->on('authors')->onDelete('cascade');
         });
 
-        Schema::table('combos', function (Blueprint $table) {
-            $table->foreign('book_id')->references('id')->on('books')->onDelete('cascade');
-        });
-
         Schema::table('book_combo', function (Blueprint $table) {
             $table->foreign('book_id')->references('id')->on('books')->onDelete('cascade');
             $table->foreign('combo_id')->references('id')->on('combos')->onDelete('cascade');
