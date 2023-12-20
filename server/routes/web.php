@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CategoryController;
@@ -16,6 +17,7 @@ Route::get('/admin/login', [AdminController::class, 'login'])->name('admin.login
 Route::post('/admin/login-handler', [AdminController::class, 'loginHandler'])->name('admin.loginHandler');
 
 Route::middleware('auth')->group(function () {
+    Route::get('dashboard', [DashboardController::class, 'overview'])->name('dashboard.index');
     //admin-Viet thanh
     Route::prefix('admin')->group(function () {
         Route::name('admin.')->group(function () {
@@ -50,6 +52,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/', [CategoryController::class, 'index'])->name('index');
             Route::get('data-table', [CategoryController::class, 'dataTable'])->name('data.table');
             Route::get('create', [CategoryController::class, 'create'])->name('create');
+            Route::post('import-categories', [CategoryController::class, 'import'])->name('import');
             Route::post('store', [CategoryController::class, 'store'])->name('store');
             Route::get('edit/{id}', [CategoryController::class, 'edit'])->name('edit');
             Route::post('update/{id}', [CategoryController::class, 'update'])->name('update');
@@ -114,6 +117,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/', [BookController::class, 'index'])->name('index');
             Route::get('data-table', [BookController::class, 'dataTable'])->name('data.table');
             Route::get('create', [BookController::class, 'create'])->name('create');
+            Route::post('import-books', [BookController::class, 'import'])->name('import');
             Route::post('store', [BookController::class, 'store'])->name('store');
             Route::get('edit/{id}', [BookController::class, 'edit'])->name('edit');
             Route::post('update/{id}', [BookController::class, 'update'])->name('update');

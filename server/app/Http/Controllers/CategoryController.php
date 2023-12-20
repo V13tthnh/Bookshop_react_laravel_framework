@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\CategoriesImport;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Requests\CreateUpdateCategoryRequest;
 use Yajra\Datatables\Datatables;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CategoryController extends Controller
 {
@@ -25,9 +27,19 @@ class CategoryController extends Controller
         return view("category.create");
     }
 
+    public function import(Request $request)
+    {
+        if ($request->hasFile('file_excel')) {
+            $path = $request->file('file_excel')->getRealPath();
+            Excel::import(new CategoriesImport, $path);
+            return back()->with('successMsg', 'Nhập thành công!');
+        }
+        return back()->with('errorMsg', 'Nhập không thành công!');
+    }
+
     public function store(CreateUpdateCategoryRequest $rq)
     {
-        $categories = Category::updateOrCreate(['name' => $rq->name],['description' => $rq->description]);
+        $categories = Category::updateOrCreate(['name' => $rq->name], ['description' => $rq->description]);
         return response()->json([
             'success' => true,
             'message' => "Thêm thành công!",
@@ -57,7 +69,7 @@ class CategoryController extends Controller
                 'message' => "Tên danh mục đã tồn tại!"
             ]);
         }
-        $categories = Category::updateOrCreate(['id' => $id],['name' => $rq->name, 'description' => $rq->description]);
+        $categories = Category::updateOrCreate(['id' => $id], ['name' => $rq->name, 'description' => $rq->description]);
         return response()->json([
             'success' => true,
             'message' => "Cập nhật thành công!"
@@ -79,7 +91,8 @@ class CategoryController extends Controller
         return view('category.trash');
     }
 
-    public function dataTableTrash(){
+    public function dataTableTrash()
+    {
         $trash = Category::onlyTrashed()->get();
         return Datatables::of($trash)->make(true);
     }

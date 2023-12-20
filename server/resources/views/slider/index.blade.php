@@ -329,7 +329,7 @@
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-create">
+                    <button type="button" class="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create">
                         <i class="nav-icon fa fa-plus"></i> Thêm
                     </button>
                     <a href="{{route('slider.trash')}}" class="btn btn-warning">

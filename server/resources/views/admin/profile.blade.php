@@ -1,5 +1,44 @@
 @extends('layout')
 
+@section('js')
+<script>
+    $(document).ready(function() {
+        $('#updateInfoBtn').click(function(e) {
+            e.preventDefault();
+            var id = $('#adminId').val();
+            var file = $('#avatar')[0].files;
+            var formData = new FormData();
+            formData.append('_token', "{{csrf_token()}}");
+            formData.append('name', $('#name').val());
+            formData.append('address', $('#address').val());
+            formData.append('phone', $('#phone').val());
+            formData.append('email', $('#email').val());
+            formData.append('role', $('#role').find(':selected').val());
+            formData.append('avatar', file[0]);
+            $.ajax({
+                url: "/admin/update/" + id,
+                method: "post",
+                data: formData;
+                contentType: false,
+                processData: false,
+            }).done(function(res) {
+                if (res.success) {
+                    Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' }); 
+                }
+                if (!res.success) {
+                    Swal.fire({ title: res.message, icon: 'error', confirmButtonText: 'OK' });
+                    return;
+                }
+            })
+        });
+        $('#changePasswordBtn').click(function(e) {
+            e.preventDefault();
+            alert("abc");
+        });
+    });
+</script>
+@endsection
+
 @section('content')
 <section class="content-header">
     <div class="container-fluid">
@@ -10,7 +49,6 @@
         </div>
     </div>
 </section>
-
 <!-- Main content -->
 <section class="content">
     <div class="container-fluid">
@@ -38,16 +76,12 @@
                         <p class="text-muted text-center">Sale</p>
                         @endif
                     </div>
-                    <!-- /.card-body -->
                 </div>
-                <!-- /.card -->
 
-                <!-- About Me Box -->
                 <div class="card card-primary">
                     <div class="card-header">
                         <h3 class="card-title">Thông tin cá nhân</h3>
                     </div>
-                    <!-- /.card-header -->
                     <div class="card-body">
                         <strong><i class="fas fa-envelope mr-1"></i>Email</strong>
                         <p class="text-muted">{{Auth::user()->email}}</p>
@@ -60,69 +94,96 @@
                         <p class="text-muted">{{Auth::user()->phone}}</p>
                         <hr>
                     </div>
-                    <!-- /.card-body -->
                 </div>
-                <!-- /.card -->
             </div>
             @endauth
-            <!-- /.col -->
             <div class="col-md-9">
                 <div class="card">
                     <div class="card-header p-2">
                         <ul class="nav nav-pills">
-                            <li class="nav-item"><a class="nav-link active" href="#update" data-toggle="tab">Cập nhật</a>
+                            <li class="nav-item"><a class="nav-link active" href="#update" data-toggle="tab">Cập nhật
+                                    thông tin</a>
                             </li>
                             <li class="nav-item"><a class="nav-link" href="#resetPwd" data-toggle="tab">Đổi mật khẩu</a>
                             </li>
                         </ul>
-                    </div><!-- /.card-header -->
+                    </div>
                     <div class="card-body">
                         <div class="tab-content">
                             <div class="active tab-pane" id="update">
-                                <form class="form-horizontal">
+                                <form id="updateInfoForm">
+                                    <input type="number" class="form-control" value="{{Auth::user()->id}}" id="adminId"
+                                        hidden>
                                     <div class="form-group row">
-                                        <label for="inputName" class="col-sm-2 col-form-label">Name</label>
+                                        <label for="inputName" class="col-sm-2 col-form-label">Họ Tên</label>
                                         <div class="col-sm-10">
-                                            <input type="email" class="form-control" id="inputName" placeholder="Name">
+                                            <input type="text" class="form-control" value="{{Auth::user()->name}}"
+                                                id="name" placeholder="Nhập họ tên">
                                         </div>
+                                        <div class="text-danger name_error"></div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
                                         <div class="col-sm-10">
-                                            <input type="email" class="form-control" id="inputEmail"
-                                                placeholder="Email">
+                                            <input type="email" class="form-control" id="email"
+                                                value="{{Auth::user()->email}}" placeholder="Email">
                                         </div>
+                                        <div class="text-danger email_error"></div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="inputName2" class="col-sm-2 col-form-label">Address</label>
+                                        <label for="inputName2" class="col-sm-2 col-form-label">Địa chỉ</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="inputName2" placeholder="Name">
+                                            <input type="text" class="form-control" id="address"
+                                                value="{{Auth::user()->address}}" placeholder="Nhập địa chỉ">
                                         </div>
+                                        <div class="text-danger address_error"></div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="inputSkills" class="col-sm-2 col-form-label">Phone</label>
+                                        <label for="inputSkills" class="col-sm-2 col-form-label">Số điện thoại</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="inputSkills" placeholder="Skills">
+                                            <input type="text" class="form-control" id="phone"
+                                                value="{{Auth::user()->phone}}" placeholder="Nhập SĐT">
                                         </div>
+                                        <div class="text-danger password_error"></div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="inputProjectLeader" class="col-sm-2 col-form-label">Ảnh</label>
+                                        <div class="col-sm-10">
+                                            <input accept="image/*" type='file' id="avatar" class="form-control" />
+                                        </div>
+                                        <div class="text-danger avatar_error"></div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="inputStatus" class="col-sm-2 col-form-label">Quyền</label>
+                                        <div class="col-sm-10">
+                                            <select name="role" id="role" class="form-control custom-select">
+                                                <option selected disabled>Select one</option>
+                                                <option value="1">Super admin</option>
+                                                <option value="2">Admin</option>
+                                                <option value="3">Sales Agent</option>
+                                            </select>
+                                        </div>
+                                        <div class="text-danger role_error"></div>
                                     </div>
                                     <div class="form-group row">
                                         <div class="offset-sm-2 col-sm-10">
-                                            <button type="submit" class="btn btn-danger">Lưu</button>
+                                            <button id="updateInfoBtn" class="btn btn-danger">Lưu</button>
                                         </div>
                                     </div>
                                 </form>
                             </div>
                             <div class="tab-pane" id="resetPwd">
-                                <form class="form-horizontal">
+                                <form id="changePasswordForm">
                                     <div class="form-group row">
-                                        <label for="inputName" class="col-sm-2 col-form-label">New password</label>
+                                        <label for="inputName" class="col-sm-2 col-form-label">Mật khẩu mới</label>
                                         <div class="col-sm-10">
-                                            <input type="email" class="form-control" id="inputName" placeholder="Mật khẩu mới">
+                                            <input type="email" class="form-control" id="inputName"
+                                                placeholder="Nhập mật khẩu">
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <div class="offset-sm-2 col-sm-10">
-                                            <button type="submit" class="btn btn-danger">Đổi mật khẩu</button>
+                                            <button id="changePasswordBtn" class="btn btn-danger">Đổi mật khẩu</button>
                                         </div>
                                     </div>
                                 </form>
