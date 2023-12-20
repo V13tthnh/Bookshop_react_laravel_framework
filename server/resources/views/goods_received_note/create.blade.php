@@ -4,6 +4,7 @@
 <script>
     
     $(document).ready(function () {
+        $('.select2').select2();
         $('#supplier').change(function(){
             $('#rq_supplier').val(this.value);
         });
@@ -15,12 +16,19 @@
     });
 
     function productAddToTable() {
+        if($('#supplier').find(':selected').val() === "0"){
+            Swal.fire({ title: "Chưa chọn nhà cung cấp", icon: 'error', confirmButtonText: 'OK' });
+            return;
+        }
+        if($('#book').find(':selected').val() === "0"){
+            Swal.fire({ title: "Chưa chọn sản phẩm", icon: 'error', confirmButtonText: 'OK' });
+            return;
+        }
         // First check if a <tbody> tag exists, add one if not
         if ($("#example1 tbody").length == 0) {
             $("#example1").append("<tbody></tbody>");
             //$("#table tbody").append(productBuildTableRow(_nextId));
         }
-
         let total=0;
         total= Number( $("#quantity").val()) * Number( $("#import_unit_price").val());
         let id = $('#example1 tbody tr').length + 1;
@@ -53,6 +61,7 @@
 
     function formClear() {
         $("#book").val($("#book option:first").val());
+        $('#book').trigger('change');
         $("#quantity").val("");
         $("#export_unit_price").val("");
         $("#import_unit_price").val("");
@@ -60,10 +69,9 @@
 
     function  productBuildTableRow(){
         let total=0;
-        total = Number( $("#quantity").val()) * Number( $("#export_unit_price").val())
+        total = Number( $("#quantity").val()) * Number( $("#import_unit_price").val())
         var ret="<tr>" +
             "<td>" +`<input  name="book_id[]" value="${$("#book").find(':selected').val()}" type="hidden" /> `+ $("#book").find(':selected').text()+ "</td>" +
-            
             "<td>" + `<input name="quantity[]" value="${$("#quantity").val()}" type="hidden" /> `+ $("#quantity").val() + "</td>" +
             "<td>" + `<input  name="import_unit_price[]" value="${$("#import_unit_price").val()}" type="hidden" /> `+ $("#import_unit_price").val() + "</td>" +
             "<td>" + `<input  name="export_unit_price[]" value="${$("#export_unit_price").val()}" type="hidden" /> `+ $("#export_unit_price").val() + "</td>" +
@@ -91,11 +99,9 @@
         $("#quantity").val($(cols[2]).text());
         $("#import_unit_price").val($(cols[3]).text());
         $("#export_unit_price").val($(cols[4]).text());
-        
         // Change Update Button Text
         $("#updateButton").text("Update");
     }
-
 
     function productUpdate() {
         if ($("#updateButton").text() == "Update") {
@@ -104,60 +110,42 @@
         else {
             productAddToTable();
         }
-        
         // Clear form fields
         formClear();
-        
         // Focus to product name field
         $("#book").focus();
     }
-
     
     function productUpdateInTable() {
         // Add changed product to table
         $(_row).after(productBuildTableRow());  
-        
         // Remove old product row
         $(_row).remove();
-        
         // Clear form fields
         formClear();
-        
         // Change Update Button Text
         $("#updateButton").text("Add");
     }
 </script>
-
-
-
 @endsection
 
 @section('content')
-@if(session('errorMsg'))
-<script>
-    Swal.fire({
-        title: '{{session('errorMsg')}}',
-        icon: 'error',
-        confirmButtonText: 'OK'
-    })
-</script>
-@endif
-
-@if(session('successMsg'))
-<script>
-    Swal.fire({
-        title: '{{session('successMsg')}}',
-        icon: 'success',
-        confirmButtonText: 'OK'
-    })
-</script>
-@endif
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Nhập hàng</h1>
+            </div>
+            <div class="col-sm-6">
+                <button class="btn btn-info">Import Excel</button>
+            </div>
+        </div>
+    </div>
+</section>
 <section class="content">
       <div class="container-fluid">
         <div class="row">
-          <!-- left column -->
           <div class="col-md-4">
-            <!-- general form elements -->
             <div class="card card-primary">
               <div class="card-header">
                 <h3 class="card-title">Phiếu nhập</h3>
@@ -165,8 +153,8 @@
                 <div class="card-body">
                   <div class="form-group">
                     <label for="exampleInputEmail1">Nhà cung cấp</label>
-                    <select id="supplier" name="name" class="form-control custom-select">
-                            <option selected disabled>Select one</option>
+                    <select id="supplier" name="name" class="form-control select2">
+                            <option selected disabled value="0">Chọn nhà cung cấp</option>
                             @foreach($listSupplier as $items)
                                 <option value="{{$items->id}}">{{$items->name}}</option>
                             @endforeach
@@ -174,12 +162,12 @@
                   </div>
                   <div class="form-group">
                     <label for="exampleInputPassword1">Sách</label>
-                    <select id="book" name="name" class="form-control custom-select">
-                            <option selected disabled>Select one</option>
+                    <select id="book" name="name" class="form-control select2">
+                            <option selected disabled value="0">Chọn sản phẩm</option>
                             @foreach($listbook as $items)
                                 <option value="{{$items->id}}" price="{{$items->unit_price}}">{{$items->name}}</option>
                             @endforeach
-                        </select>
+                    </select>
                   </div>
                   <div class="form-group">
                     <label for="exampleInputPassword1">Số lượng</label>
@@ -193,15 +181,14 @@
                     <label for="exampleInputPassword1">Giá bán</label>
                     <input type="number" id="export_unit_price" class="form-control" placeholder="Giá bán" required>
                   </div>
+                  
                 </div>
-                <!-- /.card-body -->
                 <div class="card-footer">
                   <button onclick="productAddToTable()" class="btn btn-primary">Thêm</button>
                 </div>
             </div>
           </div>
-          <!--/.col (left) -->
-          <!-- right column -->
+
     <div class="col-md-8    ">
     <div class="container-fluid">
         <div class="row">
@@ -232,11 +219,17 @@
                         </table>
                     <input type="number" id="rq_supplier" name="supplier" hidden/>
                     <div class="card-footer">
-                        <button type="submit" class="btn btn-primary">Lưu</button>
+                        <select id="formality" name="formality" class="form-control custom-select">
+                                <option selected disabled value="0">Hình thức thanh toán</option>
+                                <option value="Chuyển khoản">Chuyển khoản</option>
+                                <option value="Tiền mặt">Tiền mặt</option>
+                        </select>
+                       
                     </div>
+                    <button type="submit" class="btn btn-primary mt-3">Lưu</button>
             </form>
             </div>
         </div>
-    </div><!-- /.container-fluid -->
+    </div>
 </section>
 @endsection

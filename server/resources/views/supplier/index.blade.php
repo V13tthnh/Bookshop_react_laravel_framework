@@ -35,8 +35,23 @@
             $('#storePhone').val('');
             $('#storeDescription').val('');
         }
+        $('#modal-create').on('hidden.bs.modal', function(){
+            $('#createFormValidate').removeClass('was-validated');
+            $('.create_name_error').text('');
+            $('.create_address_error').text('');
+            $('.create_phone_error').text('');
+            $('.create_description_error').text('');
+        });
+        $('#modal-edit').on('hidden.bs.modal', function(){
+            $('#updateFormValidate').removeClass('was-validated');
+            $('.update_name_error').text('');
+            $('.update_address_error').text('');
+            $('.update_phone_error').text('');
+            $('.update_description_error').text('');
+        });
         //store
-        $('#addBtn').click(function(){
+        $('#addBtn').click(function(e){
+            e.preventDefault();
             var name = $('#storeName').val();
             var address = $('#storeAddress').val();
             var phone = $('#storePhone').val();
@@ -62,7 +77,17 @@
                     Swal.fire({ title: res.message, icon: 'error', confirmButtonText: 'OK' });
                     return;
                 }
-            });
+            }).fail(function(res){
+                var errors = res.responseJSON.errors;
+                console.log(errors);
+                $('#createFormValidate').addClass('was-validated');
+                $.each(errors, function(key, value){
+                    $('.create_' + key + '_error').text(value[0]);
+                    $('.create_' + key + '_error').text(value[0]);
+                    $('.create_' + key + '_error').text(value[0]);
+                    $('.create_' + key + '_error').text(value[0]);
+                });
+            });;
         });
         //edit
         $('#myTable').on('click', '.editBtn', function(){
@@ -79,7 +104,8 @@
             });
         });
         //update
-        $('#updateBtn').click(function(){
+        $('#updateBtn').click(function(e){
+            e.preventDefault();
             var id = $('#updateId').val();
             var name = $('#updateName').val();
             var address = $('#updateAddress').val();
@@ -105,25 +131,46 @@
                     Swal.fire({ title: res.message, icon: 'error', confirmButtonText: 'OK' });
                     return;
                 }
+            }).fail(function(res){
+                var errors = res.responseJSON.errors;
+                console.log(errors);
+                $('#updateFormValidate').addClass('was-validated');
+                $.each(errors, function(key, value){
+                    $('.update_' + key + '_error').text(value[0]);
+                    $('.update_' + key + '_error').text(value[0]);
+                    $('.update_' + key + '_error').text(value[0]);
+                    $('.update_' + key + '_error').text(value[0]);
+                });
             });
         });
         //delete
         $('#myTable').on('click', '.deleteBtn', function(){
             var id = $(this).val();
-            $.ajax({
-                url: "supplier/destroy/" + id,
-                method: "post",
-                data:{
-                    "_token" : "{{csrf_token()}}",
-                }
-            }).done(function(res){
-                if (res.success) {
-                    Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
-                    table.ajax.reload(); //refresh bảng 
-                }
-                if(!res.success) {
-                    Swal.fire({ title: res.message, icon: 'error', confirmButtonText: 'OK' });
-                    return;
+            Swal.fire({
+                title: 'Bạn chắc chắn chứ?',
+                text: 'Đừng lo, bạn vẫn có thể khôi phục lại dữ liệu đã xóa!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Đồng ý',
+                cancelButtonText: 'Hủy bỏ'
+            }).then(result => {
+                if(result.value){
+                    $.ajax({
+                        url: "supplier/destroy/" + id,
+                        method: "post",
+                        data:{
+                            "_token" : "{{csrf_token()}}",
+                        }
+                    }).done(function(res){
+                        if (res.success) {
+                            Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
+                            table.ajax.reload(); //refresh bảng 
+                        }
+                        if(!res.success) {
+                            Swal.fire({ title: res.message, icon: 'error', confirmButtonText: 'OK' });
+                            return;
+                        }
+                    });
                 }
             });
         });
@@ -149,28 +196,34 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
+            <form action="" id="createFormValidate">
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="inputName">Tên</label>
                         <input type="text" id="storeName" class="form-control" required>
+                        <div class="text-danger create_name_error"></div>
                     </div>
                     <div class="form-group">
                         <label for="inputProjectLeader">Địa chỉ</label>
                         <input type="text" id="storeAddress" class="form-control" required>
+                        <div class="text-danger create_address_error"></div>
                     </div>
                     <div class="form-group">
                         <label for="inputProjectLeader">Điện thoại</label>
                         <input type="text" id="storePhone" class="form-control" required>
+                        <div class="text-danger create_phone_error"></div>
                     </div>
                     <div class="form-group">
                         <label for="inputProjectLeader">Mô tả</label required>
                         <textarea id="storeDescription" cols="30" rows="10"></textarea>
+                        <div class="text-danger create_description_error"></div>
                     </div>
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
                     <button type="button" class="btn btn-primary" id="addBtn">Lưu</button>
                 </div>
+            </form>
         </div>
     </div>
 </div>
@@ -184,31 +237,35 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-           
+                <form action="" id="updateFormValidate">
                 <input type="text"  id="updateId" hidden>
                 <div class="modal-body">
                 <div class="form-group">
                         <label for="inputName">Tên</label>
                         <input type="text" id="updateName" class="form-control" required>
+                        <div class="text-danger update_name_error"></div>
                     </div>
                     <div class="form-group">
                         <label for="inputProjectLeader">Địa chỉ</label>
                         <input type="text" id="updateAddress" class="form-control" required>
+                        <div class="text-danger update_address_error"></div>
                     </div>
                     <div class="form-group">
                         <label for="inputProjectLeader">Điện thoại</label>
                         <input type="text" id="updatePhone" class="form-control" required>
+                        <div class="text-danger update_phone_error"></div>
                     </div>
                     <div class="form-group">
                         <label for="inputProjectLeader">Mô tả</label required>
                         <textarea id="updateDescription" cols="30" rows="10"></textarea>
+                        <div class="text-danger update_description_error"></div>
                     </div>
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
                     <button type="button" class="btn btn-primary" id="updateBtn">Lưu thay đổi</button>
                 </div>
-            
+            </form>
         </div>
     </div>
 </div>

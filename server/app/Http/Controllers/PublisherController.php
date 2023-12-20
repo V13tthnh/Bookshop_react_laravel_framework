@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Publisher;
 use Yajra\Datatables\Datatables;
+use App\Http\Requests\CreateUpdatePublisherRequest;
 class PublisherController extends Controller
 {
     
@@ -18,26 +19,14 @@ class PublisherController extends Controller
     public function dataTable(){
         return Datatables::of(Publisher::query())->make(true);
     }
-    /**
-     * Show the form for creating a new resource.
-     */
+
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(CreateUpdatePublisherRequest $request)
     {
-        $name = Publisher::where('name', $request->name)->first();
-        if($name != null){
-            return response()->json([
-                'success' => false,
-                'message' => "Tên đã tồn tại!"
-            ]);
-        }
         $publisher=new Publisher();
         $publisher->name=$request->name;
         $publisher->description=$request->description;
@@ -48,17 +37,11 @@ class PublisherController extends Controller
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         $publisher=Publisher::find($id);
@@ -74,18 +57,8 @@ class PublisherController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id)
+    public function update(CreateUpdatePublisherRequest $request, $id)
     {
-        $id = Publisher::where('id', '<>', $id)->where('name', $request->name)->first();
-        if(!empty($id)){
-            return response()->json([
-                'success' => false,
-                'message' => "Tên đã tồn tại!"
-            ]);
-        }
         $publisher=Publisher::find($request->id);
         $publisher->name=$request->name;
         $publisher->description=$request->description;
@@ -96,9 +69,6 @@ class PublisherController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         Publisher::find($id)->delete();

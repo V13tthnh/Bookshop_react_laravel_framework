@@ -4,14 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
-use Str;
+use App\Http\Requests\CreateUpdateCategoryRequest;
 use Yajra\Datatables\Datatables;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $listCategories = Category::all();
@@ -19,9 +16,6 @@ class CategoryController extends Controller
         return view('category.index', compact('listCategories', 'id'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function dataTable()
     {
         return Datatables::of(Category::query())->make(true);
@@ -31,34 +25,19 @@ class CategoryController extends Controller
         return view("category.create");
     }
 
-    public function store(Request $rq)
+    public function store(CreateUpdateCategoryRequest $rq)
     {
-        $name = Category::where('name', $rq->name)->first();
-        if ($name != null) {
-            return response()->json([
-                'success' => false,
-                'message' => "Tên danh mục đã tồn tại!"
-            ]);
-        }
-        $categories = new Category();
-        $categories->name = $rq->name;
-        $categories->description = $rq->description;
-        $categories->slug = Str::slug($rq->name);
-        $categories->save();
+        $categories = Category::updateOrCreate(['name' => $rq->name],['description' => $rq->description]);
         return response()->json([
             'success' => true,
-            'message' => "Thêm thành công!"
+            'message' => "Thêm thành công!",
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show()
     {
 
     }
-
 
     public function edit($id)
     {
@@ -69,9 +48,8 @@ class CategoryController extends Controller
         ]);
     }
 
-    public function update(Request $rq, $id)
+    public function update(CreateUpdateCategoryRequest $rq, $id)
     {
-        //dd($rq);
         $category = Category::where('id', '<>', $id)->where('name', $rq->name)->first();
         if ($category != null) {
             return response()->json([
@@ -79,11 +57,7 @@ class CategoryController extends Controller
                 'message' => "Tên danh mục đã tồn tại!"
             ]);
         }
-        $editCategories = Category::find($id);
-        $editCategories->name = $rq->name;
-        $editCategories->description = $rq->description;
-        $editCategories->slug = Str::slug($rq->name);
-        $editCategories->save();
+        $categories = Category::updateOrCreate(['id' => $id],['name' => $rq->name, 'description' => $rq->description]);
         return response()->json([
             'success' => true,
             'message' => "Cập nhật thành công!"

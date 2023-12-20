@@ -21,6 +21,7 @@ Route::middleware('auth')->group(function () {
         Route::name('admin.')->group(function () {
             Route::get('logout', [AdminController::class, 'logout'])->name('logout');
             Route::get('/', [AdminController::class, 'index'])->name('index');
+            Route::get('profile', [AdminController::class, 'profile'])->name('profile');
             Route::get('data-table', [AdminController::class, 'dataTable'])->name('data.table');
             Route::get('create', [AdminController::class, 'create'])->name('create');
             Route::post('store', [AdminController::class, 'store'])->name('store');
@@ -37,6 +38,10 @@ Route::middleware('auth')->group(function () {
     Route::prefix('combo')->group(function () {
         Route::name('combo.')->group(function () {
             Route::get('/', [ComboController::class, 'index'])->name('index');
+            Route::get('data-table', [ComboController::class, 'dataTable'])->name('data.table');
+            Route::get('data-table-detail/{id}', [ComboController::class, 'dataTableDetail'])->name('data.table.detail');
+            Route::get('create', [ComboController::class, 'create'])->name('create');
+            Route::post('store', [ComboController::class, 'store'])->name('store');
         });
     });
     //category-Thanh tuan
@@ -96,8 +101,6 @@ Route::middleware('auth')->group(function () {
             Route::get('edit/{id}', [GoodsReceivedNoteController::class, 'edit'])->name('edit');
             Route::post('update', [GoodsReceivedNoteController::class, 'update'])->name('update');
             Route::post('destroy/{id}', [GoodsReceivedNoteController::class, 'destroy'])->name('destroy');
-            // Route::get('trash', [GoodsReceivedNoteController::class,'trash'])->name('trash');
-            // Route::get('untrash/{id}', [GoodsReceivedNoteController::class, 'untrash'])->name('untrash');
         });
     });
     Route::prefix('order')->group(function () {
@@ -117,6 +120,7 @@ Route::middleware('auth')->group(function () {
             Route::post('destroy/{id}', [BookController::class, 'destroy'])->name('destroy');
             Route::get('delete-image/{id}', [BookController::class, 'deleteImage'])->name('delete.image');
             Route::get('trash', [BookController::class, 'trash'])->name('trash');
+            Route::get('data-table-trash', [BookController::class, 'dataTableTrash'])->name('data.table.trash');
             Route::get('untrash/{id}', [BookController::class, 'untrash'])->name('untrash');
         });
     });

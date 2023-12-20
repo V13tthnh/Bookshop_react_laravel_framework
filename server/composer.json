@@ -12,7 +12,11 @@
         "laravel/tinker": "^2.8",
         "tymon/jwt-auth": "*",
         "yajra/laravel-datatables": "^10.0",
-        "yajra/laravel-datatables-oracle": "*"
+        "yajra/laravel-datatables-oracle": "*",
+
+        "maatwebsite/excel": "*"
+      
+
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

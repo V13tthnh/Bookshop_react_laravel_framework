@@ -11,4 +11,5 @@ class Publisher extends Model
     use SoftDeletes;
     protected $hidden=['deleted_at', 'created_at', 'updated_at'];
     use HasFactory;
+    protected $fillable = ['name', 'description'];
 }
