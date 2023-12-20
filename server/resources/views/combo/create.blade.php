@@ -48,6 +48,7 @@
             $('#discount_total').text("Tổng giá trị combo đã giảm giá: " + discountTotal + " đ");
             //Gán giá trị cho input trước khi gửi request về controller để xử lý thêm mới
             $('#combo_name').val($('#name').val());
+            $('#combo_supplier_id').val($('#supplier_id').val());
             $('#combo_quantity').val($('#quantity').val());
             $('#combo_price').val(discountTotal);
         });
@@ -151,6 +152,16 @@
                     </div>
                     <div class="card-body">
                         <div class="form-group">
+                            <label for="supplier_id">Nhà cung cấp</label>
+                            <select id="supplier_id" name="name" class="form-control select2">
+                                <option selected disabled value="0">Chọn nhà cung cấp</option>
+                                @foreach($suppliers as $items)
+                                <option value="{{$items->id}}">{{$items->name}}</option>
+                                @endforeach
+                            </select>
+                            <div class="text-danger create_supplier_id_error"></div>
+                        </div>
+                        <div class="form-group">
                             <label for="exampleInputPassword1">Tên combo</label>
                             <input type="text" id="name" class="form-control" placeholder="Tên combo" required>
                         </div>
@@ -208,8 +219,8 @@
                                         <input type="text" name="name" id="combo_name"  hidden/>
                                         <input type="number" name="quantity" id="combo_quantity"  hidden/>
                                         <input type="number" name="price" id="combo_price" hidden />
+                                        <input type="number" name="supplier_id" id="combo_supplier_id" hidden />
                                         <div class="card-footer">
-                                            
                                         </div>
                                         <div class="form-group">
                                             <label for="storeImage">Ảnh</label>

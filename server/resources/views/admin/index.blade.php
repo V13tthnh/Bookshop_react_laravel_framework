@@ -257,6 +257,41 @@
 @endsection
 
 @section('content')
+<!-- Import File Excel -->
+<div class="modal fade" id="modal-import">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Chọn file Excel</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{route('category.import')}}" method="post" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="exampleInputFile">File Excel</label>
+                        <div class="input-group">
+                        <div class="custom-file">
+                            <input type="file" name="file_excel" accept=".xls, .xlsx" class="custom-file-input" >
+                            <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                            <div class="text-danger create_avatar_error"></div>
+                        </div>
+                        <div class="input-group-append">
+                            <span class="input-group-text">Upload</span>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary">Import</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 <div class="modal fade" id="modal-create">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -394,8 +429,6 @@
         </div>
     </div>
 </div>
-
-
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
@@ -404,7 +437,10 @@
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-create">
+                    <button type="button" class="btn btn-info mr-2" data-toggle="modal" data-target="#modal-import">
+                        <i class="nav-icon fa fa-plus"></i> Import
+                    </button>
+                    <button type="button" class="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create">
                         <i class="nav-icon fa fa-plus"></i> Thêm
                     </button>
                     <a href="{{route('admin.trash')}}" class="btn btn-warning">
