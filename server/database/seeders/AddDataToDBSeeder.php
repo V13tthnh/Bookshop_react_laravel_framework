@@ -25,6 +25,13 @@ class AddDataToDBSeeder extends Seeder
      */
     public function run(): void
     {
+        //them user 1
+        $user=new User;
+        $user->name='Tuan';
+        $user->email='asd@123';
+        $user->password=Hash::make('123123');
+        $user->status=1;
+        $user->save();
         //thêm admin 1
         $admin1=new Admin;
         $admin1->name='Viết Thành';

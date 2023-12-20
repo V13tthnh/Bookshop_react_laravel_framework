@@ -9,5 +9,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Author extends Model
 {
     use SoftDeletes;
+    protected $hidden=['id', 'description','slug', 'image', 'deleted_at', 'created_at', 'updated_at'];
     use HasFactory;
 }

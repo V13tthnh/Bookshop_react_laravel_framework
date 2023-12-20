@@ -10,9 +10,10 @@ class Category extends Model
 {
     use SoftDeletes;
     use HasFactory;
+    protected $hidden=['deleted_at', 'created_at', 'updated_at'];
     protected $table='categories';
 
-    public function list_book(){
+    public function books(){
         return $this->hasMany(Book::class);
     }
 }
