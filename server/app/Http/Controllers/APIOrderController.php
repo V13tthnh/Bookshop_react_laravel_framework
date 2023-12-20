@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GoodsReceivedNote;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\User;
@@ -14,7 +15,7 @@ class APIOrderController extends Controller
         $order = Order::all();
         return response()->json([
             'success' => true,
-            'data' => $order
+            'data' => $order,
         ]);
     }
 
@@ -26,7 +27,7 @@ class APIOrderController extends Controller
         $order->address = $rq->address;
         $order->phone = $rq->phone;
         $order->total = null;
-        $order->shipping_fee = $rq->shipping_fee;
+        $order->shipping_fee = 15000;
         $order->note = $rq->note;
         $order->status = 1;
         $order->save();
@@ -37,17 +38,27 @@ class APIOrderController extends Controller
             $orderDetail = new OrderDetail();
             $orderDetail->order_id = $order->id;
             $orderDetail->book_id = $rq->book_id[$i];
-            $orderDetail->combo_id = null;
-            $orderDetail->quantity = $rq->quantity[$i];
+            $orderDetail->combo_id = $rq->combo_id[$i];
+            $orderDetail->book_quantity = $rq->book_quantity[$i];
+            $orderDetail->combo_quantity = $rq->combo_quantity[$i];
             $orderDetail->unit_price = $rq->unit_price[$i];
             $orderDetail->sale_price = $rq->sale_price[$i];
             $orderDetail->review_status = 1;
 
             $total += $rq->total[$i];
 
-            
+            $bookQuantity = Book::find($rq->book_id[$i]);
+            $bookQuantity->quantity -= $rq->book_quantity[$i];
+            $bookQuantity->save();
 
+            $comboQuantity = Combo::find($rq->combo_id[$i]);
+            $comboQuantity->quantity -= $rq->combo_quantity[$i];
+            $comboQuantity->save();
         }
+
+        $orderTotal = Order::find($order->id);
+        $orderTotal->total = $total;
+        $orderTotal->save();
 
         return response()->json([
             'success' => true,

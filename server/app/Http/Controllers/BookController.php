@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateUpdateBookRequest;
+use App\Imports\BooksImport;
 use Illuminate\Http\Request;
 use App\Models\Book;
 use App\Models\Author;
@@ -11,7 +12,7 @@ use App\Models\Category;
 use App\Models\Image;
 use App\Models\Publisher;
 use Yajra\Datatables\Datatables;
-
+use Maatwebsite\Excel\Facades\Excel;
 use Str;
 
 class BookController extends Controller
@@ -37,9 +38,13 @@ class BookController extends Controller
         })->make(true);
     }
 
-    public function create()
-    {
-
+    public function import(Request $request){
+        if($request->hasFile('file_excel')){
+            $path = $request->file('file_excel')->getRealPath();
+            Excel::import(new BooksImport, $path);
+            return back()->with('successMsg', 'Nhập thành công!');
+        }
+        return back()->with('errorMsg', 'Nhập không thành công!');
     }
 
     public function store(CreateUpdateBookRequest $request)
@@ -48,8 +53,6 @@ class BookController extends Controller
         $book->name = $request->name;
         $book->code = $request->code;
         $book->description = $request->description;
-        $book->unit_price = $request->unit_price;
-        $book->quantity = $request->quantity;
         $book->weight = $request->weight;
         $book->format = $request->format;
         $book->year = $request->year;
@@ -128,8 +131,6 @@ class BookController extends Controller
         $book->name = $request->name;
         $book->code = $request->code;
         $book->description = $request->description;
-        $book->unit_price = $request->unit_price;
-        $book->quantity = $request->quantity;
         $book->weight = $request->weight;
         $book->format = $request->format;
         $book->year = $request->year;

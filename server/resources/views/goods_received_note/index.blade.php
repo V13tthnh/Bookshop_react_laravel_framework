@@ -133,7 +133,7 @@
                                 <tr>
                                     <th>Id</th>
                                     <th>Tên nhà cung cấp</th>
-                                    <th>Tên admin</th>
+                                    <th>Người lập</th>
                                     <th>Tổng tiền</th>
                                     <th>Hình thức</th>
                                     <th>Ngày lập</th>

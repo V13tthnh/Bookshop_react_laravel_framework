@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\GoodsReceivedNoteDetailImport;
 use App\Models\GoodsReceivedNote;
 use App\Models\GoodsReceivedNoteDetail;
 use App\Models\Supplier;
@@ -9,6 +10,7 @@ use App\Models\Admin;
 use App\Models\Book;
 use Auth;
 use Yajra\Datatables\Datatables;
+use App\Http\Requests\CreateUpdateGoodsReceivedNoteRequest;
 use Illuminate\Http\Request;
 
 class GoodsReceivedNoteController extends Controller
@@ -33,6 +35,15 @@ class GoodsReceivedNoteController extends Controller
         })->make(true);
     }
 
+    public function import(Request $request){
+        if($request->hasFile('file_excel')){
+            $path = $request->file('file_excel')->getRealPath();
+            Excel::import(new GoodsReceivedNoteDetailImport, $path);
+            return back()->with('successMsg', 'Nhập thành công!');
+        }
+        return back()->with('errorMsg', 'Nhập không thành công!');
+    }
+
     public function create()
     {
         $listSupplier = Supplier::all();
@@ -40,14 +51,11 @@ class GoodsReceivedNoteController extends Controller
         return view('goods_received_note.create', compact('listSupplier', 'listbook'));
     }
 
-    public function store(Request $rq)
+    public function store(CreateUpdateGoodsReceivedNoteRequest $rq)
     {
         //dd($rq);
-        if(empty($rq->supplier)){
-            return redirect()->back()->with('errorMsg', 'Vui lòng nhập đầy đủ thông tin!');
-        }
         $createGoodsReceivedNote = new GoodsReceivedNote();
-        $createGoodsReceivedNote->supplier_id = $rq->supplier;
+        $createGoodsReceivedNote->supplier_id = $rq->supplier_id;
         $createGoodsReceivedNote->formality =  $rq->formality;
         $createGoodsReceivedNote->admin_id = Auth::user()->id;
         $createGoodsReceivedNote->total = null;
@@ -74,7 +82,7 @@ class GoodsReceivedNoteController extends Controller
             $updateBook->quantity += $rq->quantity[$i];
             $updateBook->unit_price = $rq->export_unit_price[$i];
             $updateBook->unit_price = $rq->export_unit_price[$i] - 10000;
-            $updateBook->supplier_id = $rq->supplier;
+            $updateBook->supplier_id = $rq->supplier_id;
             $updateBook->save();
         }
         //update total goods_received_note
@@ -82,7 +90,10 @@ class GoodsReceivedNoteController extends Controller
         $updateGPN->total = $total;
         $updateGPN->save();
 
-        return redirect()->route('goods-received-note.index')->with('successMsg', 'Thêm thành công!');
+        return response()->json([
+            'success' => true,
+            'message' => "Thêm phiếu nhập thành công!"
+        ]);
     }
 
     public function show(string $id)

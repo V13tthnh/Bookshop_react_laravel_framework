@@ -9,8 +9,8 @@ use App\Models\BookCategory;
 class APICategoryController extends Controller
 {
     public function getListCategoryAndListBook(){
-        $listCateBook = Category::with('list_book')->get();
-        if(empty($listCateBook)){
+        $categoryBooks = Category::with('books')->get();
+        if(empty($categoryBooks)){
             return response()->json([
                 'success' => false,
                 'message' => "Dữ liệu không tồn tại!"
@@ -18,7 +18,7 @@ class APICategoryController extends Controller
         }
         return response()->json([
             'success' => true,
-            'data' => $listCateBook
+            'data' => $categoryBooks
         ]);
     }
 
