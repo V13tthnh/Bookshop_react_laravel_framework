@@ -42,7 +42,7 @@ return [
         ],
         'api' => [
             'driver' => 'jwt',
-            'provider' => 'khach_hang',
+            'provider' => 'customers',
         ],
     ],
 
@@ -68,9 +68,9 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\Admin::class,
         ],
-        'khach_hang'=>[
+        'customers'=>[
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => App\Models\Customer::class,
         ],
 
         // 'users' => [

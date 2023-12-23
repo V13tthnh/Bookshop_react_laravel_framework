@@ -16,7 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger('book_id')->nullable();
             $table->unsignedBigInteger('combo_id')->nullable();
             $table->unsignedBigInteger('order_id');
-            $table->Integer('quantity');
+            $table->Integer('book_quantity')->nullable();
+            $table->Integer('combo_quantity')->nullable();
             $table->Integer('unit_price')->nullable();
             $table->Integer('sale_price')->nullable();
             $table->tinyInteger('review_status')->nullable();

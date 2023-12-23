@@ -29,7 +29,7 @@ class ComboController extends Controller
 
     public function create()
     {
-        $books = Book::all();
+        $books = Book::where('book_type', 0)->get();
         $suppliers = Supplier::all();
         return view('combo.create', compact('books', 'suppliers'));
     }
@@ -66,25 +66,16 @@ class ComboController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         //

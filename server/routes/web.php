@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CategoryController;
@@ -17,7 +19,7 @@ Route::get('/admin/login', [AdminController::class, 'login'])->name('admin.login
 Route::post('/admin/login-handler', [AdminController::class, 'loginHandler'])->name('admin.loginHandler');
 
 Route::middleware('auth')->group(function () {
-    Route::get('dashboard', [DashboardController::class, 'overview'])->name('dashboard.index');
+    Route::get('/', [DashboardController::class, 'overview'])->name('dashboard.index');
     //admin-Viet thanh
     Route::prefix('admin')->group(function () {
         Route::name('admin.')->group(function () {
@@ -109,6 +111,10 @@ Route::middleware('auth')->group(function () {
     Route::prefix('order')->group(function () {
         Route::name('order.')->group(function () {
             Route::get('/', [OrderController::class, 'index'])->name('index');
+            Route::get('data-table', [OrderController::class, 'dataTable'])->name('data.table');
+            Route::get('edit-status/{id}', [OrderController::class, 'editStatus'])->name('edit.status');
+            Route::post('update-status/{id}', [OrderController::class, 'updateStatus'])->name('update.status');
+            Route::get('data-table-detail/{id}', [OrderController::class, 'dataTableDetail'])->name('data.table.detail');
         });
     });
     //book-Thanh Nghia
@@ -156,6 +162,14 @@ Route::middleware('auth')->group(function () {
             Route::get('trash', [PublisherController::class, 'trash'])->name('trash');
             Route::get('data-table-trash', [PublisherController::class, 'dataTableTrash'])->name('data.table.trash');
             Route::get('untrash/{id}', [PublisherController::class, 'untrash'])->name('untrash');
+        });
+    });
+
+    //customer-Viet thanh
+    Route::prefix('customer')->group(function () {
+        Route::name('customer.')->group(function () {
+            Route::get('/', [CustomerController::class, 'index'])->name('index');
+            Route::get('data-table', [CustomerController::class, 'dataTable'])->name('data.table');
         });
     });
 });

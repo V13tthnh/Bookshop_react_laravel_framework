@@ -35,12 +35,6 @@
 
         $('#myTable').on('click', '.showDetail', function(){
             var id = $(this).val();
-            //alert(id);
-            $.ajax({
-                url: "goods-received-note/data-table-detail/" + id, method: "get", dataType: "json",
-            }).done(function(res){
-
-            })
             $('#tableDetail').DataTable({
                 "responsive": true, "lengthChange": true, "autoWidth": false, //tùy chỉnh kích thước, phân trang
                 "paging": true, "ordering": true, "searching": true,

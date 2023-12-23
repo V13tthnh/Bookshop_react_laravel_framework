@@ -1,32 +1,32 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Models\Customer;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class APIUserController extends Controller
+class APICustomerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
-        $listUser= User::all();
+        $listUser = Customer::all();
         return response()->json([
             'success' => true,
-            'data'  => $listUser
+            'data' => $listUser
         ]);
     }
 
     public function login()
     {
-        //
+
     }
 
     public function register()
     {
-        //
+
     }
 
     /**
@@ -34,7 +34,7 @@ class APIUserController extends Controller
      */
     public function create()
     {
-        //
+
     }
 
     /**
@@ -42,49 +42,43 @@ class APIUserController extends Controller
      */
     public function store(Request $rq)
     {
-        if(empty($rq->name))
-        {
+        $listUser = Customer::where('email', $rq->name)->first();
+        if (!empty($listUser)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Chua nhap ten khach hang'
+                'message' => "Email {$rq->email} đã tồn tại"
             ]);
         }
-        $listUser = User::where('email',$rq->name)->first();
-        if(!empty($listUser)){
-            return response()->json([
-                'success'=> false,
-                'message'=> "Email {$rq->email} da ton tai"
-            ]);
+        $listUser = new Customer;
+        $listUser->name = $rq->name;
+        $listUser->address = $rq->address;
+        $listUser->phone = $rq->phone;
+        $listUser->status = 1;
+        $listUser->email = $rq->email;
+        $listUser->password = $rq->password;
+        if ($rq->hasFile('image')) {
+            $file = $rq->image;
+            $path = $file->store('uploads/customers');
+            $listUser->image = $path;
         }
-        $listUser = new User();
-        $listUser->name=$rq->name;
-        $listUser->address=$rq->address;
-        $listUser->phone=$rq->phone;
-        $listUser->status=1;
-        $listUser->email=$rq->email;       
-        $listUser->password=$rq->password;        
         $listUser->save();
         return response()->json([
-            'success'=>true,
-            'message'=> 'Thêm thông tin thành công'
+            'success' => true,
+            'message' => 'Lưu thông tin thành công'
         ]);
-            
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Request $rq)
     {
-        $count = User::where('name',$rq->name)->count();
-        if(empty($rq->name)|| $count==0){
+        $count = User::where('name', $rq->name)->count();
+        if (empty($rq->name) || $count == 0) {
             return response()->json([
                 'success' => false,
                 'message' => "tim that bai"
             ]);
         }
-        
-        $findUser = user::where('name',$rq->name)->get();
+
+        $findUser = user::where('name', $rq->name)->get();
         return response()->json([
             'success' => true,
             'data' => $findUser

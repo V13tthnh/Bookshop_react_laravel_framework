@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('combos', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('supplier_id');
             $table->string('name');
             $table->string('image');
             $table->double('price');
