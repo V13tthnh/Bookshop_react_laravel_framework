@@ -36,12 +36,12 @@ class GoodsReceivedNoteController extends Controller
     }
 
     public function import(Request $request){
-        if($request->hasFile('file_excel')){
-            $path = $request->file('file_excel')->getRealPath();
-            Excel::import(new GoodsReceivedNoteDetailImport, $path);
-            return back()->with('successMsg', 'Nhập thành công!');
-        }
-        return back()->with('errorMsg', 'Nhập không thành công!');
+        // if($request->hasFile('file_excel')){
+        //     $path = $request->file('file_excel')->getRealPath();
+        //     Excel::import(new GoodsReceivedNoteDetailImport, $path);
+        //     return back()->with('successMsg', 'Nhập thành công!');
+        // }
+        // return back()->with('errorMsg', 'Nhập không thành công!');
     }
 
     public function create()
@@ -73,15 +73,13 @@ class GoodsReceivedNoteController extends Controller
             $detail->cost_price = $rq->import_unit_price[$i];
             $detail->selling_price = $rq->export_unit_price[$i];
             $detail->save();
-
             // update total 
             $total += $rq->total[$i];
-
             // update quantity and export price
             $updateBook = Book::find($rq->book_id[$i]);
             $updateBook->quantity += $rq->quantity[$i];
             $updateBook->unit_price = $rq->export_unit_price[$i];
-            $updateBook->unit_price = $rq->export_unit_price[$i] - 10000;
+            $updateBook->e_book_price = $rq->export_unit_price[$i] - 10000;
             $updateBook->supplier_id = $rq->supplier_id;
             $updateBook->save();
         }

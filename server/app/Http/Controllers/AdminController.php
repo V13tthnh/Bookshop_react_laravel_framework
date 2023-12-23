@@ -21,7 +21,7 @@ class AdminController extends Controller
     public function loginHandler(ValidateFormDashBoardLoginRequest $request)
     {
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            return redirect()->route('admin.index')->with('loginSuccessMsg', "Đăng nhập thành công!");
+            return redirect()->route('dashboard.index')->with('loginSuccessMsg', "Đăng nhập thành công!");
         }
         return redirect()->back()->with('loginErrorMsg', "Tài khoản hoặc mật khẩu không đúng!");;
     }

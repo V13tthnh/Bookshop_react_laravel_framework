@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="{{asset('uploads/book-icon.jpg')}}" type="image/png">
     <title>BookShop Dashboard</title>
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
@@ -177,7 +178,7 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="" class="nav-link">
+                                    <a href="{{route('customer.index')}}" class="nav-link">
                                         <i class="fas fa-arrow-right nav-icon"></i>
                                         <i class="nav-icon fas fa-user-tie"></i>
                                         <p>Khách hàng</p>
@@ -203,7 +204,7 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="./index2.html" class="nav-link">
+                                    <a href="{{route('order.index')}}" class="nav-link">
                                         <i class="fas fa-arrow-right nav-icon"></i>
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Hóa đơn bán</p>

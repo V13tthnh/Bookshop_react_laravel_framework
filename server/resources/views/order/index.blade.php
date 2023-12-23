@@ -1,198 +1,223 @@
 @extends('layout')
 
 @section('js')
-<!-- SUMMERNOTE THEM -->
 <script>
-  $(function () {
-    // Summernote
-    $('#summernote').summernote()
+    $(document).ready(function () {
+        var orderId = 0;
+        var table = $('#myTable').DataTable({
+            "responsive": true, "lengthChange": true, "autoWidth": false, //tùy chỉnh kích thước, phân trang
+            "paging": true, "ordering": true, "searching": true,
+            "pageLength": 10,
+            "dom": 'Bfrtip',
+            "buttons": [{ extend: "copy", text: "Sao chép" }, //custom các button
+            { extend: "csv", text: "Xuất csv" },
+            { extend: "excel", text: "Xuất Excel" },
+            { extend: "pdf", text: "Xuất PDF" },
+            { extend: "print", text: `<i class="fas fa-print"></i> In` },
+            { extend: "colvis", text: "Hiển thị cột" }],
+            "language": { search: "Tìm kiếm:" },
+            "lengthMenu": [10, 25, 50, 75, 100],
+            "ajax": { url: "{{route('order.data.table')}}", method: "get", dataType: "json", },
+            "columns": [
+                { data: 'id', name: 'id' },
+                { data: 'customer_name', name: 'customer.name' },
+                { data: 'address', name: 'address' },
+                { data: 'phone', name: 'phone' },
+                { data: 'total', render: $.fn.dataTable.render.number('.', 2, '') },
+                {
+                    data: 'status', render: function (data, type, row) {
+                        if (data === 1) {
+                            return '<div class="bg-warning color-palette text-center">Đã đặt</div>'
+                        }
+                        if (data === 2) {
+                            return '<div class="bg-primary color-palette text-center">Đã xác nhận</div>'
+                        }
+                        if (data === 3) {
+                            return '<div class="bg-info color-palette text-center">Đang giao</div>'
+                        }
+                        if (data === 4) {
+                            return '<div class="bg-success color-palette text-center">Đã giao</div>'
+                        }
+                        if (data === 5) {
+                            return '<div class="bg-danger color-palette text-center">Đã hủy</div>'
+                        }
+                    }
+                },
+                { data: 'created_at', name: 'created_at' },
+                {
+                    data: 'id', render: function (data, type, row) {
+                        return '<button class="btn btn-info showDetail" value="' + data + '" data-toggle="modal" data-target="#modal-detail"><i class="nav-icon fa fa-eye"></i></button>'
+                            + '<button class="btn btn-warning ml-2 updateStatus" value="' + data + '" data-toggle="modal" data-target="#modal-update"><i class="nav-icon fa fa-edit"></i></button>';
+                    }
+                },
+            ],
+        });
 
-    // CodeMirror
-    CodeMirror.fromTextArea(document.getElementById("codeMirrorDemo"), {
-      mode: "htmlmixed",
-      theme: "monokai"
-    });
-  })
-// SUMMERNOTE SUA
-  $(function () {
-    // Summernote
-    $('#summernote1').summernote()
+        //Xử lý cập nhật trạng thái hóa đơn
+        $('#myTable').on('click', '.updateStatus', function () {
+            var id = $(this).val();
+            $.ajax({
+                url: "order/edit-status/" + id,
+                method: "get",
+            }).done(function (res) {
+                if (res.success) {
+                    $('#orderStatus').val(res.data.status);
+                    $('#updateBtn').val(id);
+                }
+            });
+        });
 
-    // CodeMirror
-    CodeMirror.fromTextArea(document.getElementById("codeMirrorDemo"), {
-      mode: "htmlmixed",
-      theme: "monokai"
+        $('#updateBtn').click(function () {
+            var id = $(this).val();
+            if (Number($('#orderStatus').val()) === 5) {
+                Swal.fire({ //Thông báo xác nhận trước khi xóa
+                    title: 'Bạn muốn hủy đơn hàng này?',
+                    text: 'Cảnh báo, hãy kiểm tra thật kỹ thông tin đơn hàng để tránh nhầm lẫn!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Đồng ý',
+                    cancelButtonText: 'Hủy bỏ'
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            url: "order/update-status/" + id,
+                            method: "post",
+                            data: {
+                                "_token": "{{csrf_token()}}",
+                                "status": $('#orderStatus').val()
+                            }
+                        }).done(function (res) {
+                            if (res.success) {
+                                Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
+                                $('#modal-update').modal('hide');
+                                table.ajax.reload();
+                            }
+                            else{
+                                Swal.fire({ title: res.message, icon: 'warning', confirmButtonText: 'OK' });
+                            }
+                        });
+                    }
+                });
+                return;
+            }
+            $.ajax({
+                url: "order/update-status/" + id,
+                method: "post",
+                data: {
+                    "_token": "{{csrf_token()}}",
+                    "status": $('#orderStatus').val()
+                }
+            }).done(function (res) {
+                if (res.success) {
+                    Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
+                    $('#modal-update').modal('hide');
+                    table.ajax.reload();
+                }
+            });
+        });
+
+        $('#myTable').on('click', '.showDetail', function () {
+            var id = $(this).val();
+            $('#tableDetail').DataTable({
+                "responsive": true, "lengthChange": true, "autoWidth": false, //tùy chỉnh kích thước, phân trang
+                "paging": true, "ordering": true, "searching": true,
+                "pageLength": 10, "dom": 'Bfrtip', stateSave: true, "bDestroy": true,
+                "buttons": [{ extend: "copy", text: "Sao chép" }, //custom các button
+                { extend: "csv", text: "Xuất csv" },
+                { extend: "excel", text: "Xuất Excel" },
+                { extend: "pdf", text: "Xuất PDF" },
+                { extend: "print", text: `<i class="fas fa-print"></i> In` },
+                { extend: "colvis", text: "Hiển thị cột" }],
+                "language": { search: "Tìm kiếm:" },
+                "lengthMenu": [10, 25, 50, 75, 100],
+                "ajax": { url: "order/data-table-detail/" + id, method: "get", dataType: "json", },
+                "columns": [
+                    { data: 'order_id', name: 'order_id' },
+                    { data: 'book_name', name: 'book.name' },
+                    { data: 'combo_name', name: 'combo.name' },
+                    { data: 'book_quantity', name: 'book_quantity' },
+                    { data: 'combo_quantity', name: 'combo_quantity' },
+                    { data: 'unit_price', render: $.fn.dataTable.render.number('.', 2, '') },
+                    { data: 'combo_price', render: $.fn.dataTable.render.number('.', 2, '') },
+                ],
+            });
+        });
     });
-  })
 </script>
-<!-- SweetAlert2 -->
-<script src="{{asset('plugins/sweetalert2/sweetalert2.min.js')}}"></script>
-<!-- Toastr -->
-<script src="{{asset('plugins/toastr/toastr.min.js')}}"></script>
-<!-- DataTables  & Plugins -->
-<script src="{{asset('plugins/datatables/jquery.dataTables.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/dataTables.buttons.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/buttons.bootstrap4.min.js')}}"></script>
-<script src="{{asset('plugins/jszip/jszip.min.js')}}"></script>
-<script src="{{asset('plugins/pdfmake/pdfmake.min.js')}}"></script>
-<script src="{{asset('plugins/pdfmake/vfs_fonts.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/buttons.html5.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
-<script src="{{asset('plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
-<script src="{{asset('dist/js/pages/dashboard.js')}}"></script>
-<script>
-    //Edit ajax
-    // $(document).ready(function () {
-    //     $(document).on('click', '.editBtn', function () {
-    //         var id = $(this).val();
-    //         $('#modal-edit').modal('show');
-    //         $.ajax({
-    //             url: '/supplier/edit/' + id,
-    //             type: "get",
-    //             success: function (result) {
-    //                 //console.log(result.supplier);
-    //                 $('#id').val(result.supplier.id)
-    //                 $('#name').val(result.supplier.name);
-    //                 $('#address').val(result.supplier.address);
-    //                 $('#phone').val(result.supplier.phone);
-    //                 $('#summernote1').summernote('code', result.supplier.description);
-    //                 $('#slug').val(result.supplier.slug);
-    //             }
-    //         });
-    //     });
-    // });
-
-    $(function () {
-        $("#example1").DataTable({
-            "responsive": true, "lengthChange": false, "autoWidth": false,
-            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-    });
-
-</script>
-
-
-
 @endsection
 
 @section('content')
-@if(session('errorMsg'))
-<script>
-    Swal.fire({
-        title: '{{session('errorMsg')}}',
-        icon: 'error',
-        confirmButtonText: 'OK'
-    })
-</script>
-@endif
+<div class="modal fade" id="modal-detail" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Chi tiết hóa đơn</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table id="tableDetail" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Id hóa đơn</th>
+                            <th>Sách</th>
+                            <th>Combo</th>
+                            <th>Số lượng sách</th>
+                            <th>Số lượng combo</th>
+                            <th>Giá sách</th>
+                            <th>Giá combo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-@if(session('successMsg'))
-<script>
-    Swal.fire({
-        title: '{{session('successMsg')}}',
-        icon: 'success',
-        confirmButtonText: 'OK'
-    })
-</script>
-@endif
-<!-- Them -->
-<div class="modal fade" id="modal-create">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="text" id="idDetail" hidden>
+
+<div class="modal fade" id="modal-update">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Nhập Hàng</h4>
+                <h4 class="modal-title">Cập nhật trạng thái</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{route('goods-received-note.store')}}" method="post" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="inputName">Tên Nguoi Dung</label>
-                        <select id="inputStatus" name="name" class="form-control custom-select">
-                            <option selected disabled>Select one</option>
-                            @foreach($listUser as $items)
-                            <option value="{{$items->id}}">{{$items->name}}</option>
-                           @endforeach
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="exampleInputFile">Trạng thái</label>
+                    <div class="input-group">
+                        <select id="orderStatus" class="form-control">
+                            <option value="1">Đã đặt</option>
+                            <option value="2">Đã xác nhận</option>
+                            <option value="3">Đang giao</option>
+                            <option value="4">Đã giao</option>
+                            <option value="5">Đã hủy</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label for="inputProjectLeader">Hình Thức</label>
-                        <input type="text" name="formality" class="form-control" required>
-                    </div>
-                 
-                    <div class="form-group">
-                        <label for="inputProjectLeader">Tổng Tiền</label required>
-                        <input type="text" name="total" class="form-control" required>
-                    </div>
-                 
-                   
                 </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div> 
-<!-- Sua -->
-<!-- <div class="modal fade" id="modal-edit">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Sửa nhà xuất bản</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
             </div>
-            <form action="{{route('supplier.update')}}" method="post" enctype="multipart/form-data">
-                @csrf
-                <input type="text" name="id" id="id" hidden>
-                <div class="modal-body">
-                <div class="form-group">
-                        <label for="inputName">Tên</label>
-                        <input type="text" name="name" id="name" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputProjectLeader">Địa chỉ</label>
-                        <input type="text" name="address" id="address" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputProjectLeader">Điện thoại</label>
-                        <input type="text" name="phone" id="phone" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputProjectLeader">Mô tả</label required>
-                        <textarea name="description" id="summernote1" cols="30" rows="10"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputProjectLeader">Slug</label required>
-                        <input type="text" name="slug" id="slug" class="form-control" required>
-                    </div>
-                   
-                </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
-                </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                <button id="updateBtn" value="" class="btn btn-primary">Cập nhật</button>
+            </div>
             </form>
         </div>
     </div>
-</div> -->
-
-
+</div>
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Danh sách Nhập Hàng</h1>
+                <h1>Danh sách hóa đơn</h1>
             </div>
-            
         </div>
     </div>
 </section>
@@ -201,53 +226,25 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Danh sách admin</h3>
-                    </div>
                     <div class="card-body">
-                        <table id="example1" class="table table-bordered table-striped">
+                        <table id="myTable" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    
                                     <th>Id</th>
-                                    <th>Tên nhà xuất bản</th>
-                                    <th>Hình thức</th>
-                                    <th>Tên admin</th>
+                                    <th>Tên khách hàng</th>
+                                    <th>Địa chỉ</th>
+                                    <th>SĐT</th>
                                     <th>Tổng tiền</th>
                                     <th>Trạng Thái</th>
+                                    <th>Ngày mua</th>
                                     <th>Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($listGoodsReceivedNote as $item)
-                                <tr>
-                                    <td>{{$id++ }}</td>
-                                 <td><a href="">{{$item->supplier->name}}</a></td>
-                                    <td>{{$item->formality}}</td>
-                                    <td>{{$item->admin->name}}</td>
-                                    <td>{{$item->total}}</td>
-                                    <td>{{$item->status}}</td>
-                                 
-                              
-                                    <!-- <td>
-                                        <button class="btn btn-warning editBtn" value="{{$item->id}}"><i
-                                                class="nav-icon fa fa-edit"></i></a>
-                                            <form action="{{route('goods-received-note.destroy', $item->id)}}" method="post">
-                                                @csrf
-                                                <button class="btn btn-danger" type="submit"><i
-                                                        class="nav-icon fa fa-trash"></i></a>
-                                            </form>
-                                    </td> -->
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan=5>Không có dữ liệu!</td>
-                                </tr>
-                                @endforelse
+
                             </tbody>
                         </table>
                     </div>
-                    {{$listGoodsReceivedNote->links()}}
                 </div>
             </div>
         </div>

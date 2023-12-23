@@ -64,7 +64,9 @@ return new class extends Migration
             $table->foreign('book_id')->references('id')->on('books')->onDelete('cascade');
         });
 
-      
+        Schema::table('combos', function (Blueprint $table) {
+            $table->foreign('supplier_id')->references('id')->on('suppliers')->onDelete('cascade');
+        });
     }
 
     public function down(): void

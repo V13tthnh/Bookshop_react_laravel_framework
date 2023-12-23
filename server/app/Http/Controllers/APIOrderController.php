@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\GoodsReceivedNote;
+use App\Models\Book;
+use App\Models\Combo;
 use App\Models\Order;
 use App\Models\OrderDetail;
-use App\Models\User;
+
 use Illuminate\Http\Request;
 
 class APIOrderController extends Controller
@@ -21,6 +22,7 @@ class APIOrderController extends Controller
 
     public function store(Request $rq)
     {
+        //dd($rq);
         $order = new Order();
         $order->customer_id = $rq->customer_id;
         $order->name = $rq->name;
@@ -40,29 +42,33 @@ class APIOrderController extends Controller
             $orderDetail->book_id = $rq->book_id[$i];
             $orderDetail->combo_id = $rq->combo_id[$i];
             $orderDetail->book_quantity = $rq->book_quantity[$i];
-            $orderDetail->combo_quantity = $rq->combo_quantity[$i];
             $orderDetail->unit_price = $rq->unit_price[$i];
+            $orderDetail->combo_quantity = $rq->combo_quantity[$i];
+            $orderDetail->combo_price = $rq->combo_price[$i];
             $orderDetail->sale_price = $rq->sale_price[$i];
             $orderDetail->review_status = 1;
+            $orderDetail->save();
 
             $total += $rq->total[$i];
-
-            $bookQuantity = Book::find($rq->book_id[$i]);
-            $bookQuantity->quantity -= $rq->book_quantity[$i];
-            $bookQuantity->save();
-
-            $comboQuantity = Combo::find($rq->combo_id[$i]);
-            $comboQuantity->quantity -= $rq->combo_quantity[$i];
-            $comboQuantity->save();
+            if($rq->book_id[$i] != null || $rq->book_id[$i] != 0){
+                $bookQuantity = Book::find($rq->book_id[$i]);
+                $bookQuantity->quantity -= $rq->book_quantity[$i];
+                $bookQuantity->save();
+            }
+            if($rq->combo_id[$i] != null || $rq->combo_id[$i] != 0){
+                $comboQuantity = Combo::find($rq->combo_id[$i]);
+                $comboQuantity->quantity -= $rq->combo_quantity[$i];
+                $comboQuantity->save();
+            }
         }
 
         $orderTotal = Order::find($order->id);
-        $orderTotal->total = $total;
+        $orderTotal->total = $total + 15000;
         $orderTotal->save();
 
         return response()->json([
             'success' => true,
-            'message' => 'Them loai san pham thanh cong'
+            'message' => 'Cảm ơn bạn đã mua hàng!'
         ]);
     }
     public function details($id)
