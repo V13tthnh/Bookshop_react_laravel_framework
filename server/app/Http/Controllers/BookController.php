@@ -104,10 +104,6 @@ class BookController extends Controller
         ]);
     }
 
-    public function show(string $id)
-    {
-
-    }
     public function edit(string $id)
     {
         $book = Book::with('images','authors', 'categories')->find($id);

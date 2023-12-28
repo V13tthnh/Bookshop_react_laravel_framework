@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\AdminsImport;
 use Illuminate\Http\Request;
 use Auth;
 use App\Models\Admin;
@@ -10,6 +11,7 @@ use App\Http\Requests\CreateUpdateAdminRequest;
 use App\Http\Requests\UpdateAdminRequest;
 use App\Http\Requests\ValidateFormDashBoardLoginRequest;
 use Yajra\Datatables\Datatables;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminController extends Controller
 {
@@ -52,6 +54,33 @@ class AdminController extends Controller
     public function create()
     {
         return view('admin.create');
+    }
+
+    public function import(Request $request)
+    {
+        if($request->file_excel == "undefined"){
+            return response()->json([
+                'success' => false,
+                'message' => "Vui lòng chọn file cần nhập!",
+            ]);
+        }
+        if ($request->hasFile('file_excel')) {
+            $path = $request->file('file_excel')->getRealPath();
+            try{
+                Excel::import(new AdminsImport, $path);
+            }catch(\Maatwebsite\Excel\Validators\ValidationException $e){
+                $failures = $e->failures(); //Lấy danh sách thông báo lỗi
+                return response()->json([
+                    'success' => false,
+                    'message' => "Nhập không thành không!",
+                    'errors' => $failures
+                ]);
+            }
+        }
+        return response()->json([
+            'success' => true,
+            'message' => "Nhập thành công!",
+        ]);
     }
 
     public function store(CreateUpdateAdminRequest $request)

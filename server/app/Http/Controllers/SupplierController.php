@@ -1,17 +1,16 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Imports\SuppliersImport;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 use App\Http\Requests\CreateUpdateSupplierRequest;
+use Maatwebsite\Excel\Facades\Excel;
 use Str;
 
 class SupplierController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         return view('supplier.index');
@@ -38,6 +37,33 @@ class SupplierController extends Controller
         return response()->json([
             'success' => true,
             'message' => "Thêm thành công!"
+        ]);
+    }
+
+    public function import(Request $request)
+    {
+        if($request->file_excel == "undefined"){
+            return response()->json([
+                'success' => false,
+                'message' => "Vui lòng chọn file cần nhập!",
+            ]);
+        }
+        if ($request->hasFile('file_excel')) {
+            $path = $request->file('file_excel')->getRealPath();
+            try{
+                Excel::import(new SuppliersImport, $path);
+            }catch(\Maatwebsite\Excel\Validators\ValidationException $e){
+                $failures = $e->failures(); //Lấy danh sách thông báo lỗi
+                return response()->json([
+                    'success' => false,
+                    'message' => "Nhập không thành không!",
+                    'errors' => $failures
+                ]);
+            }
+        }
+        return response()->json([
+            'success' => true,
+            'message' => "Nhập thành công!",
         ]);
     }
 

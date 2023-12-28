@@ -3,11 +3,11 @@
 @section('js')
 @if(session('successMsg'))
 <script>
-    Swal.fire({ title:'{{session('successMsg')}}', icon: 'success', confirmButtonText: 'OK' });
+    Swal.fire({ title: '{{session('successMsg')}}', icon: 'success', confirmButtonText: 'OK' });
 </script>
 @elseif(session('errorMsg'))
 <script>
-    Swal.fire({ title: '{{session('errorMsg')}}', icon: 'error', confirmButtonText: 'OK' });
+    Swal.fire({ title: '{{session('errorMsg')}}', text: 'Hãy xem lại file!', icon: 'error', confirmButtonText: 'OK' });
 </script>
 @endif
 <script>
@@ -28,7 +28,7 @@
             "lengthMenu": [10, 25, 50, 75, 100],
             "ajax": { url: "{{route('category.data.table')}}", method: "get", dataType: "json", },
             "columns": [
-                { data: 'id', name: 'id'},
+                { data: 'id', name: 'id' },
                 { data: 'name', name: 'name' },
                 {
                     data: 'id', render: function (data, type, row) {
@@ -37,15 +37,6 @@
                     }
                 },
             ],
-        });
-        //closeModal
-        $('.closeModal').click(function(){
-            $('#updateFormValidate').removeClass('was-validated'); //clear validate 
-            $('.update_name_error').text('');
-            $('.update_description_error').text('');
-            $('#createFormValidate').removeClass('was-validated'); 
-            $('.create_name_error').text('');
-            $('.create_description_error').text('');
         });
         //store
         $('#addBtn').click(function (e) {
@@ -65,9 +56,9 @@
                     Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
                     $('#modal-create').modal('hide'); //ẩn model thêm mới
                     //clear input và validate trong modal thêm mới
-                    $('#storeName').val(''); 
-                    $('#storeDescription').summernote('code', ''); 
-                    $('#createFormValidate').removeClass('was-validated'); 
+                    $('#storeName').val('');
+                    $('#storeDescription').summernote('code', '');
+                    $('#createFormValidate').removeClass('was-validated');
                     $('.create_name_error').text('');
                     $('.create_description_error').text('');
                     table.ajax.reload(); //refresh bảng 
@@ -76,10 +67,10 @@
                     Swal.fire({ title: res.message, icon: 'error', confirmButtonText: 'OK' });
                     return;
                 }
-            }).fail(function(res) {
+            }).fail(function (res) {
                 var errors = res.responseJSON.errors;
                 $('#createFormValidate').addClass('was-validated');
-                $.each(errors, function(key, value){
+                $.each(errors, function (key, value) {
                     $('.create_' + key + '_error').text(value[0]);
                     $('.create_' + key + '_error').text(value[1]);
                 });
@@ -97,7 +88,7 @@
                 $('#updateDescription').summernote('code', res.data.description);
             });
         });
-        
+
         //update
         $('#updateBtn').click(function (e) {
             e.preventDefault();
@@ -119,16 +110,16 @@
                     $('#updateFormValidate').removeClass('was-validated'); //clear validate 
                     $('.update_name_error').text('');
                     $('.update_description_error').text('');
-                    table.ajax.reload(); 
+                    table.ajax.reload();
                 }
                 if (!res.success) {
                     Swal.fire({ title: res.message, icon: 'error', confirmButtonText: 'OK' });
                     return;
                 }
-            }).fail(function(res) {
+            }).fail(function (res) {
                 var errors = res.responseJSON.errors;
                 $('#updateFormValidate').addClass('was-validated');
-                $.each(errors, function(key, value){
+                $.each(errors, function (key, value) {
                     $('.update_' + key + '_error').text(value[0]);
                     $('.update_' + key + '_error').text(value[1]);
                 });
@@ -144,13 +135,13 @@
                 showCancelButton: true,
                 confirmButtonText: 'Đồng ý',
                 cancelButtonText: 'Hủy bỏ'
-            }).then((result)=>{
-                if(result.value){
+            }).then((result) => {
+                if (result.value) {
                     $.ajax({
-                    url: "category/destroy/" + id,
-                    method: "post",
-                    data: {
-                        "_token": "{{csrf_token()}}"
+                        url: "category/destroy/" + id,
+                        method: "post",
+                        data: {
+                            "_token": "{{csrf_token()}}"
                         }
                     }).done(function (res) {
                         if (res.success) {
@@ -164,9 +155,51 @@
                     });
                 }
             })
-           
         });
-
+        //import
+        $('#importBtn').click(function () {
+            $('#importErrors').empty();
+            var formData = new FormData();
+            var file = $('#importFile')[0].files[0];
+            formData.append('_token', "{{csrf_token()}}");
+            formData.append('file_excel', file);
+            $.ajax({
+                url: '{{route('category.import')}}',
+                method: 'post',
+                data: formData,
+                contentType: false,
+                processData: false,
+            }).done(function (res) {
+                if (res.success) {
+                    $('#modal-import').modal('hide');
+                    Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
+                    $('#importErrors').empty();
+                    table.ajax.reload();
+                }
+                if (!res.success) {
+                    //Xuất danh sách thông báo lỗi
+                    $('#importErrors').append('<li>' + res.message + '</li>');
+                    res.errors.map((e) => {
+                        return $('#importErrors').append('<li>' + e.errors + '</li>');
+                    });
+                }
+            });
+        });
+        //Clear các dòng thông báo lỗi của các modal khi ẩn hoặc tắt
+        $('#modal-import').on('hidden.bs.modal', function () {
+            $('#importErrors').empty();
+            $('#importFile').val('');
+        });
+        $('#modal-create').on('hidden.bs.modal', function () {
+            $('#createFormValidate').removeClass('was-validated');
+            $('.create_name_error').text('');
+            $('.create_description_error').text('');
+        });
+        $('#modal-edit').on('hidden.bs.modal', function () {
+            $('#updateFormValidate').removeClass('was-validated');
+            $('.update_name_error').text('');
+            $('.update_description_error').text('');
+        });
     });
 
     $(function () {
@@ -189,28 +222,31 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{route('category.import')}}" method="post" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="exampleInputFile">File Excel</label>
-                        <div class="input-group">
+            <div class="modal-body">
+                <div class="text-danger">
+                    <ul id="importErrors">
+                    </ul>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputFile">File Excel</label>
+                    <div class="input-group">
                         <div class="custom-file">
-                            <input type="file" name="file_excel" accept=".xls, .xlsx" class="custom-file-input" >
+                            <input id="importFile" type="file" name="file_excel" accept=".xls, .xlsx"
+                                class="custom-file-input">
                             <label class="custom-file-label" for="exampleInputFile">Choose file</label>
                             <div class="text-danger create_avatar_error"></div>
                         </div>
                         <div class="input-group-append">
                             <span class="input-group-text">Upload</span>
                         </div>
-                        </div>
                     </div>
                 </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
-                    <button type="submit" class="btn btn-primary">Import</button>
-                </div>
-            </form>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                <button type="submit" id="importBtn" class="btn btn-primary">Import</button>
+            </div>
+
         </div>
     </div>
 </div>
@@ -225,23 +261,23 @@
                 </button>
             </div>
             <form action="" id="createFormValidate">
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="inputName">Tên</label>
-                    <input type="text" id="storeName" name="name" class="form-control" required>
-                    <div class="text-danger create_name_error"></div>
-                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="inputName">Tên</label>
+                        <input type="text" id="storeName" name="name" class="form-control" required>
+                        <div class="text-danger create_name_error"></div>
+                    </div>
 
-                <div class="form-group">
-                    <label for="inputProjectLeader">Mô tả</label>
-                    <textarea name="description" id="storeDescription" cols="30" rows="10"></textarea>
-                    <div class="text-danger create_description_error"></div>
+                    <div class="form-group">
+                        <label for="inputProjectLeader">Mô tả</label>
+                        <textarea name="description" id="storeDescription" cols="30" rows="10"></textarea>
+                        <div class="text-danger create_description_error"></div>
+                    </div>
                 </div>
-            </div>
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default closeModal" data-dismiss="modal">Đóng</button>
-                <button type="submit" class="btn btn-primary" id="addBtn">Lưu</button>
-            </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default closeModal" data-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary" id="addBtn">Lưu</button>
+                </div>
             </form>
         </div>
     </div>
@@ -258,27 +294,26 @@
             </div>
             <input type="text" id="updateId" hidden>
             <form action="" id="updateFormValidate">
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="inputName">Tên</label>
-                    <input type="text" id="updateName" class="form-control" required>
-                    <div class="text-danger update_name_error"></div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="inputName">Tên</label>
+                        <input type="text" id="updateName" class="form-control" required>
+                        <div class="text-danger update_name_error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputProjectLeader">Mô tả</label>
+                        <textarea id="updateDescription" cols="30" rows="10"></textarea>
+                        <div class="text-danger update_description_error"></div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="inputProjectLeader">Mô tả</label>
-                    <textarea id="updateDescription" cols="30" rows="10"></textarea>
-                    <div class="text-danger update_description_error"></div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default closeModal" data-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary" id="updateBtn">Lưu thay đổi</button>
                 </div>
-            </div>
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default closeModal" data-dismiss="modal">Đóng</button>
-                <button type="submit" class="btn btn-primary" id="updateBtn">Lưu thay đổi</button>
-            </div>
             </form>
         </div>
     </div>
 </div>
-
 
 <section class="content-header">
     <div class="container-fluid">
@@ -320,7 +355,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-
                             </tbody>
                         </table>
                     </div>

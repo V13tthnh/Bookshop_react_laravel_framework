@@ -236,7 +236,69 @@
                     });
                 }
             });
-
+        });
+        //import
+        $('#importBtn').click(function () {
+            $('#importErrors').empty();
+            var formData = new FormData();
+            var file = $('#importFile')[0].files[0];
+            formData.append('_token', "{{csrf_token()}}");
+            formData.append('file_excel', file);
+            $.ajax({
+                url: '{{route('author.import')}}',
+                method: 'post',
+                data: formData,
+                contentType: false,
+                processData: false,
+            }).done(function (res) {
+                if (res.success) {
+                    $('#modal-import').modal('hide');
+                    Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
+                    $('#importErrors').empty();
+                    table.ajax.reload();
+                }
+                if (!res.success) {
+                    //Xuất danh sách thông báo lỗi
+                    $('#importErrors').append('<li>' + res.message + '</li>');
+                    res.errors.map((e) => {
+                        return $('#importErrors').append('<li>' + e.errors + '</li>');
+                    });
+                }
+            });
+        });
+         //import
+         $('#importBtn').click(function () {
+            $('#importErrors').empty();
+            var formData = new FormData();
+            var file = $('#importFile')[0].files[0];
+            formData.append('_token', "{{csrf_token()}}");
+            formData.append('file_excel', file);
+            $.ajax({
+                url: '{{route('admin.import')}}',
+                method: 'post',
+                data: formData,
+                contentType: false,
+                processData: false,
+            }).done(function (res) {
+                if (res.success) {
+                    $('#modal-import').modal('hide');
+                    Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
+                    $('#importErrors').empty();
+                    table.ajax.reload();
+                }
+                if (!res.success) {
+                    //Xuất danh sách thông báo lỗi
+                    $('#importErrors').append('<li>' + res.message + '</li>');
+                    res.errors.map((e) => {
+                        return $('#importErrors').append('<li>' + e.errors + '</li>');
+                    });
+                }
+            });
+        });
+        //Clear các dòng thông báo lỗi của các modal khi ẩn hoặc tắt
+        $('#modal-import').on('hidden.bs.modal', function () {
+            $('#importErrors').empty();
+            $('#importFile').val('');
         });
     });
     //Xử lý sự kiện onchange hiển thị hình ảnh khi chọn ảnh từ trường input cho modal create
@@ -267,31 +329,35 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{route('category.import')}}" method="post" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="exampleInputFile">File Excel</label>
-                        <div class="input-group">
+            <div class="modal-body">
+                <div class="text-danger">
+                    <ul id="importErrors">
+                    </ul>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputFile">File Excel</label>
+                    <div class="input-group">
                         <div class="custom-file">
-                            <input type="file" name="file_excel" accept=".xls, .xlsx" class="custom-file-input" >
+                            <input id="importFile" type="file" name="file_excel" accept=".xls, .xlsx"
+                                class="custom-file-input">
                             <label class="custom-file-label" for="exampleInputFile">Choose file</label>
                             <div class="text-danger create_avatar_error"></div>
                         </div>
                         <div class="input-group-append">
                             <span class="input-group-text">Upload</span>
                         </div>
-                        </div>
                     </div>
                 </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
-                    <button type="submit" class="btn btn-primary">Import</button>
-                </div>
-            </form>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                <button type="submit" id="importBtn" class="btn btn-primary">Import</button>
+            </div>
+
         </div>
     </div>
 </div>
+<!-- Them moi -->
 <div class="modal fade" id="modal-create">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -364,7 +430,7 @@
         </div>
     </div>
 </div>
-
+<!-- Cap nhat -->
 <div class="modal fade" id="modal-edit">
     <div class="modal-dialog">
         <div class="modal-content">

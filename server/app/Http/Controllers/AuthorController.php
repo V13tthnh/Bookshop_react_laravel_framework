@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\AuthorsImport;
 use Illuminate\Http\Request;
 use App\Models\Author;
 use Yajra\Datatables\Datatables;
 use App\Http\Requests\CreateUpdateAuthorRequest;
+use Maatwebsite\Excel\Facades\Excel;
 use Str;
 class AuthorController extends Controller
 {
@@ -17,9 +19,32 @@ class AuthorController extends Controller
         $listAuthor=Author::all();
         return Datatables::of($listAuthor)->make(true);
     }
-    public function create()
+
+    public function import(Request $request)
     {
-        return view('author.create');
+        if($request->file_excel == "undefined"){
+            return response()->json([
+                'success' => false,
+                'message' => "Vui lòng chọn file cần nhập!",
+            ]);
+        }
+        if ($request->hasFile('file_excel')) {
+            $path = $request->file('file_excel')->getRealPath();
+            try{
+                Excel::import(new AuthorsImport, $path);
+            }catch(\Maatwebsite\Excel\Validators\ValidationException $e){
+                $failures = $e->failures(); //Lấy danh sách thông báo lỗi
+                return response()->json([
+                    'success' => false,
+                    'message' => "Nhập không thành không!",
+                    'errors' => $failures
+                ]);
+            }
+        }
+        return response()->json([
+            'success' => true,
+            'message' => "Nhập thành công!",
+        ]);
     }
 
     public function store(CreateUpdateAuthorRequest $request)
@@ -46,11 +71,6 @@ class AuthorController extends Controller
         ]);
     }
 
-    public function show(string $id)
-    {
-        //
-    }
-
     public function edit($id)
     {
         $author=Author::find($id);
@@ -60,9 +80,6 @@ class AuthorController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(CreateUpdateAuthorRequest $request, $id)
     {
         if($request->hasFile('avatar')){
@@ -88,9 +105,6 @@ class AuthorController extends Controller
       
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $author = Author::find($id);
@@ -105,11 +119,9 @@ class AuthorController extends Controller
         $trash = Author::onlyTrashed()->get();
         return Datatables::of($trash)->make(true);
     }
-
     public function trash(){
         return view('author.trash');
     }
-
     public function untrash($id)
     {   
         Author::withTrashed()->find($id)->restore();
