@@ -2,40 +2,32 @@
 
 @section('js')
 <script>
-    $(document).ready(function(){
+    $(document).ready(function () {
         var table = $('#myTable').DataTable({
             "responsive": true, "lengthChange": true, "autoWidth": false, //tùy chỉnh kích thước, phân trang
             "paging": true, "ordering": true, "searching": true,
-            "pageLength": 10, 
-            "dom": 'Bfrtip', 
-            "buttons": [{extend:"copy", text:"Sao chép"}, //custom các button
-                        {extend:"csv", text:"Xuất csv"}, 
-                        {extend:"excel",text:"Xuất Excel"}, 
-                        {extend:"pdf",text:"Xuất PDF"}, 
-                        {extend:"print",text:"In"}, 
-                        {extend:"colvis",text:"Hiển thị cột"}],
+            "pageLength": 10,
+            "dom": 'Bfrtip',
+            "buttons": [{ extend: "copy", text: "Sao chép" }, //custom các button
+            { extend: "csv", text: "Xuất csv" },
+            { extend: "excel", text: "Xuất Excel" },
+            { extend: "pdf", text: "Xuất PDF" },
+            { extend: "print", text: "In" },
+            { extend: "colvis", text: "Hiển thị cột" }],
             "language": { search: "Tìm kiếm:" },
             "lengthMenu": [10, 25, 50, 75, 100],
             "ajax": { url: "{{route('publisher.data.table')}}", method: "get", dataType: "json", },
-            "columns" : [{ data: 'id', name: 'id' },
-                        { data: 'name', name: 'name' },
-                        { data: 'id', render: function(data, type, row){
-                            return '<button class="btn btn-warning editBtn" value="' + data + '" data-toggle="modal" data-target="#modal-edit"><i class="nav-icon fa fa-edit"></i></button>'
-                                +'<div class="btn-group btn-group-toggle"><button class="btn btn-danger deleteBtn" value="' + data + '"><i class="nav-icon fa fa-trash"></i></button></div>'
-                        } },]
-        });
-        $('#modal-create').on('hidden.bs.modal', function(){
-            $('#createFormValidate').removeClass('was-validated');
-            $('.create_name_error').text('');
-            $('.create_description_error').text('');
-        });
-        $('#modal-edit').on('hidden.bs.modal', function(){
-            $('#updateFormValidate').removeClass('was-validated');
-            $('.update_name_error').text('');
-            $('.update_description_error').text('');
+            "columns": [{ data: 'id', name: 'id' },
+            { data: 'name', name: 'name' },
+            {
+                data: 'id', render: function (data, type, row) {
+                    return '<button class="btn btn-warning editBtn" value="' + data + '" data-toggle="modal" data-target="#modal-edit"><i class="nav-icon fa fa-edit"></i></button>'
+                        + '<div class="btn-group btn-group-toggle"><button class="btn btn-danger deleteBtn" value="' + data + '"><i class="nav-icon fa fa-trash"></i></button></div>'
+                }
+            },]
         });
         //store
-        $('#addBtn').click(function(e){
+        $('#addBtn').click(function (e) {
             e.preventDefault();
             var name = $('#storeName').val();
             var description = $('#storeDescription').val();
@@ -43,11 +35,11 @@
                 url: "{{route('publisher.store')}}",
                 method: "post",
                 data: {
-                    "_token":"{{csrf_token()}}",
-                    "name":name,
-                    "description":description
+                    "_token": "{{csrf_token()}}",
+                    "name": name,
+                    "description": description
                 }
-            }).done(function(res){
+            }).done(function (res) {
                 if (res.success) {
                     Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
                     $('#modal-create').modal('hide'); //ẩn model thêm mới
@@ -55,32 +47,32 @@
                     $('#storeDescription').summernote('code', '');
                     table.ajax.reload(); //refresh bảng 
                 }
-                if(!res.success) {
+                if (!res.success) {
                     Swal.fire({ title: res.message, icon: 'error', confirmButtonText: 'OK' });
                     return;
                 }
-            }).fail(function(res){
+            }).fail(function (res) {
                 $('#createFormValidate').addClass('was-validated');
-                $.each(res.responseJSON.errors, function(key, value){
+                $.each(res.responseJSON.errors, function (key, value) {
                     $('.create_' + key + '_error').text(value[0]);
                     $('.create_' + key + '_error').text(value[1]);
                 });
             });
         });
         //edit
-        $('#myTable').on('click', '.editBtn', function(){
+        $('#myTable').on('click', '.editBtn', function () {
             var id = $(this).val();
             $.ajax({
                 url: "publisher/edit/" + id,
                 method: "get",
-            }).done(function(res){
+            }).done(function (res) {
                 $('#updateId').val(res.data.id);
                 $('#updateName').val(res.data.name);
                 $('#updateDescription').summernote('code', res.data.description);
             });
         });
         //update
-        $('#updateBtn').click(function(e){
+        $('#updateBtn').click(function (e) {
             e.preventDefault();
             var id = $('#updateId').val();
             var name = $('#updateName').val();
@@ -88,31 +80,31 @@
             $.ajax({
                 url: "publisher/update/" + id,
                 method: "post",
-                data:{
+                data: {
                     "_token": "{{csrf_token()}}",
                     "name": name,
                     "description": description
                 }
-            }).done(function(res){
+            }).done(function (res) {
                 if (res.success) {
                     Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
                     $('#modal-edit').modal('hide'); //ẩn model edit
                     table.ajax.reload(); //refresh bảng 
                 }
-                if(!res.success) {
+                if (!res.success) {
                     Swal.fire({ title: res.message, icon: 'error', confirmButtonText: 'OK' });
                     return;
                 }
-            }).fail(function(res){
+            }).fail(function (res) {
                 $('#updateFormValidate').addClass('was-validated');
-                $.each(res.responseJSON.errors, function(key, value){
+                $.each(res.responseJSON.errors, function (key, value) {
                     $('.update_' + key + '_error').text(value[0]);
                     $('.update_' + key + '_error').text(value[1]);
                 });
             });
         });
         //delete
-        $('#myTable').on('click', '.deleteBtn', function(){
+        $('#myTable').on('click', '.deleteBtn', function () {
             var id = $(this).val();
             Swal.fire({
                 title: 'Bạn chắc chắn chứ?',
@@ -122,12 +114,12 @@
                 confirmButtonText: 'Đồng ý',
                 cancelButtonText: 'Hủy bỏ'
             }).then(result => {
-                if(result.value){
+                if (result.value) {
                     $.ajax({
                         url: "publisher/destroy/" + id,
                         method: "post",
-                        data:{"_token" : "{{csrf_token()}}",}
-                    }).done(function(res){
+                        data: { "_token": "{{csrf_token()}}", }
+                    }).done(function (res) {
                         if (res.success) {
                             Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
                             table.ajax.reload();
@@ -135,7 +127,51 @@
                     });
                 }
             });
-            
+        });
+        //import
+        $('#importBtn').click(function () {
+            $('#importErrors').empty();
+            var formData = new FormData();
+            var file = $('#importFile')[0].files[0];
+            formData.append('_token', "{{csrf_token()}}");
+            formData.append('file_excel', file);
+            $.ajax({
+                url: '{{route('publisher.import')}}',
+                method: 'post',
+                data: formData,
+                contentType: false,
+                processData: false,
+            }).done(function (res) {
+                if (res.success) {
+                    $('#modal-import').modal('hide');
+                    Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
+                    $('#importErrors').empty();
+                    table.ajax.reload();
+                }
+                if (!res.success) {
+                    $('#importErrors').append('<li>' + res.message + '</li>');
+                    //Xuất danh sách thông báo lỗi
+                    res.errors.map((e) => {
+                        return $('#importErrors').append('<li>' + e.errors + '</li>');
+                    });
+                }
+                
+            });
+        });
+         //Clear các dòng thông báo lỗi của các modal khi ẩn hoặc tắt
+         $('#modal-import').on('hidden.bs.modal', function () {
+            $('#importErrors').empty();
+            $('#importFile').val('');
+        });
+        $('#modal-create').on('hidden.bs.modal', function () {
+            $('#createFormValidate').removeClass('was-validated');
+            $('.create_name_error').text('');
+            $('.create_description_error').text('');
+        });
+        $('#modal-edit').on('hidden.bs.modal', function () {
+            $('#updateFormValidate').removeClass('was-validated');
+            $('.update_name_error').text('');
+            $('.update_description_error').text('');
         });
         $(function () {
             // create description
@@ -158,28 +194,30 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{route('category.import')}}" method="post" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="exampleInputFile">File Excel</label>
-                        <div class="input-group">
+            <div class="modal-body">
+                <div class="text-danger">
+                    <ul id="importErrors">
+                    </ul>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputFile">File Excel</label>
+                    <div class="input-group">
                         <div class="custom-file">
-                            <input type="file" name="file_excel" accept=".xls, .xlsx" class="custom-file-input" >
+                            <input id="importFile" type="file" accept=".xls, .xlsx"
+                                class="custom-file-input">
                             <label class="custom-file-label" for="exampleInputFile">Choose file</label>
                             <div class="text-danger create_avatar_error"></div>
                         </div>
                         <div class="input-group-append">
                             <span class="input-group-text">Upload</span>
                         </div>
-                        </div>
                     </div>
                 </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
-                    <button type="submit" class="btn btn-primary">Import</button>
-                </div>
-            </form>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                <button id="importBtn" class="btn btn-primary">Import</button>
+            </div>
         </div>
     </div>
 </div>
@@ -210,7 +248,7 @@
                     <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
                     <button type="button" class="btn btn-primary" id="addBtn">Lưu</button>
                 </div>
-           </form>
+            </form>
         </div>
     </div>
 </div>
@@ -229,14 +267,14 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="inputName">Tên</label>
-                        <input id="updateName" type="text"  class="form-control" required>
+                        <input id="updateName" type="text" class="form-control" required>
                         <div class="text-danger update_name_error"></div>
                     </div>
                     <div class="form-group">
                         <label for="inputName">Mô tả</label>
                         <textarea id="updateDescription" cols="30" rows="10"></textarea>
                         <div class="text-danger update_description_error"></div>
-                    </div>  
+                    </div>
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
@@ -287,7 +325,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                               
+
                             </tbody>
                         </table>
                     </div>

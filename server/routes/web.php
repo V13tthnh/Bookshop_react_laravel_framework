@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/', [AdminController::class, 'index'])->name('index');
             Route::get('profile', [AdminController::class, 'profile'])->name('profile');
             Route::get('data-table', [AdminController::class, 'dataTable'])->name('data.table');
+            Route::post('import-admins', [AdminController::class, 'import'])->name('import');
             Route::get('create', [AdminController::class, 'create'])->name('create');
             Route::post('store', [AdminController::class, 'store'])->name('store');
             Route::get('edit/{id}', [AdminController::class, 'edit'])->name('edit');
@@ -69,6 +70,7 @@ Route::middleware('auth')->group(function () {
         Route::name('author.')->group(function () {
             Route::get('/', [AuthorController::class, 'index'])->name('index');
             Route::get('data-table', [AuthorController::class, 'dataTable'])->name('data.table');
+            Route::post('import-authors', [AuthorController::class, 'import'])->name('import');
             Route::get('create', [AuthorController::class, 'create'])->name('create');
             Route::post('store', [AuthorController::class, 'store'])->name('store');
             Route::get('edit/{id}', [AuthorController::class, 'edit'])->name('edit');
@@ -84,6 +86,7 @@ Route::middleware('auth')->group(function () {
         Route::name('supplier.')->group(function () {
             Route::get('/', [SupplierController::class, 'index'])->name('index');
             Route::get('data-table', [SupplierController::class, 'dataTable'])->name('data.table');
+            Route::post('import-suppliers', [SupplierController::class, 'import'])->name('import');
             Route::get('create', [SupplierController::class, 'create'])->name('create');
             Route::post('store', [SupplierController::class, 'store'])->name('store');
             Route::get('edit/{id}', [SupplierController::class, 'edit'])->name('edit');
@@ -155,6 +158,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/', [PublisherController::class, 'index'])->name('index');
             Route::get('data-table', [PublisherController::class, 'dataTable'])->name('data.table');
             Route::get('create', [PublisherController::class, 'create'])->name('create');
+            Route::post('import-publishers', [PublisherController::class, 'import'])->name('import');
             Route::post('store', [PublisherController::class, 'store'])->name('store');
             Route::get('edit/{id}', [PublisherController::class, 'edit'])->name('edit');
             Route::post('update/{id}', [PublisherController::class, 'update'])->name('update');

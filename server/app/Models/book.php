@@ -17,7 +17,21 @@ class Book extends Model
     use HasFactory;
     protected $hidden=['deleted_at', 'created_at', 'updated_at'];
 
-    protected $fillable = ['name', 'code', 'description', 'weight', 'format', 'year', 'language', 'size', 'num_pages', 'translator', 'supplier_id', 'publisher_id'];
+    protected $fillable = [
+        'name', 
+        'code',
+        'description',
+        'weight', 
+        'format', 
+        'year', 
+        'language', 
+        'size', 
+        'num_pages', 
+        'translator', 
+        'slug', 
+        'supplier_id', 
+        'publisher_id', 
+        'book_type'];
 
     public function categories(){
         return $this->belongsToMany(Category::class);

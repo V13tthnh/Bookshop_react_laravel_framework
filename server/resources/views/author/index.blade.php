@@ -4,33 +4,34 @@
 <script>
     //Edit ajax
     $(document).ready(function () {
-        $(document).ready(function () {
         var table = $('#myTable').DataTable({
             "responsive": true, "lengthChange": true, "autoWidth": false, //tùy chỉnh kích thước, phân trang
             "paging": true, "ordering": true, "searching": true,
-            "pageLength": 10, "processing":true,
-            "dom": 'Bfrtip', 
-            "buttons": [{extend:"copy", text:"Sao chép"}, //custom các button
-                        {extend:"csv", text:"Xuất csv"}, 
-                        {extend:"excel",text:"Xuất Excel"}, 
-                        {extend:"pdf",text:"Xuất PDF"}, 
-                        {extend:"print",text:`<i class="fas fa-print"></i> In`}, 
-                        {extend:"colvis",text:"Hiển thị cột"}],
+            "pageLength": 10, "processing": true,
+            "dom": 'Bfrtip',
+            "buttons": [{ extend: "copy", text: "Sao chép" }, //custom các button
+            { extend: "csv", text: "Xuất csv" },
+            { extend: "excel", text: "Xuất Excel" },
+            { extend: "pdf", text: "Xuất PDF" },
+            { extend: "print", text: `<i class="fas fa-print"></i> In` },
+            { extend: "colvis", text: "Hiển thị cột" }],
             "language": { search: "Tìm kiếm:" },
             "ajax": { url: "{{route('author.data.table')}}", method: "get", dataType: "json", },
             "columns": [
                 { data: 'id', name: 'id' },
-                { data: 'image', render: function(data, type, row){ 
-                    if(data != null){
-                        return '<img src="'+data+'" alt="" sizes="40" srcset="" style="height:100px;width:100px">';
+                {
+                    data: 'image', render: function (data, type, row) {
+                        if (data != null) {
+                            return '<img src="' + data + '" alt="" sizes="40" srcset="" style="height:100px;width:100px">';
+                        }
+                        return `<img src="{{asset('dist/img/user.jpg')}}" alt="" sizes="40" srcset="" style="height:100px;width:100px">`;
                     }
-                    return `<img src="{{asset('dist/img/user.jpg')}}" alt="" sizes="40" srcset="" style="height:100px;width:100px">`;
-                    } },
-                { data: 'name', name: 'name'},
+                },
+                { data: 'name', name: 'name' },
                 {
                     data: 'id', render: function (data, type, row) {
                         return '<button class="btn btn-warning editBtn  " value="' + data + '" data-toggle="modal" data-target="#modal-edit"><i class="nav-icon fa fa-edit"></i></button>'
-                                +'<div class="btn-group btn-group-toggle"><button class="btn btn-danger deleteBtn" value="' + data + '"><i class="nav-icon fa fa-trash"></i></button></div>'
+                            + '<div class="btn-group btn-group-toggle"><button class="btn btn-danger deleteBtn" value="' + data + '"><i class="nav-icon fa fa-trash"></i></button></div>'
                     }
                 },
             ],
@@ -59,20 +60,8 @@
                 reader.readAsDataURL(input.files[0]);
             }
         });
-        //Sự kiện click khi nhấn button x hoặc hủy trên modal
-        $('.closeModal').click(function(){
-            //clear tất cả các class validate của modal create và edit
-            $('#createFormValidate').removeClass('was-validated');
-            $('.create_name_error').text('');
-            $('.create_description_error').text('');
-            $('.create_image_error').text('');
-            $('#updateFormValidate').removeClass('was-validated');
-            $('.update_name_error').text('');
-            $('.update_description_error').text('');
-            $('.update_image_error').text('');
-        });
         //store
-        $('#addBtn').click(function(e){
+        $('#addBtn').click(function (e) {
             e.preventDefault(); //Chỉ focus vào sự kiện click bỏ qua tất cả sự kiện khác
             var description = $('#storeDescription').val();
             var name = $('#storeName').val();
@@ -85,13 +74,13 @@
                 data: formDataCreate,
                 contentType: false,
                 processData: false
-            }).done(function(res){
+            }).done(function (res) {
                 if (res.success) {
                     Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
                     $('#modal-create').modal('hide'); //ẩn model thêm mới
                     //clear input trên modal sau khi thêm xong
-                    $('#storeName').val(''); 
-                    $('#storeDescription').summernote('code', ''); 
+                    $('#storeName').val('');
+                    $('#storeDescription').summernote('code', '');
                     $('#storeAvatar').val('');
                     $('#blah2').attr('src', '');
                     //clear class validate trên modal sau khi thêm xong
@@ -101,15 +90,15 @@
                     $('.create_image_error').text('');
                     table.ajax.reload(); //refresh lại bảng để hiển thị dữ liệu mới
                 }
-                if(!res.success) {
+                if (!res.success) {
                     Swal.fire({ title: res.message, icon: 'error', confirmButtonText: 'OK' });
                     return;
                 }
-            }).fail(function(res){
+            }).fail(function (res) {
                 //Xử lý validate form trong hàm fail 
                 var errors = res.responseJSON.errors;
                 $('#createFormValidate').addClass('was-validated');
-                $.each(errors, function(key, value){
+                $.each(errors, function (key, value) {
                     $('.create_' + key + '_error').text(value[0]);
                     $('.create_' + key + '_error').text(value[1]);
                     $('.create_' + key + '_error').text(value[2]);
@@ -117,12 +106,12 @@
             });
         });
         //edit
-        $('#myTable').on('click', '.editBtn', function(){
+        $('#myTable').on('click', '.editBtn', function () {
             var id = $(this).val();
             $.ajax({
                 url: "/author/edit/" + id,
                 method: "get",
-            }).done(function(res){
+            }).done(function (res) {
                 $('#updateId').val(id);
                 $('#updateName').val(res.data.name);
                 $('#updateDescription').summernote('code', res.data.description);
@@ -130,7 +119,7 @@
             });
         });
         //update
-        $('#updateBtn').click(function(e){
+        $('#updateBtn').click(function (e) {
             e.preventDefault();
             var id = $('#updateId').val();
             var name = $('#updateName').val();
@@ -144,7 +133,7 @@
                 data: formDataEdit,
                 contentType: false,
                 processData: false
-            }).done(function(res){
+            }).done(function (res) {
                 if (res.success) {
                     Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
                     $('#modal-edit').modal('hide'); //ẩn model thêm mới
@@ -152,15 +141,15 @@
                     $('#updateFormValidate').removeClass('was-validated');
                     table.ajax.reload(); //refresh bảng 
                 }
-                if(!res.success) {
+                if (!res.success) {
                     Swal.fire({ title: res.message, icon: 'error', confirmButtonText: 'OK' });
                     return;
                 }
-            }).fail(function(res){
+            }).fail(function (res) {
                 //Xử lý validate form trong hàm fail 
                 var errors = res.responseJSON.errors;
                 $('#updateFormValidate').addClass('was-validated');
-                $.each(errors, function(key, value){
+                $.each(errors, function (key, value) {
                     $('.update_' + key + '_error').text(value[0]);
                     $('.update_' + key + '_error').text(value[1]);
                     $('.update_' + key + '_error').text(value[2]);
@@ -168,7 +157,7 @@
             });
         });
         //delete
-        $('#myTable').on('click', '.deleteBtn', function(){
+        $('#myTable').on('click', '.deleteBtn', function () {
             var id = $(this).val();
             Swal.fire({
                 title: 'Bạn chắc chắn chứ?',
@@ -178,19 +167,19 @@
                 confirmButtonText: 'Đồng ý',
                 cancelButtonText: 'Hủy bỏ'
             }).then(result => {
-                if(result.value){
+                if (result.value) {
                     $.ajax({
                         url: "author/destroy/" + id,
-                        method : "post",
-                        data:{
-                            "_token" : "{{csrf_token()}}"
-                        } 
-                    }).done(function(res){
+                        method: "post",
+                        data: {
+                            "_token": "{{csrf_token()}}"
+                        }
+                    }).done(function (res) {
                         if (res.success) {
                             Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
                             table.ajax.reload(); //refresh bảng 
                         }
-                        if(!res.success) {
+                        if (!res.success) {
                             Swal.fire({ title: res.message, icon: 'error', confirmButtonText: 'OK' });
                             return;
                         }
@@ -198,30 +187,59 @@
                 }
             })
         });
-
+        //import
+        $('#importBtn').click(function () {
+            $('#importErrors').empty();
+            var formData = new FormData();
+            var file = $('#importFile')[0].files[0];
+            formData.append('_token', "{{csrf_token()}}");
+            formData.append('file_excel', file);
+            $.ajax({
+                url: '{{route('author.import')}}',
+                method: 'post',
+                data: formData,
+                contentType: false,
+                processData: false,
+            }).done(function (res) {
+                if (res.success) {
+                    $('#modal-import').modal('hide');
+                    Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
+                    $('#importErrors').empty();
+                    table.ajax.reload();
+                }
+                if (!res.success) {
+                    //Xuất danh sách thông báo lỗi
+                    $('#importErrors').append('<li>' + res.message + '</li>');
+                    res.errors.map((e) => {
+                        return $('#importErrors').append('<li>' + e.errors + '</li>');
+                    });
+                }
+            });
+        });
+        //Clear các dòng thông báo lỗi của các modal khi ẩn hoặc tắt
+        $('#modal-import').on('hidden.bs.modal', function () {
+            $('#importErrors').empty();
+            $('#importFile').val('');
+        });
+        $('#modal-create').on('hidden.bs.modal', function () {
+            $('#createFormValidate').removeClass('was-validated');
+            $('.create_name_error').text('');
+            $('.create_description_error').text('');
+            $('.create_image_error').text('');
+        });
+        $('#modal-edit').on('hidden.bs.modal', function () {
+            $('#updateFormValidate').removeClass('was-validated');
+            $('.update_name_error').text('');
+            $('.update_description_error').text('');
+            $('.update_image_error').text('');
+        });
     });
-
     $(function () {
         // Summernote thêm
         $('#storeDescription').summernote()
         // Summernote sửa
         $('#updateDescription').summernote()
     });
-});
-//review image create
-storeAvatar.onchange = evt => {
-    const [file] = storeAvatar.files
-    if (file) {
-        blah2.src = URL.createObjectURL(file)
-    }
-}
-// review image edit
-updateAvatar.onchange = evt => {
-    const [file] = updateAvatar.files
-    if (file) {
-        blah.src = URL.createObjectURL(file)
-    }
-}
 </script>
 @endsection
 
@@ -236,28 +254,31 @@ updateAvatar.onchange = evt => {
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{route('category.import')}}" method="post" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="exampleInputFile">File Excel</label>
-                        <div class="input-group">
+            <div class="modal-body">
+                <div class="text-danger">
+                    <ul id="importErrors">
+                    </ul>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputFile">File Excel</label>
+                    <div class="input-group">
                         <div class="custom-file">
-                            <input type="file" name="file_excel" accept=".xls, .xlsx" class="custom-file-input" >
+                            <input id="importFile" type="file" name="file_excel" accept=".xls, .xlsx"
+                                class="custom-file-input">
                             <label class="custom-file-label" for="exampleInputFile">Choose file</label>
                             <div class="text-danger create_avatar_error"></div>
                         </div>
                         <div class="input-group-append">
                             <span class="input-group-text">Upload</span>
                         </div>
-                        </div>
                     </div>
                 </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
-                    <button type="submit" class="btn btn-primary">Import</button>
-                </div>
-            </form>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                <button type="submit" id="importBtn" class="btn btn-primary">Import</button>
+            </div>
+
         </div>
     </div>
 </div>
@@ -274,7 +295,7 @@ updateAvatar.onchange = evt => {
             <form action="" id="createFormValidate">
                 <div class="modal-body">
                     <div style="text-align:center">
-                        <img id="blah2" src="#"  style="height:150px;width:150px" />
+                        <img id="blah2" src="#" style="height:150px;width:150px" />
                     </div>
                     <div class="form-group">
                         <label for="inputName">Tên</label>
@@ -283,12 +304,12 @@ updateAvatar.onchange = evt => {
                     </div>
                     <div class="form-group">
                         <label for="inputProjectLeader">Mô tả</label required>
-                        <textarea  id="storeDescription" cols="30" rows="10"></textarea>
+                        <textarea id="storeDescription" cols="30" rows="10"></textarea>
                         <div class="text-danger create_description_error"></div>
                     </div>
                     <div class="form-group">
                         <label for="inputProjectLeader">Ảnh</label>
-                        <input accept="image/*" type='file' id="storeAvatar" class="form-control"/>
+                        <input accept="image/*" type='file' id="storeAvatar" class="form-control" />
                         <div class="text-danger create_image_error"></div>
                     </div>
                 </div>
@@ -309,9 +330,9 @@ updateAvatar.onchange = evt => {
                 <button type="button" class="close closeModal" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
-            </div>  
-                <input type="text" id="updateId" hidden>
-                <form action="" id="updateFormValidate">
+            </div>
+            <input type="text" id="updateId" hidden>
+            <form action="" id="updateFormValidate">
                 <div class="modal-body">
                     <div style="text-align:center">
                         <img id="blah" src="#" alt="your image" style="height:150px;width:150px" />
@@ -327,7 +348,7 @@ updateAvatar.onchange = evt => {
                         <div class="text-danger update_description_error"></div>
                     </div>
                     <div class="form-group">
-                    <label for="inputProjectLeader">Ảnh</label>
+                        <label for="inputProjectLeader">Ảnh</label>
                         <input accept="image/*" type='file' id="updateAvatar" class="form-control" />
                         <div class="text-danger update_image_error"></div>
                     </div>
@@ -336,7 +357,7 @@ updateAvatar.onchange = evt => {
                     <button type="button" class="btn btn-default closeModal" data-dismiss="modal">Đóng</button>
                     <button type="submit" class="btn btn-primary" id="updateBtn">Lưu thay đổi</button>
                 </div>
-                </form>
+            </form>
         </div>
     </div>
 </div>
@@ -377,12 +398,11 @@ updateAvatar.onchange = evt => {
                                     <th>Id</th>
                                     <th>Ảnh</th>
                                     <th>Tên</th>
-                                    
                                     <th>Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody>
-                             
+
                             </tbody>
                         </table>
                     </div>

@@ -29,12 +29,29 @@ class CategoryController extends Controller
 
     public function import(Request $request)
     {
+        if($request->file_excel == "undefined"){
+            return response()->json([
+                'success' => false,
+                'message' => "Vui lòng chọn file cần nhập!",
+            ]);
+        }
         if ($request->hasFile('file_excel')) {
             $path = $request->file('file_excel')->getRealPath();
-            Excel::import(new CategoriesImport, $path);
-            return back()->with('successMsg', 'Nhập thành công!');
+            try{
+                Excel::import(new CategoriesImport, $path);
+            }catch(\Maatwebsite\Excel\Validators\ValidationException $e){
+                $failures = $e->failures(); //Lấy danh sách thông báo lỗi
+                return response()->json([
+                    'success' => false,
+                    'message' => "Nhập không thành không!",
+                    'errors' => $failures
+                ]);
+            }
         }
-        return back()->with('errorMsg', 'Nhập không thành công!');
+        return response()->json([
+            'success' => true,
+            'message' => "Nhập thành công!",
+        ]);
     }
 
     public function store(CreateUpdateCategoryRequest $rq)
@@ -44,11 +61,6 @@ class CategoryController extends Controller
             'success' => true,
             'message' => "Thêm thành công!",
         ]);
-    }
-
-    public function show()
-    {
-
     }
 
     public function edit($id)
