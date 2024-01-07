@@ -194,7 +194,6 @@
                 }
             }).fail(function(res){
                 var errors = res.responseJSON.errors;
-                console.log(errors);
                 $('#updateFormValidate').addClass('was-validated');
                 $.each(errors, function(key, value){
                     $('.update_' + key + '_error').text(value[0]);

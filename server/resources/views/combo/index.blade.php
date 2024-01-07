@@ -47,8 +47,8 @@
                 res.data.map(item => {
                     $('#tableDetail').append(
                         `<tr> 
-                            <td>${item.pivot.combo_id}</td>
                             <td>${item.name}</td>
+                            <td>${1}</td>
                         </tr>`);
                 });
             })
@@ -75,12 +75,11 @@
                 <table id="tableDetail" class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th>Id</th>
-                            <th>Sách</th>
+                            <th>Tên sách</th>
+                            <th>Số lượng</th>
                         </tr>
                     </thead>
                     <tbody>
-
                     </tbody>
                 </table>
             </div>

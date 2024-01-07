@@ -49,7 +49,14 @@
                 "lengthMenu": [10, 25, 50, 75, 100],
                 "ajax": { url: "goods-received-note/data-table-detail/" + id, method: "get", dataType: "json", },
                 "columns": [
-                    { data: 'id', name: 'id' },
+                    {
+                        "title": "#", // Tiêu đề của cột
+                        "data": null,
+                        "render": function (data, type, row, meta) {
+                            // 'meta.row' là chỉ số hàng, 'meta.settings._iDisplayStart' là số lượng hàng hiển thị trên mỗi trang
+                            return meta.row + meta.settings._iDisplayStart + 1;
+                        }
+                    },
                     { data: 'goods_received_note_id', name: 'goods_received_note_id' },
                     { data: 'book_name', name: 'book.name' },
                     { data: 'quantity', name: 'quantity' },
