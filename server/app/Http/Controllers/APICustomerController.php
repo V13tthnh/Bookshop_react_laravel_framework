@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\APIUpdateCustomerRequest;
 use App\Models\Customer;
 use App\Models\Order;
-use App\Models\User;
 use Illuminate\Http\Request;
-
+use Hash;
 class APICustomerController extends Controller
 {
 
@@ -19,17 +19,7 @@ class APICustomerController extends Controller
         ]);
     }
 
-    public function login()
-    {
-
-    }
-
     public function register()
-    {
-
-    }
-
-    public function create()
     {
 
     }
@@ -64,7 +54,7 @@ class APICustomerController extends Controller
 
     public function show(Request $rq)
     {
-        $count = User::where('name', $rq->name)->count();
+        $count = Customer::where('name', $rq->name)->count();
         if (empty($rq->name) || $count == 0) {
             return response()->json([
                 'success' => false,
@@ -72,34 +62,42 @@ class APICustomerController extends Controller
             ]);
         }
 
-        $findUser = user::where('name', $rq->name)->get();
+        $findUser = Customer::where('name', $rq->name)->get();
         return response()->json([
             'success' => true,
             'data' => $findUser
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(APIUpdateCustomerRequest $request, $id)
     {
-        //
+        //dd($request->hasFile('image'));
+        $user = Customer::find($id);
+        if(empty($user)){
+            return response()->json([
+                'success' => false,
+                'message' => "Không có dữ liệu người dùng!"
+            ]);
+        }
+        $user->name = $request->name;
+        $user->address = $request->address;
+        $user->phone = $request->phone;
+        if($request->hasFile('image')){
+            $file = $request->image;
+            $path = $file->store('uploads/customers');
+            $user->image = $path;
+        }
+        if(!empty($request->password)){
+            $user->password = Hash::make($request->password);
+        }
+        if(!empty($request->email)){
+            $user->email = $request->email;
+        }
+        $user->save();
+        return response()->json([
+            'success' => true,
+            'message' => "Cập nhật thông tin tài khoản thành công!"
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 }

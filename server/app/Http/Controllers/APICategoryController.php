@@ -8,7 +8,6 @@ use App\Models\BookCategory;
 
 class APICategoryController extends Controller
 {
-
     public function getAllCategory(){
         $listCate = Category::withCount('books')->get();
         if(empty($listCate)){

@@ -43,7 +43,7 @@
                         }
                     }
                 },
-                { data: 'created_at', name: 'created_at' },
+                { data: 'created_at', name: 'created_at'},
                 {
                     data: 'id', render: function (data, type, row) {
                         return '<button class="btn btn-info showDetail" value="' + data + '" data-toggle="modal" data-target="#modal-detail"><i class="nav-icon fa fa-eye"></i></button>'
@@ -132,14 +132,20 @@
                 "lengthMenu": [10, 25, 50, 75, 100],
                 "ajax": { url: "order/data-table-detail/" + id, method: "get", dataType: "json", },
                 "columns": [
-                    { data: 'order_id', name: 'order_id' },
+                    {
+                        "title": "#", // Tiêu đề của cột
+                        "data": null,
+                        "render": function (data, type, row, meta) {
+                            // 'meta.row' là chỉ số hàng, 'meta.settings._iDisplayStart' là số lượng hàng hiển thị trên mỗi trang
+                            return meta.row + meta.settings._iDisplayStart + 1;
+                        }
+                    },
                     { data: 'book_name', name: 'book.name' },
                     { data: 'combo_name', name: 'combo.name' },
-                    { data: 'book_quantity', name: 'book_quantity' },
-                    { data: 'combo_quantity', name: 'combo_quantity' },
+                    { data: 'quantity', name: 'quantity' },
                     { data: 'unit_price', render: $.fn.dataTable.render.number('.', 2, '') },
-                    { data: 'combo_price', render: $.fn.dataTable.render.number('.', 2, '') },
                 ],
+               
             });
         });
     });
@@ -160,13 +166,11 @@
                 <table id="tableDetail" class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th>Id hóa đơn</th>
-                            <th>Sách</th>
-                            <th>Combo</th>
-                            <th>Số lượng sách</th>
-                            <th>Số lượng combo</th>
-                            <th>Giá sách</th>
-                            <th>Giá combo</th>
+                            <th>#</th>
+                            <th>Tên Sách</th>
+                            <th>Tên Combo</th>
+                            <th>Số lượng</th>
+                            <th>Đơn giá</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -32,6 +32,8 @@ class GoodsReceivedNoteController extends Controller
             return $supplier_name->supplier->name;
         })->addColumn('admin_name', function ($admin_name) {
             return $admin_name->admin->name;
+        })->addColumn('created_at', function($supplier_name){
+            return \Carbon\Carbon::parse($supplier_name->created_at)->format('d-m-Y');
         })->make(true);
     }
 

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Customer;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Str;
@@ -14,8 +15,7 @@ use App\Models\Discount;
 use App\Models\Image;
 use App\Models\Review;
 use App\Models\Slider;
-use App\Models\Supplier;
-use App\Models\User;
+use App\Models\Supplier;    
 use App\Models\Publisher;
 use Hash;
 
@@ -27,18 +27,19 @@ class AddDataToDBSeeder extends Seeder
     public function run(): void
     {
         //them user 1
-        $user=new User;
-        $user->name='Tuan';
-        $user->email='asd@123';
-        $user->password=Hash::make('123123');
-        $user->status=1;
+        $user = new Customer;
+        $user->name = 'Tuan';
+        $user->email = 'asd@123';
+        $user->password = Hash::make('123123');
+        $user->status = 1;
         $user->save();
         //thêm admin 1
-        $admin1=new Admin;
-        $admin1->name='Viết Thành';
-        $admin1->email='admin@123';
-        $admin1->email_verified_at=null;
-        $admin1->password=Hash::make('123123');
+        $admin1 = new Admin;
+        $admin1->name = 'Viết Thành';
+        $admin1->email = 'admin@123';
+        $admin1->email_verified_at = null;
+        $admin1->password = Hash::make('123123');
+        $admin1->save();
 
         $admin2 = new Admin;
         $admin2->name = 'Thành Nghĩa';
@@ -60,13 +61,13 @@ class AddDataToDBSeeder extends Seeder
         $admin3->password = Hash::make('Admin@123');
         $admin3->role = 3;
         $admin3->remember_token = '';
-        $admin3->save(); 
+        $admin3->save();
 
         //categories
         for ($i = 0; $i < 10; $i++) {
             $categorys = new Category;
-            $categorys->name = "Danh mục " .$i;
-            $categorys->description = "Thông tin danh mục " .$i;
+            $categorys->name = "Danh mục " . $i;
+            $categorys->description = "Thông tin danh mục " . $i;
             $categorys->slug = Str::slug($categorys->name);
             $categorys->save();
         }
@@ -74,8 +75,8 @@ class AddDataToDBSeeder extends Seeder
         //authors
         for ($i = 0; $i < 10; $i++) {
             $author = new Author;
-            $author->name = "Tác giả " .$i;
-            $author->description = "Thông tin tác giả " .$i;
+            $author->name = "Tác giả " . $i;
+            $author->description = "Thông tin tác giả " . $i;
             $author->slug = Str::slug($author->name);
             $author->image = null;
             $author->save();
@@ -84,18 +85,18 @@ class AddDataToDBSeeder extends Seeder
         //publishers
         for ($i = 0; $i < 10; $i++) {
             $publisher = new Publisher;
-            $publisher->name = "NXB " .$i;
-            $publisher->description = "Thông tin NXB " .$i;
+            $publisher->name = "NXB " . $i;
+            $publisher->description = "Thông tin NXB " . $i;
             $publisher->save();
         }
 
-         //suppliers
-         for ($i = 0; $i < 10; $i++) {
+        //suppliers
+        for ($i = 0; $i < 10; $i++) {
             $supplier = new Supplier;
-            $supplier->name = "Nhà cung cấp " .$i;
-            $supplier->address = "Thông tin địa chỉ NCC " .$i;
-            $supplier->phone = "012345678 " .$i;
-            $supplier->description = "Thông tin NCC " .$i;
+            $supplier->name = "Nhà cung cấp " . $i;
+            $supplier->address = "Thông tin địa chỉ NCC " . $i;
+            $supplier->phone = "012345678 " . $i;
+            $supplier->description = "Thông tin NCC " . $i;
             $supplier->slug = Str::slug($supplier->name);
             $supplier->save();
         }
