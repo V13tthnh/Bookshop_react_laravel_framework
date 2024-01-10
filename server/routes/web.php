@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
@@ -47,6 +48,12 @@ Route::middleware('auth')->group(function () {
             Route::get('data-table-detail/{id}', [ComboController::class, 'dataTableDetail'])->name('data.table.detail');
             Route::get('create', [ComboController::class, 'create'])->name('create');
             Route::post('store', [ComboController::class, 'store'])->name('store');
+            Route::get('edit/{id}', [ComboController::class, 'edit'])->name('edit');
+            Route::post('update/{id}', [ComboController::class, 'update'])->name('update');
+            Route::post('destroy/{id}', [ComboController::class, 'destroy'])->name('destroy');
+            Route::get('trash', [ComboController::class, 'trash'])->name('trash');
+            Route::get('data-table-trash', [ComboController::class, 'dataTableTrash'])->name('data.table.trash');
+            Route::get('untrash/{id}', [ComboController::class, 'untrash'])->name('untrash');
         });
     });
     //category-Thanh tuan
@@ -174,6 +181,21 @@ Route::middleware('auth')->group(function () {
         Route::name('customer.')->group(function () {
             Route::get('/', [CustomerController::class, 'index'])->name('index');
             Route::get('data-table', [CustomerController::class, 'dataTable'])->name('data.table');
+        });
+    });
+
+    //discount-Viet thanh
+    Route::prefix('discount')->group(function () {
+        Route::name('discount.')->group(function () {
+            Route::get('/', [DiscountController::class, 'index'])->name('index');
+            Route::get('data-table', [DiscountController::class, 'dataTable'])->name('data.table');
+            Route::post('store', [DiscountController::class, 'store'])->name('store');
+            Route::get('edit/{id}', [DiscountController::class, 'edit'])->name('edit');
+            Route::post('update/{id}', [DiscountController::class, 'update'])->name('update');
+            Route::post('destroy/{id}', [DiscountController::class, 'destroy'])->name('destroy');
+            Route::get('trash', [DiscountController::class, 'trash'])->name('trash');
+            Route::get('data-table-trash', [DiscountController::class, 'dataTableTrash'])->name('data.table.trash');
+            Route::get('untrash/{id}', [DiscountController::class, 'untrash'])->name('untrash');
         });
     });
 });

@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Hash;
+use Storage;
 class APICustomerController extends Controller
 {
 
@@ -71,28 +72,41 @@ class APICustomerController extends Controller
 
     public function update(APIUpdateCustomerRequest $request, $id)
     {
-        //dd($request->hasFile('image'));
         $user = Customer::find($id);
-        if(empty($user)){
+        if (empty($user)) {
             return response()->json([
                 'success' => false,
                 'message' => "Không có dữ liệu người dùng!"
             ]);
         }
+        // Kiểm tra request có yêu cầu cập nhật mật khẩu không nếu có thì cập nhật không thì bỏ qua
+        if (!empty($request->password)) {
+            // Kiểm tra mật khẩu cũ có khớp trong csdl nếu không thông báo lỗi
+            if (!Hash::check($request->oldPassword, $user->password)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Mật khẩu không trùng khớp!",
+                ]);
+            }
+            $user->password = Hash::make($request->password);
+        }
+        // Kiểm tra request có yêu cầu cập nhật email không nếu có thì cập nhật không thì bỏ qua
+        if (!empty($request->email)) {
+            $user->email = $request->email;
+        }
+        //Kiểm tra request có file ảnh không nếu có thì cập nhật ảnh còn không thì bỏ qua
+        if ($request->hasFile('image')) {
+            if ($user->image) {
+                Storage::delete($user->image);
+            }
+            $file = $request->file('image');
+            $fileName = date('His') . $file->getClientOriginalName();
+            $path = $request->file('image')->storeAs('uploads/customers', $fileName, 'local');
+            $user->image = $path;
+        }
         $user->name = $request->name;
         $user->address = $request->address;
         $user->phone = $request->phone;
-        if($request->hasFile('image')){
-            $file = $request->image;
-            $path = $file->store('uploads/customers');
-            $user->image = $path;
-        }
-        if(!empty($request->password)){
-            $user->password = Hash::make($request->password);
-        }
-        if(!empty($request->email)){
-            $user->email = $request->email;
-        }
         $user->save();
         return response()->json([
             'success' => true,
@@ -100,4 +114,15 @@ class APICustomerController extends Controller
         ]);
     }
 
+    public function update_image(Request $request, $id)
+    {
+        $user = Customer::find($id);
+        //Kiểm tra request có file ảnh không nếu có thì thêm ảnh còn không thì bỏ qua
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $fileName = date('His') . $file->getClientOriginalName();
+            $path = $request->file('image')->storeAs('uploads/', $fileName, 'public');
+            $user->image = $path;
+        }
+    }
 }

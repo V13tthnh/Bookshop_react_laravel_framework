@@ -16,6 +16,7 @@ return new class extends Migration
             $table->tinyInteger('rating')->nullable();
             $table->string('comment')->nullable();
             $table->unsignedBigInteger('order_detail_id');
+            $table->boolean('status');
             $table->timestamps();
         });
     }

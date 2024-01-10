@@ -84,8 +84,8 @@ class APIOrderController extends Controller
     }
     public function details($id)
     {
-        $order = Order::with('customer')->find($id);
-        if (empty($order)) {
+        $orderDetail = OrderDetail::with('book', 'combo')->where('order_id', $id)->get();
+        if (empty($orderDetail)) {
             return response()->json([
                 'success' => false,
                 'message' => "Hóa đơn không tồn tại!"
@@ -93,7 +93,7 @@ class APIOrderController extends Controller
         }
         return response()->json([
             'success' => true,
-            'data' => $order
+            'data' => $orderDetail
         ]);
     }
 

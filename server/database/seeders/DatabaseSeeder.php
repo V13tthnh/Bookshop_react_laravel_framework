@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $this->call([
-            AddDataToDBSeeder::class,
+            set_data_seeder::class,
         ]);
     }
 }

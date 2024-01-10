@@ -21,7 +21,7 @@ class CreateUpdatePublisherRequest extends FormRequest
                 'regex:/^[\pL\s]+$/u',
                 'unique:publishers,name,'.$this->id.',id'
             ],
-            'description' => 'required|min:50',
+            'description' => 'required|min:20',
         ];
     }
 
