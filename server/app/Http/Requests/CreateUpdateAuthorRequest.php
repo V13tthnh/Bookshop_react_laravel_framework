@@ -19,7 +19,7 @@ class CreateUpdateAuthorRequest extends FormRequest
                 'regex:/^[\pL\s]+$/u', //regex chỉ nhận ký tự hoa, thường
                 'min:4','max:55',
             ],
-            'description' => 'required|min:50',
+            'description' => 'required|min:20',
             'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
         ];
     }

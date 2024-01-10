@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateUpdateComboRequest;
 use App\Models\Book;
 use App\Models\Combo;
 use App\Models\Supplier;
@@ -12,15 +13,19 @@ class ComboController extends Controller
 {
     public function index()
     {
-        return view('combo.index');
+        $suppliers = Supplier::all();
+        $books = Book::all();
+        return view('combo.index', compact('suppliers', 'books'));
     }
 
-    public function dataTable(){
+    public function dataTable()
+    {
         $combos = Combo::all();
         return Datatables::of($combos)->make(true);
     }
 
-    public function dataTableDetail($id){
+    public function dataTableDetail($id)
+    {
         $combo = Combo::find($id);
         return response()->json([
             'data' => $combo->books
@@ -34,31 +39,31 @@ class ComboController extends Controller
         return view('combo.create', compact('books', 'suppliers'));
     }
 
-    public function store(Request $request)
+    public function store(CreateUpdateComboRequest $request)
     {
-        //dd($request);
-        if($request->hasFile('image')){
+        $combo = new Combo;
+        $combo->supplier_id = $request->supplier_id;
+        $combo->name = $request->name;
+        $combo->price = $request->price;
+        $combo->quantity = $request->quantity;
+        if ($request->hasFile('image')) {
             $file = $request->image;
             $path = $file->store('uploads/combos');
-            $combo = new Combo;
-            $combo->supplier_id = $request->supplier_id;
-            $combo->name = $request->name;
-            $combo->price = $request->price;
-            $combo->quantity = $request->quantity;
             $combo->image = $path;
-            $combo->save();
-            $combo->books()->sync($request->book_ids);
+        } else {
+            $combo->image = null;
         }
-        else{
-            $combo = new Combo;
-            $combo->name = $request->name;
-            $combo->supplier_id = $request->supplier_id;
-            $combo->price = $request->price;
-            $combo->quantity = $request->quantity;
-            $combo->save();
-            $combo->books()->sync($request->book_ids);
+        $combo->save();
+        if (isset($request->book_ids)) {
+            //Hàm explode() chuyển request từ string sang array vì hàm sync() chỉ nhận array
+            //ví dụ: "2,3" => [2, 3]
+            $bookIds = explode(',', $request->book_ids);
+            $combo->books()->sync($bookIds);
         }
-       return redirect()->route('combo.index')->with('successMsg', "Thêm thành công!");
+        return response()->json([
+            'success' => true,
+            'message' => "Tạo combo thành công!"
+        ]);
     }
 
     public function show(string $id)
@@ -68,16 +73,70 @@ class ComboController extends Controller
 
     public function edit(string $id)
     {
-        //
+        $combo = Combo::find($id);
+        return response()->json([
+            'success' => true,
+            'combo' => $combo,
+            'books' => $combo->books
+        ]);
     }
 
-    public function update(Request $request, string $id)
+    public function update(CreateUpdateComboRequest $request, string $id)
     {
-        //
+
+        $combo = Combo::find($id);
+        if (empty($combo)) {
+            return response()->json([
+                'success' => false,
+                'message' => "Không tìm thấy combo!"
+            ]);
+        }
+        $combo->supplier_id = $request->supplier_id;
+        $combo->name = $request->name;
+        $combo->price = $request->price;
+        $combo->quantity = $request->quantity;
+        if ($request->hasFile('image')) {
+            $file = $request->image;
+            $path = $file->store('uploads/combos');
+            $combo->image = $path;
+        }
+        $combo->save();
+        if (isset($request->book_ids)) {
+            $bookIds = explode(',', $request->book_ids);
+            $combo->books()->sync($bookIds);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => "Sửa combo thành công!"
+        ]);
     }
 
     public function destroy(string $id)
     {
-        //
+        Combo::find($id)->delete();
+        return response()->json([
+            'success' => true,
+            'message' => "Xóa thành công!"
+        ]);
+    }
+
+    public function trash()
+    {
+        return view('combo.trash');
+    }
+
+    public function dataTableTrash()
+    {
+        $trash = Combo::onlyTrashed()->get();
+        return Datatables::of($trash)->make(true);
+    }
+
+    public function untrash($id)
+    {
+        Combo::withTrashed()->find($id)->restore();
+        return response()->json([
+            'success' => true,
+            'message' => "Khôi phục thành công!"
+        ]);
     }
 }

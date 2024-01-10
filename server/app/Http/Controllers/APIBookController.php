@@ -90,18 +90,11 @@ class APIBookController extends Controller
     }
 
     public function getRelatedBooks($id){
-        $book = Book::find($id);
-        // Lấy danh sách các danh mục của sách
-        $categories = $book->categories;
-        // Lấy danh sách sản phẩm liên quan theo danh mục
-        $relatedProducts = collect();
-        foreach ($categories as $category) {
-            $relatedProducts = $relatedProducts->merge($category->books);
-        }
-
+        $books = Book::with('categories')->find($id);
+        $relatedBooks = Category::with('books.images', 'books.authors', 'books.categories', 'books.supplier', 'books.publisher')->find($books->categories[0]->id);
         return response()->json([
             'success' => true,
-            'data' => $relatedProducts
+            'data' => $relatedBooks
         ]);
     }
     public function filterByCategory($categories, Request $request)

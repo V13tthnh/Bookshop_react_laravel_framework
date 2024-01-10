@@ -19,6 +19,8 @@
     <link rel="stylesheet" href="{{asset('plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css')}}">
     <!-- iCheck -->
     <link rel="stylesheet" href="{{asset('plugins/icheck-bootstrap/icheck-bootstrap.min.css')}}">
+    <!-- daterange picker -->
+    <link rel="stylesheet" href="{{asset('plugins/daterangepicker/daterangepicker.css')}}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{asset('dist/css/adminlte.min.css')}}">
     <!-- overlayScrollbars -->
@@ -226,6 +228,14 @@
                                 <p>Banner</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{route('discount.index')}}" class="nav-link">
+                                <i class="nav-icon fas fa-percent"></i>
+                                <p>
+                                    Giảm giá
+                                </p>
+                            </a>
+                        </li>
                 </nav>
             </div>
         </aside>
@@ -248,7 +258,6 @@
     </div>
 
     
-    <!-- ./wrapper -->
     <!-- jQuery -->
     <script src="{{asset('plugins/jquery/jquery.min.js')}}"></script>
     <!-- jQuery UI 1.11.4 -->

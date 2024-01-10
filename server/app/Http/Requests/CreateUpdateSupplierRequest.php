@@ -23,7 +23,7 @@ class CreateUpdateSupplierRequest extends FormRequest
             ],
             'address' => 'required|string|max:255',
             'phone' => 'required|regex:/^0[0-9]{9,10}$/',
-            'description' => 'required|min:50',
+            'description' => 'required|min:20',
         ];
     }
 

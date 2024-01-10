@@ -15,7 +15,7 @@ class CreateUpdateCategoryRequest extends FormRequest
     {
         return [
             'name' => 'required|min:4|max:50|unique:categories,name,'.$this->id.',id',
-            'description' => 'required|min:50',
+            'description' => 'required|min:20',
         ];
     }
 

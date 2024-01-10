@@ -16,9 +16,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('code')->nullable();
             $table->longText('description')->nullable();
-            $table->Integer('unit_price')->nullable();
+            $table->float('unit_price')->nullable();
             $table->bigInteger('quantity')->nullable();
-            $table->double('weight')->nullable();
+            $table->Integer('weight')->nullable();
             $table->string('format')->nullable();
             $table->year('year')->nullable();
             $table->string('language')->nullable();

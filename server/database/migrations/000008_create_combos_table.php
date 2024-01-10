@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('supplier_id');
             $table->string('name');
-            $table->string('image');
+            $table->string('image')->nullable();
             $table->double('price');
             $table->bigInteger('quantity');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
