@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\APILoginRequest;
 use Illuminate\Http\Request;
 
 class APIAuthController extends Controller 
 {
-    public function login()
+    public function login(APILoginRequest $request)
     {
         $credentials = request(['email', 'password']);
 
@@ -19,7 +20,7 @@ class APIAuthController extends Controller
             'access_token' => $token,
             'message' => "Đăng nhập thành công!",
             'token_type' => 'bearer',
-            'expires_in' => auth('api')->factory()->getTTL() * 60
+            'expires_in' => auth('api')->factory()->getTTL() * 120
         ]);
     }
 

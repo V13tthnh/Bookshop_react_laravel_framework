@@ -65,6 +65,7 @@ class BookController extends Controller
         $book->supplier_id = $request->supplier_id;
         $book->book_type = $request->book_type;
         $book->e_book_price = null;
+        $book->overrate = 0;
         if($request->hasFile('link_pdf')){
             $files = $request->link_pdf;
             $path = $files->store('uploads/ebooks');
@@ -139,6 +140,7 @@ class BookController extends Controller
         $book->supplier_id = $request->supplier_id;
         $book->book_type = $request->book_type;
         $book->e_book_price = null;
+        $book->overrate = 0;
         if($request->hasFile('link_pdf')){
             $files = $request->link_pdf;
             $path = $files->store('uploads/ebooks');

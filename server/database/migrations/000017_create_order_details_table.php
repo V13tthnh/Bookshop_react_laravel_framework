@@ -19,7 +19,6 @@ return new class extends Migration
             $table->Integer('quantity')->nullable();
             $table->Integer('unit_price')->nullable();
             $table->Integer('sale_price')->nullable();
-            $table->tinyInteger('review_status')->nullable();
             $table->timestamps();
         });
     }

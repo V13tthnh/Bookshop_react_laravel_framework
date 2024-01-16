@@ -29,7 +29,7 @@ class APIBookController extends Controller
     public function getBanner()
     {
         $sliders = Slider::with('book')->get();
-        if(empty($sliders)){
+        if (empty($sliders)) {
             return response()->json([
                 'success' => false,
                 'message' => "Không có dữ liệu!"
@@ -39,7 +39,8 @@ class APIBookController extends Controller
             'success' => true,
             'data' => $sliders
         ]);
-    }    public function getBook($id)
+    }
+    public function getBook($id)
     {
         $book = Book::with('categories', 'authors', 'images', 'publisher')->find($id);
         if (empty($book)) {
@@ -56,7 +57,7 @@ class APIBookController extends Controller
 
     public function getCombo(Request $request)
     {
-        $perPage = 3; // Số lượng mục trên mỗi trang, mặc định là 10
+        $perPage = 9; // Số lượng mục trên mỗi trang, mặc định là 10
         $page = $request->input('page', 1); // Trang hiện tại, mặc định là 1
         $query = Combo::with('supplier', 'books')->get();
         if (empty($query)) {
@@ -66,7 +67,6 @@ class APIBookController extends Controller
             ]);
         }
         $total = $query->count();
-     
         $totalPages = ceil($total / $perPage);
         $data = $query->skip(($page - 1) * $perPage)->take($perPage)->all();
         return response()->json([
@@ -89,7 +89,8 @@ class APIBookController extends Controller
         ]);
     }
 
-    public function getRelatedBooks($id){
+    public function getRelatedBooks($id)
+    {
         $books = Book::with('categories')->find($id);
         $relatedBooks = Category::with('books.images', 'books.authors', 'books.categories', 'books.supplier', 'books.publisher')->find($books->categories[0]->id);
         return response()->json([
@@ -99,16 +100,14 @@ class APIBookController extends Controller
     }
     public function filterByCategory($categories, Request $request)
     {
-        $perPage = 3; // Số lượng mục trên mỗi trang, mặc định là 10
+        $perPage = 9; // Số lượng mục trên mỗi trang, mặc định là 10
         $page = $request->input('page', 1); // Trang hiện tại, mặc định là 1
-
-        $query = Category::with('books.images', 'books.publisher', 'books.supplier')->find($categories);
+        $query = Category::with('books.images', 'books.publisher', 'books.supplier', 'books.discounts')->find($categories);
         if (!$query) {
             // Xử lý khi không tìm thấy category
             return response()->json(['error' => 'Không tìm thấy danh mục'], 404);
         }
         $books = $query->books;
-        //dd($query->books);
         //Phân trang
         $total = $books->count();
         $totalPages = ceil($total / $perPage);
@@ -125,21 +124,51 @@ class APIBookController extends Controller
 
     public function filterByPrice($minPrice, $maxPrice, Request $request)
     {
-        $filteredBooks = Book::whereBetween('unit_price', [$minPrice, $maxPrice])
-            ->with('categories', 'authors', 'images')
-            ->orderBy('unit_price', 'ASC')
-            ->get();
-        $perPage = 3; // Số lượng mục trên mỗi trang, mặc định là 10
+        $perPage = 9; // Số lượng mục trên mỗi trang, mặc định là 10
         $page = $request->input('page', 1); // Trang hiện tại, mặc định là 1
-
         $query = Book::query()->whereBetween('unit_price', [$minPrice, $maxPrice])->orderBy('unit_price', 'ASC');
-
         // Thêm bất kỳ điều kiện tìm kiếm nào nếu cần
         $total = $query->count();
         $totalPages = ceil($total / $perPage);
         $data = $query->skip(($page - 1) * $perPage)
             ->take($perPage)
-            ->with('categories', 'authors', 'images')
+            ->with('categories', 'authors', 'images', 'discounts')
+            ->get();
+        return response()->json([
+            'page' => $page,
+            'per_page' => $perPage,
+            'total' => $total,
+            'total_pages' => $totalPages,
+            'data' => $data,
+        ]);
+    }
+
+    public function filterByType($type, Request $request)
+    {
+        $perPage = 9; // Số lượng mục trên mỗi trang, mặc định là 10
+        $page = $request->input('page', 1); // Trang hiện tại, mặc định là 1
+        $query = Book::query()->where('book_type', $type)->orderBy('unit_price', 'ASC');
+        if ($type == 2) {
+            $query = Combo::query();
+            $total = $query->count();
+            $totalPages = ceil($total / $perPage);
+            $data = $query->skip(($page - 1) * $perPage)
+                ->take($perPage)
+                ->get();
+            return response()->json([
+                'page' => $page,
+                'per_page' => $perPage,
+                'total' => $total,
+                'total_pages' => $totalPages,
+                'data' => $data,
+            ]);
+        }
+        //Thêm bất kỳ điều kiện tìm kiếm nào nếu cần
+        $total = $query->count();
+        $totalPages = ceil($total / $perPage);
+        $data = $query->skip(($page - 1) * $perPage)
+            ->take($perPage)
+            ->with('categories', 'authors', 'images', 'discounts')
             ->get();
         return response()->json([
             'page' => $page,
@@ -151,26 +180,29 @@ class APIBookController extends Controller
     }
     public function index(Request $request)
     {
-        $perPage = 3; // Số lượng mục trên mỗi trang, mặc định là 10
+        $perPage = 9; // Số lượng mục trên mỗi trang, mặc định là 10
         $page = $request->input('page', 1); // Trang hiện tại, mặc định là 1
-
         $query = Book::query();
-
         // Thêm bất kỳ điều kiện tìm kiếm nào nếu cần
-
         $total = $query->count();
         $totalPages = ceil($total / $perPage);
-
         $data = $query->skip(($page - 1) * $perPage)
-            ->take($perPage)->with('categories', 'authors', 'images')
+            ->take($perPage)->with('categories', 'authors', 'images', 'discounts')
             ->get();
-
         return response()->json([
             'page' => $page,
             'per_page' => $perPage,
             'total' => $total,
             'total_pages' => $totalPages,
             'data' => $data,
+        ]);
+    }
+
+    public function showPDF($id){
+        $pdf = Book::find($id);
+        return response()->json([
+            'success' => true,
+            'filePDF' => $pdf->link_pdf
         ]);
     }
 }

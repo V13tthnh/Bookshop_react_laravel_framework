@@ -23,7 +23,7 @@ class CreateUpdateSliderRequest extends FormRequest
             'start_date' => 'required|date|date_format:Y-m-d',
             'end_date' => 'required|date|date_format:Y-m-d',
             'book_id' => 'required|integer',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'image|mimes:jpeg,png,jpg|max:2048',
         ];
     }
 
@@ -47,7 +47,8 @@ class CreateUpdateSliderRequest extends FormRequest
             'book_id.integer' => "Vui lòng chọn sản phẩm hợp lệ",
 
             'image.required' => "Vui lòng chọn ảnh!",
-            'image.mimes' => "Vui lòng chọn ảnh có đuôi jpeg,png,jpg,gif",
+            'image.image' => "Vui lòng chỉ chọn file ảnh!",
+            'image.mimes' => "Vui lòng chọn ảnh có đuôi jpeg,png,jpg!",
             'image.max' => "Vui lòng chọn ảnh dung lượng dưới :max kilobyte!",
         ];
     }

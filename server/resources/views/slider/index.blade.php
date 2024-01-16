@@ -9,12 +9,12 @@
             "responsive": true, "lengthChange": true, "autoWidth": false, //tùy chỉnh kích thước, phân trang
             "paging": true, "ordering": true, "searching": true,
             "pageLength": 10, "dom": 'Bfrtip',
-            "buttons": [{extend:"copy", text:"Sao chép"}, //custom các button
-                        {extend:"csv", text:"Xuất csv"}, 
-                        {extend:"excel",text:"Xuất Excel"}, 
-                        {extend:"pdf",text:"Xuất PDF"}, 
-                        {extend:"print",text:`<i class="fa fa-print"><i/> In`}, 
-                        {extend:"colvis",text:"Hiển thị cột"}],
+            "buttons": [{ extend: "copy", text: "Sao chép" }, //custom các button
+            { extend: "csv", text: "Xuất csv" },
+            { extend: "excel", text: "Xuất Excel" },
+            { extend: "pdf", text: "Xuất PDF" },
+            { extend: "print", text: `<i class="fa fa-print"><i/> In` },
+            { extend: "colvis", text: "Hiển thị cột" }],
             "language": { search: "Tìm kiếm:" },
             "lengthMenu": [10, 25, 50, 75, 100],
             "ajax": { url: "{{route('slider.data.table')}}", method: "get", dataType: "json", },
@@ -23,18 +23,19 @@
                 { data: 'name', name: 'name' },
                 { data: 'start_date', name: 'start_date' },
                 { data: 'end_date', name: 'end_date' },
-                { data: 'book_name', name: 'book.name' },   
-                { data: 'image', render: function(data, type, row){ 
-                    if(data != null){
-                        return '<img src="'+data+'" alt="" sizes="40" srcset="" style="height:100px;width:100px">';
+                { data: 'book_name', name: 'book.name' },
+                {
+                    data: 'image', render: function (data, type, row) {
+                        if (data != null) {
+                            return '<img src="' + data + '" alt="" sizes="40" srcset="" style="height:100px;width:100px">';
+                        }
+                        return "Không có hình ảnh";
                     }
-                    return "Không có hình ảnh";
-                    } 
                 },
                 {
                     data: 'id', render: function (data, type, row) {
                         return '<button class="btn btn-warning editBtn  " value="' + data + '" data-toggle="modal" data-target="#modal-edit"><i class="nav-icon fa fa-edit"></i></button>'
-                                +'<div class="btn-group btn-group-toggle"><button class="btn btn-danger deleteBtn" value="' + data + '"><i class="nav-icon fa fa-trash"></i></button></div>'
+                            + '<div class="btn-group btn-group-toggle"><button class="btn btn-danger deleteBtn" value="' + data + '"><i class="nav-icon fa fa-trash"></i></button></div>'
                     }
                 },
             ],
@@ -65,14 +66,14 @@
             }
         });
 
-        function createFormClear(){
+        function createFormClear() {
             $('#storeName').val("");
             $('#storeStartDate').val("");
             $('#storeEndDate').val("");
             $("#storeBookId").val($("#storeBookId option:first").val());
             $('#storeImage').attr('src', '');
         }
-        $('#modal-create').on('hidden.bs.modal', function(){
+        $('#modal-create').on('hidden.bs.modal', function () {
             $('#createFormValidate').removeClass('was-validated');
             $('.create_name_error').text('');
             $('.create_start_date_error').text('');
@@ -80,7 +81,7 @@
             $('.create_book_id_error').text('');
             $('.create_image_error').text('');
         });
-        $('#modal-edit').on('hidden.bs.modal', function(){
+        $('#modal-edit').on('hidden.bs.modal', function () {
             $('#updateFormValidate').removeClass('was-validated');
             $('.update_name_error').text('');
             $('.update_start_date_error').text('');
@@ -90,7 +91,7 @@
         });
 
         //store
-        $('#addBtn').click(function(e){
+        $('#addBtn').click(function (e) {
             e.preventDefault();
             var name = $('#storeName').val();
             var start_date = $('#storeStartDate').val();
@@ -100,28 +101,28 @@
             formDataCreate.append("name", name);
             formDataCreate.append("start_date", start_date);
             formDataCreate.append("end_date", end_date);
-            formDataCreate.append("book_id", book_id);   
+            formDataCreate.append("book_id", book_id);
             $.ajax({
                 url: "{{route('slider.store')}}",
                 method: "post",
                 data: formDataCreate,
                 contentType: false,
                 processData: false,
-            }).done(function(res){
+            }).done(function (res) {
                 if (res.success) {
                     Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
                     $('#modal-create').modal('hide'); //ẩn model thêm mới
                     createFormClear();
                     table.ajax.reload(); //refresh bảng 
                 }
-                if(!res.success) {
+                if (!res.success) {
                     Swal.fire({ title: res.message, icon: 'error', confirmButtonText: 'OK' });
                     return;
                 }
-            }).fail(function(res){
+            }).fail(function (res) {
                 console.log(res.responseJSON.errors);
                 $('#createFormValidate').addClass('was-validated');
-                $.each(res.responseJSON.errors, function(key, value){
+                $.each(res.responseJSON.errors, function (key, value) {
                     $('.create_' + key + '_error').text(value[0]);
                     $('.create_' + key + '_error').text(value[1]);
                     $('.create_' + key + '_error').text(value[2]);
@@ -132,13 +133,13 @@
         });
 
         //edit
-        $('#myTable').on('click', '.editBtn', function(){
+        $('#myTable').on('click', '.editBtn', function () {
             var id = $(this).val();
             $.ajax({
                 url: "slider/edit/" + id,
                 method: "get",
-            }).done(function(res){
-                if(res.data == null){
+            }).done(function (res) {
+                if (res.data == null) {
                     Swal.fire({ title: "Dữ liệu không tồn tại", icon: 'error', confirmButtonText: 'OK' });
                     return;
                 }
@@ -146,13 +147,13 @@
                 $('#updateName').val(res.data.name);
                 $('#updateStartDate').val(res.data.start_date);
                 $('#updateEndDate').val(res.data.end_date);
-                $('#updateBookId').val(res.data.book_id); 
+                $('#updateBookId').val(res.data.book_id);
                 $('#updateBookId').trigger('change');
             })
         });
 
         //update
-        $('#updateBtn').click(function(e){
+        $('#updateBtn').click(function (e) {
             e.preventDefault();
             var id = $('#updateId').val();
             var name = $('#updateName').val();
@@ -163,22 +164,22 @@
             formDataEdit.append("name", name);
             formDataEdit.append("start_date", start_date);
             formDataEdit.append("end_date", end_date);
-            formDataEdit.append("book_id", book_id);   
+            formDataEdit.append("book_id", book_id);
             $.ajax({
                 url: "slider/update/" + id,
                 method: "post",
                 data: formDataEdit,
                 contentType: false,
                 processData: false,
-            }).done(function(res){
+            }).done(function (res) {
                 if (res.success) {
                     Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
                     $('#modal-edit').modal('hide'); //ẩn model thêm mới
                     table.ajax.reload(); //refresh bảng 
                 }
-            }).fail(function(res){
+            }).fail(function (res) {
                 $('#updateFormValidate').addClass('was-validated');
-                $.each(res.responseJSON.errors, function(key, value){
+                $.each(res.responseJSON.errors, function (key, value) {
                     $('.update_' + key + '_error').text(value[0]);
                     $('.update_' + key + '_error').text(value[1]);
                     $('.update_' + key + '_error').text(value[2]);
@@ -189,28 +190,38 @@
         });
 
         //delete
-        $('#myTable').on('click', '.deleteBtn', function(){
+        $('#myTable').on('click', '.deleteBtn', function () {
             var id = $(this).val();
-            $.ajax({
-                url: "slider/destroy/" + id,
-                method: "post",
-                data: {"_token" : "{{csrf_token()}}"}
-            }).done(function(res){
-                Swal.fire({ title: "Bạn có có muốn xóa", icon: 'info', confirmButtonText: 'OK' });
-                if (res.success) {
-                    Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
-                    table.ajax.reload(); //refresh bảng 
+            Swal.fire({
+                title: 'Bạn chắc chắn chứ?',
+                text: 'Đừng lo, bạn vẫn có thể khôi phục lại dữ liệu đã xóa!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Đồng ý',
+                cancelButtonText: 'Hủy bỏ'
+            }).then(result => {
+                if (result.value) {
+                    $.ajax({
+                        url: "slider/destroy/" + id,
+                        method: "post",
+                        data: { "_token": "{{csrf_token()}}" }
+                    }).done(function (res) {
+                        if (res.success) {
+                            Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
+                            table.ajax.reload(); //refresh bảng 
+                        }
+                    });
                 }
             });
+
         });
     });
-
 
     $(function () {
         // Summernote
         $('#summernote').summernote();
         $('#summernote1').summernote();
-  });
+    });
 
 </script>
 @endsection
@@ -246,7 +257,7 @@
                     <div class="form-group">
                         <label for="inputStatus">Sách</label>
                         <select id="storeBookId" class="form-control select2" style="width: 100%;">
-                        <option selected disabled>Select one</option>
+                            <option selected disabled>Select one</option>
                             @foreach($listBook as $book)
                             <option value="{{$book->id}}">{{$book->name}}</option>
                             @endforeach
@@ -255,7 +266,7 @@
                     </div>
                     <div class="form-group">
                         <label for="inputProjectLeader">Hình ảnh</label>
-                        <input accept="image/*" type='file' id="storeImage" class="form-control" />
+                        <input type='file' id="storeImage" class="form-control" />
                         <div class="text-danger create_image_error"></div>
                     </div>
                 </div>
@@ -298,8 +309,8 @@
                     </div>
                     <div class="form-group">
                         <label for="inputStatus">Sách</label>
-                        <select id="updateBookId" class="form-control select2" style="width: 100%;"> 
-                        <option selected disabled>Select one</option>
+                        <select id="updateBookId" class="form-control select2" style="width: 100%;">
+                            <option selected disabled>Select one</option>
                             @foreach($listBook as $book)
                             <option value="{{$book->id}}">{{$book->name}}</option>
                             @endforeach
@@ -362,7 +373,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            
+
                             </tbody>
                         </table>
                     </div>

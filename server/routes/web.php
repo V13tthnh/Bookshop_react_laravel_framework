@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CategoryController;
@@ -20,7 +22,11 @@ Route::get('/admin/login', [AdminController::class, 'login'])->name('admin.login
 Route::post('/admin/login-handler', [AdminController::class, 'loginHandler'])->name('admin.loginHandler');
 
 Route::middleware('auth')->group(function () {
+    //dashboard-viet Thanh
     Route::get('/', [DashboardController::class, 'overview'])->name('dashboard.index');
+    Route::get('/order-chart', [DashboardController::class, 'getChart'])->name('dashboard.chart');
+    Route::get('/hot-selling', [DashboardController::class, 'hotSelling'])->name('dashboard.hot.selling');
+    Route::post('/filter-order', [DashboardController::class, 'filterOrder'])->name('dashboard.filter.order');
     //admin-Viet thanh
     Route::prefix('admin')->group(function () {
         Route::name('admin.')->group(function () {
@@ -196,6 +202,26 @@ Route::middleware('auth')->group(function () {
             Route::get('trash', [DiscountController::class, 'trash'])->name('trash');
             Route::get('data-table-trash', [DiscountController::class, 'dataTableTrash'])->name('data.table.trash');
             Route::get('untrash/{id}', [DiscountController::class, 'untrash'])->name('untrash');
+        });
+    });
+
+    Route::prefix('comment')->group(function () {
+        Route::name('comment.')->group(function () {
+            Route::get('/', [CommentController::class, 'index'])->name('index');
+            Route::get('data-table', [CommentController::class, 'dataTable'])->name('data.table');
+            Route::get('data-table-detail/{id}', [CommentController::class, 'dataTableDetail'])->name('data.table.detail');
+            Route::post('destroy/{id}', [CommentController::class, 'destroy'])->name('destroy');
+            Route::post('destroy-reply/{id}', [CommentController::class, 'destroyReply'])->name('destroy.reply');
+        });
+    });
+
+    Route::prefix('review')->group(function () {
+        Route::name('review.')->group(function () {
+            Route::get('/', [ReviewController::class, 'index'])->name('index');
+            Route::get('data-table', [ReviewController::class, 'dataTable'])->name('data.table');
+            Route::get('update/{id}', [ReviewController::class, 'update'])->name('update');
+            Route::get('update-status/{id}', [ReviewController::class, 'updateStatus'])->name('update.status');
+            Route::get('destroy/{id}', [ReviewController::class, 'destroy'])->name('destroy');
         });
     });
 });
