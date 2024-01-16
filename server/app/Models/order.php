@@ -11,11 +11,20 @@ class Order extends Model
 
     protected $fillable = ['customer_id', 'name', 'address', 'phone', 'total', 'status', 'created_at'];
 
-    public function customer(){
+    public function customer()
+    {
         return $this->belongsTo(Customer::class);
     }
 
-    public function orderDetails(){
+    public function orderDetails()
+    {
         return $this->hasMany(OrderDetail::class);
     }
+
+    public function getCreatedAtAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('d/m/Y');
+    }
+
+ 
 }

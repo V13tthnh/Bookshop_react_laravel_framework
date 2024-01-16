@@ -6,7 +6,6 @@ use App\Models\Book;
 use App\Models\Combo;
 use App\Models\Order;
 use App\Models\OrderDetail;
-
 use Illuminate\Http\Request;
 
 class APIOrderController extends Controller
@@ -29,6 +28,7 @@ class APIOrderController extends Controller
         $order->address = $rq->address;
         $order->phone = $rq->phone;
         $order->total = null;
+        $order->format = $rq->format;
         $order->shipping_fee = $rq->shipping_fee;
         $order->note = $rq->note;
         $order->status = 1;
@@ -43,7 +43,6 @@ class APIOrderController extends Controller
                 $orderDetail->quantity = $rq->book_quantity[$i];
                 $orderDetail->unit_price = $rq->book_price[$i];
                 $orderDetail->sale_price = null;
-                $orderDetail->review_status = 0;
                 $orderDetail->save();
 
                 $total += $rq->book_total[$i];
@@ -62,7 +61,6 @@ class APIOrderController extends Controller
                 $orderDetail->quantity = $rq->combo_quantity[$i];
                 $orderDetail->unit_price = $rq->combo_price[$i];
                 $orderDetail->sale_price = null;
-                $orderDetail->review_status = 0;
                 $orderDetail->save();
 
                 $total += $rq->combo_total[$i];

@@ -3,7 +3,6 @@
 @section('js')
 <script>
     $(document).ready(function () {
-        $('#showDetail').hide();
         var table = $('#myTable').DataTable({
             "responsive": true, "lengthChange": true, "autoWidth": false, //tùy chỉnh kích thước, phân trang
             "paging": true, "ordering": true, "searching": true,
@@ -22,7 +21,7 @@
                 { data: 'id', name: 'id' },
                 { data: 'supplier_name', name: 'supplier.name' },
                 { data: 'admin_name', name: 'admin.name' },
-                { data: 'total',  render: $.fn.dataTable.render.number('.', 2, '') },
+                { data: 'total', render: $.fn.dataTable.render.number('.', 2, '') },
                 { data: 'formality', name: 'formality' },
                 { data: 'created_at', name: 'created_at' },
                 {
@@ -33,39 +32,135 @@
             ],
         });
 
-        $('#myTable').on('click', '.showDetail', function(){
+        $('#myTable').on('click', '.showDetail', function () {
             var id = $(this).val();
-            $('#tableDetail').DataTable({
-                "responsive": true, "lengthChange": true, "autoWidth": false, //tùy chỉnh kích thước, phân trang
-                "paging": true, "ordering": true, "searching": true,
-                "pageLength": 10, "dom": 'Bfrtip',  stateSave: true, "bDestroy": true,
-                "buttons": [{ extend: "copy", text: "Sao chép" }, //custom các button
-                { extend: "csv", text: "Xuất csv" },
-                { extend: "excel", text: "Xuất Excel" },
-                { extend: "pdf", text: "Xuất PDF" },
-                { extend: "print", text: `<i class="fas fa-print"></i> In` },
-                { extend: "colvis", text: "Hiển thị cột" }],
-                "language": { search: "Tìm kiếm:" },
-                "lengthMenu": [10, 25, 50, 75, 100],
-                "ajax": { url: "goods-received-note/data-table-detail/" + id, method: "get", dataType: "json", },
-                "columns": [
-                    {
-                        "title": "#", // Tiêu đề của cột
-                        "data": null,
-                        "render": function (data, type, row, meta) {
-                            // 'meta.row' là chỉ số hàng, 'meta.settings._iDisplayStart' là số lượng hàng hiển thị trên mỗi trang
-                            return meta.row + meta.settings._iDisplayStart + 1;
-                        }
-                    },
-                    { data: 'goods_received_note_id', name: 'goods_received_note_id' },
-                    { data: 'book_name', name: 'book.name' },
-                    { data: 'quantity', name: 'quantity' },
-                    { data: 'cost_price', render: $.fn.dataTable.render.number('.', 2, '') },
-                    { data: 'selling_price', render: $.fn.dataTable.render.number('.', 2, '') },
-                ],
+            $.ajax({
+                url: '/goods-received-note/show/' + id,
+                method: 'get'
+            }).done(function (res) {
+                $('#invoices').append(`<section class="content">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="invoice p-3 mb-3">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h4>
+                                                <i class="fas fa-globe"></i> BookShop.
+                                                <small class="float-right">Ngày: ${res.data.created_at}</small>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                    <div class="row invoice-info">
+                                        <div class="col-sm-4 invoice-col">
+                                            From
+                                            <address>
+                                                <strong>${res.data.supplier.name}</strong><br>
+                                                ${res.data.supplier.address}<br>
+                                                Phone: ${res.data.supplier.phone}<br>
+                                            </address>
+                                        </div>
+                                        <div class="col-sm-4 invoice-col">
+                                            To
+                                            <address>
+                                                <strong>BookShop</strong><br>
+                                                Hẻm 48<br>
+                                                Bùi Thị Xuân<br>
+                                                Phone: (069) 69 696 969<br>
+                                                Email: bookshop@wowy.com
+                                            </address>
+                                        </div>
+                                        <div class="col-sm-4 invoice-col">
+                                            <b>Invoice #${res.data.id}</b><br>
+                                            <br>
+                                            <b>Order ID:</b>${res.data.id} <br>
+                                            <b>Payment Due:</b>${res.data.formality} <br>
+                                            <b>Account:${res.data.admin.name}</b> 
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-12 table-responsive">
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Sách</th>
+                                                        <th>Số lượng</th>
+                                                        <th>Đơn giá</th>
+                                                        <th>Tổng</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="detailTable">
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <!-- accepted payments column -->
+                                        <div class="col-6">
+                                            <p class="lead">Payment Methods:</p>
+                                            <img src="../../dist/img/credit/visa.png" alt="Visa">
+                                            <img src="../../dist/img/credit/mastercard.png" alt="Mastercard">
+                                            <img src="../../dist/img/credit/american-express.png"
+                                                alt="American Express">
+                                            <img src="../../dist/img/credit/paypal2.png" alt="Paypal">
+                                            <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">
+                                                Etsy doostang zoodles disqus groupon greplin oooj voxy zoodles, weebly
+                                                ning heekya
+                                                handango imeem
+                                                plugg
+                                                dopplr jibjab, movity jajah plickers sifteo edmodo ifttt zimbra.
+                                            </p>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <tr>
+                                                        <th style="width:50%">Subtotal:</th>
+                                                        <td> ${res.data.total.toLocaleString('vi-VN', {style: 'currency',currency: 'VND'})}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Total:</th>
+                                                        <td>${res.data.total.toLocaleString('vi-VN', {style: 'currency',currency: 'VND'})}</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row no-print">
+                                        <div class="col-12">
+                                            <a href="invoice-print.html" rel="noopener" target="_blank"
+                                                class="btn btn-default"><i class="fas fa-print"></i> Print</a>
+                                            <button type="button" class="btn btn-primary float-right"
+                                                style="margin-right: 5px;">
+                                                <i class="fas fa-download"></i> Generate PDF
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>`);
+
+                res.data.good_received_note_details.map(item => {
+                    $('#detailTable').append(`<tr>
+                                            <td>${item.id}</td>
+                                            <td>${item.book.name}</td>
+                                            <td>${item.quantity}</td>
+                                            <td>${item.cost_price.toLocaleString('vi-VN', {style: 'currency',currency: 'VND'})}</td>
+                                            <td>${(item.quantity * item.cost_price).toLocaleString('vi-VN', {style: 'currency',currency: 'VND'})}</td>
+                                        </tr>`);
+                });
             });
         });
-        var idDetail = $('#idDetail').val();
+
+        $('#modal-detail').on('hidden.bs.modal', function (){
+            $('#invoices').text('');
+        });
     });
 </script>
 @endsection
@@ -77,31 +172,13 @@
             <div class="modal-header">
                 <h4 class="modal-title">Chi tiết phiếu nhập</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">×</span>
+                    <span aria-hidden="true">×</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <table id="tableDetail" class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>Id phiếu nhập</th>
-                            <th>Sách</th>
-                            <th>Số lượng</th>
-                            <th>Giá nhập</th>
-                            <th>Giá bán</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                    </tbody>
-                </table>
-            </div>
+            <div class="modal-body" id='invoices'></div>
         </div>
     </div>
 </div>
-
-<input type="text" id="idDetail" hidden>
 
 <section class="content-header">
     <div class="container-fluid">
@@ -111,7 +188,7 @@
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <a type="button" href="{{route('goods-received-note.create')}}" class="btn btn-success" >
+                    <a type="button" href="{{route('goods-received-note.create')}}" class="btn btn-success">
                         <i class="nav-icon fas fa-edit"></i> Nhập hàng
                     </a>
                 </ol>

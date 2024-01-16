@@ -236,6 +236,22 @@
                                 </p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{route('comment.index')}}" class="nav-link">
+                                <i class="nav-icon fas fa-comment"></i>
+                                <p>
+                                    Bình luận
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('review.index')}}" class="nav-link">
+                                <i class="nav-icon fas fa-star"></i>
+                                <p>
+                                    Đánh giá
+                                </p>
+                            </a>
+                        </li>
                 </nav>
             </div>
         </aside>

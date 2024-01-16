@@ -26,6 +26,7 @@ class create_books_seeder extends Seeder
         $book1->publisher_id = 1;
         $book1->supplier_id = 1;
         $book1->book_type = 0;
+        $book1->overrate = 0;
         $book1->e_book_price = null;
         $book1->link_pdf = null;
         $book1->save();
@@ -49,6 +50,7 @@ class create_books_seeder extends Seeder
         $book2->publisher_id = 1;
         $book2->supplier_id = 1;
         $book2->book_type = 0;
+        $book2->overrate = 0;
         $book2->e_book_price = null;
         $book2->link_pdf = null;
         $book2->save();
@@ -70,6 +72,7 @@ class create_books_seeder extends Seeder
         $book3->publisher_id = 1;
         $book3->supplier_id = 1;
         $book3->book_type = 0;
+        $book3->overrate = 0;
         $book3->e_book_price = null;
         $book3->link_pdf = null;
         $book3->save();
@@ -91,6 +94,7 @@ class create_books_seeder extends Seeder
         $book4->publisher_id = 1;
         $book4->supplier_id = 1;
         $book4->book_type = 0;
+        $book4->overrate = 0;
         $book4->e_book_price = null;
         $book4->link_pdf = null;
         $book4->save();
@@ -112,6 +116,7 @@ class create_books_seeder extends Seeder
         $book5->publisher_id = 1;
         $book5->supplier_id = 1;
         $book5->book_type = 0;
+        $book5->overrate = 0;
         $book5->e_book_price = null;
         $book5->link_pdf = null;
         $book5->save();
@@ -135,6 +140,7 @@ class create_books_seeder extends Seeder
         $book6->publisher_id = 1;
         $book6->supplier_id = 1;
         $book6->book_type = 0;
+        $book6->overrate = 0;
         $book6->e_book_price = null;
         $book6->link_pdf = null;
         $book6->save();
@@ -158,6 +164,7 @@ class create_books_seeder extends Seeder
         $book7->publisher_id = 1;
         $book7->supplier_id = 1;
         $book7->book_type = 0;
+        $book7->overrate = 0;
         $book7->e_book_price = null;
         $book7->link_pdf = null;
         $book7->save();
@@ -181,6 +188,7 @@ class create_books_seeder extends Seeder
         $book8->publisher_id = 1;
         $book8->supplier_id = 1;
         $book8->book_type = 0;
+        $book8->overrate = 0;
         $book8->e_book_price = null;
         $book8->link_pdf = null;
         $book8->save();
@@ -206,6 +214,7 @@ class create_books_seeder extends Seeder
         $book9->publisher_id = 1;
         $book9->supplier_id = 1;
         $book9->book_type = 0;
+        $book9->overrate = 0;
         $book9->e_book_price = null;
         $book9->link_pdf = null;
         $book9->save();
@@ -227,6 +236,7 @@ class create_books_seeder extends Seeder
         $book10->publisher_id = 1;
         $book10->supplier_id = 1;
         $book10->book_type = 0;
+        $book10->overrate = 0;
         $book10->e_book_price = null;
         $book10->link_pdf = null;
         $book10->save();
@@ -269,6 +279,7 @@ class create_books_seeder extends Seeder
         $book11->publisher_id = 6;
         $book11->supplier_id = 3;
         $book11->book_type = 0;
+        $book11->overrate = 0;
         $book11->e_book_price = null;
         $book11->link_pdf = null;
         $book11->save();
@@ -292,6 +303,7 @@ class create_books_seeder extends Seeder
         $book12->publisher_id = 2;
         $book12->supplier_id = 4;
         $book12->book_type = 0;
+        $book12->overrate = 0;
         $book12->e_book_price = null;
         $book12->link_pdf = null;
         $book12->save();
@@ -321,6 +333,7 @@ class create_books_seeder extends Seeder
         $book13->publisher_id = 4;
         $book13->supplier_id = 4;
         $book13->book_type = 0;
+        $book13->overrate = 0;
         $book13->e_book_price = null;
         $book13->link_pdf = null;
         $book13->save();
@@ -346,6 +359,7 @@ class create_books_seeder extends Seeder
         $book14->publisher_id = 3;
         $book14->supplier_id = 5;
         $book14->book_type = 0;
+        $book14->overrate = 0;
         $book14->e_book_price = null;
         $book14->link_pdf = null;
         $book14->save();
@@ -379,6 +393,7 @@ class create_books_seeder extends Seeder
         $book15->publisher_id = 9;
         $book15->supplier_id = 8;
         $book15->book_type = 0;
+        $book15->overrate = 0;
         $book15->e_book_price = null;
         $book15->link_pdf = null;
         $book15->save();
@@ -424,6 +439,7 @@ class create_books_seeder extends Seeder
         $book16->publisher_id = 7;
         $book16->supplier_id = 4;
         $book16->book_type = 0;
+        $book16->overrate = 0;
         $book16->e_book_price = null;
         $book16->link_pdf = null;
         $book16->save();
@@ -445,6 +461,7 @@ class create_books_seeder extends Seeder
         $book17->publisher_id = 9;
         $book17->supplier_id = 7;
         $book17->book_type = 1;
+        $book17->overrate = 0;
         $book17->e_book_price = 25000;
         $book17->link_pdf = null;
         $book17->save();
@@ -467,6 +484,7 @@ class create_books_seeder extends Seeder
         $book18->publisher_id = 7;
         $book18->supplier_id = 9;
         $book18->book_type = 1;
+        $book18->overrate = 0;
         $book18->e_book_price = 25000;
         $book18->link_pdf = null;
         $book18->save();
@@ -498,6 +516,7 @@ class create_books_seeder extends Seeder
         $book19->publisher_id = 6;
         $book19->supplier_id = 4;
         $book19->book_type = 1;
+        $book19->overrate = 0;
         $book19->e_book_price = 25000;
         $book19->link_pdf = null;
         $book19->save();
@@ -525,6 +544,7 @@ class create_books_seeder extends Seeder
         $book20->publisher_id = 2;
         $book20->supplier_id = 7;
         $book20->book_type = 0;
+        $book20->overrate = 0;
         $book20->e_book_price = 25000;
         $book20->link_pdf = null;
         $book20->save();

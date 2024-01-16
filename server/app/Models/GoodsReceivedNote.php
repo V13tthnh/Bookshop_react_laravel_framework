@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Supplier;
 use App\Models\Admin;
+use Illuminate\Support\Carbon;
 
 class GoodsReceivedNote extends Model
 {
@@ -17,5 +18,14 @@ class GoodsReceivedNote extends Model
 
     public function admin(){
         return $this->belongsTo(Admin::class);
+    }
+
+    public function goodReceivedNoteDetails(){
+        return $this->hasMany(GoodsReceivedNoteDetail::class);
+    }
+
+    public function getCreatedAtAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('d/m/Y');
     }
 }

@@ -32,8 +32,6 @@ class GoodsReceivedNoteController extends Controller
             return $supplier_name->supplier->name;
         })->addColumn('admin_name', function ($admin_name) {
             return $admin_name->admin->name;
-        })->addColumn('created_at', function($supplier_name){
-            return \Carbon\Carbon::parse($supplier_name->created_at)->format('d-m-Y');
         })->make(true);
     }
 
@@ -98,7 +96,7 @@ class GoodsReceivedNoteController extends Controller
 
     public function show(string $id)
     {
-        $detail = GoodsReceivedNoteDetail::where('goods_received_note_id', $id)->get();
+        $detail = GoodsReceivedNote::with('supplier', 'admin', 'goodReceivedNoteDetails.book')->find($id);
         return response()->json([
             'success' => true,
             'data' => $detail

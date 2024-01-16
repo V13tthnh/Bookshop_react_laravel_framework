@@ -55,4 +55,12 @@ class Book extends Model
     public function images(){
         return $this->hasMany(Image::class);
     }
+
+    public function discounts(){
+        return $this->hasMany(Discount::class);
+    }
+
+    public function reviews(){
+        return $this->hasMany(Review::class);
+    }
 }

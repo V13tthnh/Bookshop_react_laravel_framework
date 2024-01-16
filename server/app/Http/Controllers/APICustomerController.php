@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\APIRegisterRequest;
 use App\Http\Requests\APIUpdateCustomerRequest;
 use App\Models\Customer;
 use App\Models\Order;
@@ -20,9 +21,24 @@ class APICustomerController extends Controller
         ]);
     }
 
-    public function register()
+    public function register(APIRegisterRequest $request)
     {
-
+        if($request->confirm_password != $request->password){
+            return response()->json([
+                'success' => false,
+                'message' => "* Mật khẩu xác nhận phải trùng khớp với trường mật khẩu!"
+            ]);
+        }
+        $customer = new Customer;
+        $customer->name = $request->name;
+        $customer->email = $request->email;
+        $customer->password = Hash::make($request->password);
+        $customer->status = 1;
+        $customer->save();
+        return response()->json([
+            'success' => true,
+            'message' => "Đăng ký tài khoản thành công!"
+        ]);
     }
 
     public function store(Request $rq)

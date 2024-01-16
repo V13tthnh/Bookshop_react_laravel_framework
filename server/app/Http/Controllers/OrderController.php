@@ -22,8 +22,6 @@ class OrderController extends Controller
         //dd(\Carbon\Carbon::parse($orders->created_at)->format('d-m-Y'));
         return Datatables::of($orders)->addColumn('customer_name', function ($orders) {
             return $orders->customer->name;
-        })->addColumn('created_at', function ($orders) {
-            return \Carbon\Carbon::parse($orders->created_at)->format('d-m-Y');
         })->make(true);
     }
 

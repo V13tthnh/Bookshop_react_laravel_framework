@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('address');
             $table->string('phone');
             $table->double('total')->nullable();
+            $table->string('format');
             $table->double('shipping_fee');
             $table->string('note')->nullable();
             $table->tinyInteger('status');
