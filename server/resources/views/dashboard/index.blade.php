@@ -5,10 +5,10 @@
   $(document).ready(function () {
     var total = [];
     var date = [];
+    var orderChart = null;
     $('#hot_selling').append('');
     $('#date_range_picker').daterangepicker({
       startDate: moment().add(5, 'day'),
-      minDate: moment(),
       locale: {
         format: 'DD-MM-YYYY'
       }
@@ -19,7 +19,6 @@
       url: '{{route('dashboard.chart')}}',
       method: 'get',
     }).done(function (res) {
-      
       res.orderDate.map(item => date.push(item.created_at));
       res.orderTotal.map(item => total.push(item.total));
       var areaChartData = {
@@ -55,13 +54,13 @@
           }]
         }
       }
-      //Lấy số liệu trạng thái tất cả hóa đơn
-      var areaChartCanvas = $('#areaChart').get(0).getContext('2d')
-      var orderChart = new Chart(areaChartCanvas, {
+      var areaChartCanvas = $('#areaChart').get(0).getContext('2d');
+      orderChart = new Chart(areaChartCanvas, {
         type: 'bar',
         data: areaChartData,
         options: areaChartOptions
       })
+      //Lấy số liệu trạng thái tất cả hóa đơn
       var donutData = {
         labels: [
           'Chờ xác nhận',
@@ -92,8 +91,8 @@
       var donutData = {
         labels: [
           'Sách in',
-          'Ebook',
           'Combo',
+          'Ebook',
         ],
         datasets: [
           {
@@ -175,8 +174,19 @@
       console.log(startDate, endDate);
     });
 
-    $('#filterBtn').click(function(){
-     
+    function filterDataByDate(data, startDate, endDate) {
+      return data.filter(function (item) {
+
+        var date = new Date(item);
+        return date >= startDate && date <= endDate;
+      });
+    }
+
+    $('#filterBtn').click(function () {
+      var start_date = new Date( $('#store_start_date').val());
+      var end_date = new Date( $('#store_end_date').val());
+      var filterByDate = filterDataByDate(date, start_date, end_date);
+      
     });
   });
 </script>

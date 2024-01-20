@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\APICheckoutRequest;
 use App\Models\Book;
 use App\Models\Combo;
 use App\Models\Order;
@@ -19,7 +20,7 @@ class APIOrderController extends Controller
         ]);
     }
 
-    public function store(Request $rq)
+    public function store(APICheckoutRequest $rq)
     {
         //dd($rq);
         $order = new Order();
@@ -32,6 +33,7 @@ class APIOrderController extends Controller
         $order->shipping_fee = $rq->shipping_fee;
         $order->note = $rq->note;
         $order->status = 1;
+        $order->vnp_status = 0;
         $order->save();
 
         $total = 0;
@@ -55,7 +57,7 @@ class APIOrderController extends Controller
         }
         for ($i = 0; $i < count($rq->combo_id); $i++) {
             if ($rq->combo_id[$i] != null && $rq->combo_quantity[$i] != null && $rq->combo_price[$i] != null) {
-                $orderDetail = new OrderDetail();
+                $orderDetail = new OrderDetail();   
                 $orderDetail->order_id = $order->id;
                 $orderDetail->combo_id = $rq->combo_id[$i];
                 $orderDetail->quantity = $rq->combo_quantity[$i];
@@ -98,7 +100,7 @@ class APIOrderController extends Controller
     public function show(Request $rq, $id)
     {
         $findOrder = Order::with('orderDetails')->where('customer_id', $id)->get();
-        if(empty($findOrder)){
+        if (empty($findOrder)) {
             return response()->json([
                 'success' => false,
                 'message' => "Không tìm thấy hóa đơn!"
@@ -110,42 +112,71 @@ class APIOrderController extends Controller
         ]);
     }
 
-    public function edit(Request $rq, $id)
-    {
 
+    public function cancel($id)
+    {
+        $order = Order::find($id);
+        if (empty($order)) {
+            return response()->json([
+                'success' => false,
+                'message' => "Không tìm thấy hóa đơn!"
+            ]);
+        }
+        $order->status = 5;
+        $order->save();
+
+        $orderItems = OrderDetail::where('order_id', $id)->get();
+        foreach ($orderItems as $item) {
+            if ($item->combo_id != null) {
+                // Trả số lượng combo về kho nếu hủy đơn
+                $book = Combo::find($item->combo_id);
+                $book->quantity += $item->quantity;
+                $book->save();
+            } else {
+                // Trả số lượng sách về kho nếu hủy đơn
+                $book = Book::find($item->book_id);
+                $book->quantity += $item->quantity;
+                $book->save();
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => "Hủy hóa đơn thành công!"
+        ]);
     }
 
-    public function update(Request $request, string $id)
+    public function repurchase($id)
     {
-        // $order=Order::find($id);
-        // if(empty($order)){
-        //     return response()->json([
-        //         'success' => false,
-        //         'message'=> "Hoa don ID={$id} khong ton tai"
-        //     ]);
+        $order = Order::find($id);
+        if (empty($order)) {
+            return response()->json([
+                'success' => false,
+                'message' => "Không tìm thấy hóa đơn!"
+            ]);
+        }
+        $order->status = 1;
+        $order->save();
 
-        // }
-    }
+        $orderItems = OrderDetail::where('order_id', $id)->get();
+        foreach ($orderItems as $item) {
+            if ($item->combo_id != null) {
+                // Trả số lượng combo về kho nếu hủy đơn
+                $book = Combo::find($item->combo_id);
+                $book->quantity -= $item->quantity;
+                $book->save();
+            } else {
+                // Trả số lượng sách về kho nếu hủy đơn
+                $book = Book::find($item->book_id);
+                $book->quantity -= $item->quantity;
+                $book->save();
+            }
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
-    {
-        // $order=Order::find($id);
-        // if(empty($order)){
-        //     return reponse()->json([
-        //         'success'=>false,
-        //         'message'=>"Loai san pham ID={$id} khong ton tai"
-        //     ]);
-        // }
-
-        // $order->delete();
-
-        // return reponse()->json([
-        //     'success'=>true,
-        //     'message'=>"Xoa loai san pham thanh cong"
-        // ]);
+        return response()->json([
+            'success' => true,
+            'message' => "Đã mua lại đơn hàng!"
+        ]);
     }
 
     public function vnpay(Request $request)
@@ -197,7 +228,7 @@ class APIOrderController extends Controller
 
         $vnp_Url = $vnp_Url . "?" . $query;
         if (isset($vnp_HashSecret)) {
-           // $vnpSecureHash = md5($vnp_HashSecret . $hashdata);
+            // $vnpSecureHash = md5($vnp_HashSecret . $hashdata);
             $vnpSecureHash = hash('sha256', $vnp_HashSecret . $hashdata);
             $vnp_Url .= 'vnp_SecureHashType=SHA256&vnp_SecureHash=' . $vnpSecureHash;
         }

@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Combo;
+use App\Models\Discount;
+use App\Models\OrderDetail;
 use App\Models\Slider;
 use Illuminate\Http\Request;
 use App\Models\Book;
-
+use DB;
 class APIBookController extends Controller
 {
     public function getListBook()
@@ -20,8 +22,8 @@ class APIBookController extends Controller
     }
     public function search(Request $request)
     {
-        $keyword = $request->input('q');
-        $posts = book::where('name', 'like', "%$keyword%")->get();
+        $keyword = $request->input('search');
+        $posts = book::with('images', 'categories', 'authors')->where('name', 'like', "%$keyword%")->get();
         return response()->json(['data' => $posts]);
     }
 
@@ -205,5 +207,52 @@ class APIBookController extends Controller
             'filePDF' => $pdf->link_pdf
         ]);
     }
+
+    public function hotSellingBook(){
+        $books = OrderDetail::with('book','book.images', 'book.discounts')
+        ->join('orders', 'order_details.order_id', '=', 'orders.id')
+        ->select('order_details.book_id', 'order_details.unit_price', DB::raw('SUM(order_details.quantity) as total_sold'))
+        ->where('order_details.book_id', '<>', null)
+        ->where('orders.status', '=', 4) 
+        ->groupBy('order_details.book_id', 'order_details.unit_price')
+        ->get();
+        return response()->json([
+            'success' => true,
+            'data' => $books
+        ]);
+    }
+
+    public function newBooks(){
+        $newBooks = Book::with('discounts', 'images')->orderBy('id', 'desc')->take(3)->get();
+        return response()->json([
+            'success' => true,
+            'data' => $newBooks
+        ]);
+    }
+
+    public function salesBooks(){
+        $saleBooks = Discount::with('book', 'book.images')->get();
+        return response()->json([
+            'success' => true,
+            'data' => $saleBooks
+        ]);
+    }
+
+    public function featuredBook(){
+        $featuredBook = Book::with('images', 'discounts', 'authors')->select('books.id', 'books.name', 'books.unit_price', 'books.overrate',DB::raw('SUM(order_details.quantity) as total_sold'))
+        ->join('order_details', 'books.id', '=', 'order_details.book_id')
+        ->join('orders', 'order_details.order_id', '=', 'orders.id')
+        ->where('status', 4)
+        ->groupBy('books.id', 'books.name',  'books.unit_price', 'books.overrate')
+        ->orderByDesc('total_sold')
+        ->take(1) // Lấy top 1 sách bán chạy nhất
+        ->get();
+        return response()->json([
+            'success' => true,
+            'data' => $featuredBook
+        ]);
+    }
+
+   
 }
 

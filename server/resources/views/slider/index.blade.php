@@ -61,9 +61,11 @@
                 var reader = new FileReader();
                 reader.onload = function (e) {
                     formDataEdit.set("image", input.files[0]);
+                    console.log(input.files[0]);
                 }
                 reader.readAsDataURL(input.files[0]);
             }
+            console.log(input.files[0]);
         });
 
         function createFormClear() {
@@ -120,7 +122,6 @@
                     return;
                 }
             }).fail(function (res) {
-                console.log(res.responseJSON.errors);
                 $('#createFormValidate').addClass('was-validated');
                 $.each(res.responseJSON.errors, function (key, value) {
                     $('.create_' + key + '_error').text(value[0]);
@@ -240,7 +241,7 @@
             <form action="" id="createFormValidate">
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="inputName">Tên</label>
+                        <label for="inputName">Tiêu đề</label>
                         <input type="text" id="storeName" class="form-control" required>
                         <div class="text-danger create_name_error"></div>
                     </div>

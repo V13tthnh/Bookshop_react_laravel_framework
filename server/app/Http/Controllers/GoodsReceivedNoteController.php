@@ -36,12 +36,7 @@ class GoodsReceivedNoteController extends Controller
     }
 
     public function import(Request $request){
-        // if($request->hasFile('file_excel')){
-        //     $path = $request->file('file_excel')->getRealPath();
-        //     Excel::import(new GoodsReceivedNoteDetailImport, $path);
-        //     return back()->with('successMsg', 'Nhập thành công!');
-        // }
-        // return back()->with('errorMsg', 'Nhập không thành công!');
+       
     }
 
     public function create()
@@ -53,7 +48,6 @@ class GoodsReceivedNoteController extends Controller
 
     public function store(CreateUpdateGoodsReceivedNoteRequest $rq)
     {
-        //dd($rq);
         $createGoodsReceivedNote = new GoodsReceivedNote();
         $createGoodsReceivedNote->supplier_id = $rq->supplier_id;
         $createGoodsReceivedNote->formality =  $rq->formality;
@@ -97,10 +91,11 @@ class GoodsReceivedNoteController extends Controller
     public function show(string $id)
     {
         $detail = GoodsReceivedNote::with('supplier', 'admin', 'goodReceivedNoteDetails.book')->find($id);
-        return response()->json([
-            'success' => true,
-            'data' => $detail
-        ]);
+        // return response()->json([
+        //     'success' => true,
+        //     'data' => $detail
+        // ]);
+        return view('goods_received_note.show', compact('detail'));
     }
 
     public function dataTableDetail(string $id)

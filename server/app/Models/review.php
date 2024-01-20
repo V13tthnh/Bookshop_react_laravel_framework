@@ -11,6 +11,10 @@ class Review extends Model
         return $this->belongsTo(Book::class);
     }
 
+    public function combo(){
+        return $this->belongsTo(Combo::class);
+    }
+
     public function customer(){
         return $this->belongsTo(Customer::class);
     }

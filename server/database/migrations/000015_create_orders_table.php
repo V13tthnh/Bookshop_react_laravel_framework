@@ -22,6 +22,7 @@ return new class extends Migration
             $table->double('shipping_fee');
             $table->string('note')->nullable();
             $table->tinyInteger('status');
+            $table->tinyInteger('vnp_status');
             $table->timestamps();
         });
     }

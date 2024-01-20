@@ -36,7 +36,7 @@ class APICategoryController extends Controller
     }
 
     public function getListBookInCategory($id){
-        $listCB = Category::with('list_book')->where('id',$id)->get();
+        $listCB = Category::with('books', 'books.images', 'books.discounts')->where('id', $id)->get();
         if(empty($listCB)){
             return response()->json([
                 'success' => false,

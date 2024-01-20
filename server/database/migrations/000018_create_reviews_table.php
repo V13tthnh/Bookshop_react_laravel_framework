@@ -13,7 +13,8 @@ return new class extends Migration
             $table->unsignedBigInteger('customer_id');
             $table->tinyInteger('rating')->nullable();
             $table->string('comment')->nullable();
-            $table->unsignedBigInteger('book_id');
+            $table->unsignedBigInteger('book_id')->nullable();
+            $table->unsignedBigInteger('combo_id')->nullable();
             $table->boolean('status');
             $table->timestamps();
         });

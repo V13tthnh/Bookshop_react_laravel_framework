@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Models\Book;
 use App\Models\Combo;
 use App\Models\Order;
@@ -27,13 +26,8 @@ class OrderController extends Controller
 
     public function dataTableDetail($id)
     {
-        $orderDetail = OrderDetail::with('book', 'combo')->where('order_id', $id)->get();
-
-        return Datatables::of($orderDetail)->addColumn('book_name', function ($orderDetail) {
-            return $orderDetail->book->name ?? "N/A";
-        })->addColumn('combo_name', function ($orderDetail) {
-            return $orderDetail->combo->name ?? "N/A";
-        })->make(true);
+        $orderDetail = Order::with('customer','orderDetails.book', 'orderDetails.combo')->find($id);
+        return view('order.show', compact('orderDetail'));
     }
 
     public function editStatus($id)

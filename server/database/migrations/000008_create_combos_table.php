@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->double('price');
             $table->bigInteger('quantity');
+            $table->float('overrate');
             $table->softDeletes();
             $table->timestamps();
         });

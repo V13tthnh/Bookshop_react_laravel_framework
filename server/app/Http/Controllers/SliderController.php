@@ -24,9 +24,6 @@ class SliderController extends Controller
         
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         //
@@ -34,26 +31,18 @@ class SliderController extends Controller
 
     public function store(CreateUpdateSliderRequest $request)
     {
-        //dd($request);
+        $slider=new Slider();
+        $slider->name=$request->name;
+        $slider->start_date=$request->start_date;
+        $slider->end_date=$request->end_date;
+        $slider->book_id=$request->book_id;
         if($request->hasFile('image')){ 
             $file = $request->image;
             $path = $file->store('uploads/sliders');
-            $slider=new Slider();
-            $slider->name=$request->name;
-            $slider->start_date=$request->start_date;
-            $slider->end_date=$request->end_date;
-            $slider->book_id=$request->book_id;
             $slider->image = $path; 
-            $slider->save();
+           
         }
-        else{
-            $slider=new Slider();
-            $slider->name=$request->name;
-            $slider->start_date=$request->start_date;
-            $slider->end_date=$request->end_date;
-            $slider->book_id=$request->book_id;
-            $slider->save();
-        }
+        $slider->save();
         return response()->json([
             'success' => true,
             'message' => "Thêm thành công!"

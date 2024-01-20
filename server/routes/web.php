@@ -139,6 +139,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/', [BookController::class, 'index'])->name('index');
             Route::get('data-table', [BookController::class, 'dataTable'])->name('data.table');
             Route::get('create', [BookController::class, 'create'])->name('create');
+            Route::get('show/{id}', [BookController::class, 'show'])->name('show');
             Route::post('import-books', [BookController::class, 'import'])->name('import');
             Route::post('store', [BookController::class, 'store'])->name('store');
             Route::get('edit/{id}', [BookController::class, 'edit'])->name('edit');
