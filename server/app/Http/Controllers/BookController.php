@@ -26,6 +26,11 @@ class BookController extends Controller
         return view('book.index', compact('listAuthor', 'listSupplier', 'listCategory', 'listPublisher'));
     }
 
+    public function show($id){
+        $book = Book::with('supplier', 'authors', 'publisher', 'categories', 'images', 'discounts')->find($id);
+        return view('book.show', compact('book'));
+    }
+
     public function dataTable()
     {
         $listBook = Book::with('supplier')->with('publisher')->with('images')->get();

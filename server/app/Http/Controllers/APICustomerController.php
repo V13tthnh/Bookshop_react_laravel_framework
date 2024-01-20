@@ -6,24 +6,29 @@ use App\Http\Requests\APIRegisterRequest;
 use App\Http\Requests\APIUpdateCustomerRequest;
 use App\Models\Customer;
 use App\Models\Order;
+use App\Models\PasswordReset;
 use Illuminate\Http\Request;
 use Hash;
 use Storage;
+use Str;
+use URL;
+use Mail;
+
 class APICustomerController extends Controller
 {
 
     public function index()
     {
-        $listUser = Customer::all();
+        $listCustomer = Customer::all();
         return response()->json([
             'success' => true,
-            'data' => $listUser
+            'data' => $listCustomer
         ]);
     }
 
     public function register(APIRegisterRequest $request)
     {
-        if($request->confirm_password != $request->password){
+        if ($request->confirm_password != $request->password) {
             return response()->json([
                 'success' => false,
                 'message' => "* Mật khẩu xác nhận phải trùng khớp với trường mật khẩu!"
@@ -41,28 +46,91 @@ class APICustomerController extends Controller
         ]);
     }
 
+    public function forgetPassword(Request $request)
+    {
+        try {
+            $customer = Customer::where('email', $request->email)->get();
+            if (count($customer) > 0) {
+                $token = Str::random(40);
+                $domain = URL::to('http://localhost:3000');
+                $url = $domain . '/reset-password?token=' . $token;
+
+                $data['url'] = $url;
+                $data['email'] = $request->email;
+                $data['title'] = "BookShop - Reset Password";
+                $data['body'] = "Please click on below link to reset your password";
+
+                Mail::send('emails.check_email_forget', ['data' => $data], function ($message) use ($data) {
+                    $message->to($data['email'])->subject($data['title']);
+                });
+
+                $datetime = \Carbon\Carbon::now()->format('Y-m-d H:i:s');
+                PasswordReset::updateOrCreate(
+                    ['email' => $request->email],
+                    [
+                        'email' => $request->email,
+                        'token' => $token,
+                        'created_at' => $datetime
+                    ]
+                );
+                return response()->json(['success' => true, 'msg' => 'Please check your mail to reset password !']);
+            } else {
+                return response()->json(['success' => false, 'msg' => 'Not found!']);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'msg' => $e->getMessage()]);
+        }
+    }
+    public function resetpasswordLoad(Request $request)
+    {
+        $resetData = PasswordReset::where('token', $request->token)->get();
+        if (isset($request->token) && count($resetData) > 0) {
+            $customer = Customer::where('email', $resetData[0]['email'])->get();
+        } else {
+            return response()->json(['success' => false, 'url' => '404']);
+        }
+    }
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'password' =>
+                [
+                    'required',
+                    'string',
+                    'min:6',
+                    'confirmed'
+                ]
+        ]);
+
+        $customer = Customer::find($request->id);
+        $customer->password = Hash::make($request->password);
+        $customer->save();
+        PasswordReset::where('email', $customer->email)->delete();
+        return '<h1> Your password has been reset! </h1>';
+    }
+
     public function store(Request $rq)
     {
-        $listUser = Customer::where('email', $rq->name)->first();
-        if (!empty($listUser)) {
+        $listCustomer = Customer::where('email', $rq->name)->first();
+        if (!empty($listCustomer)) {
             return response()->json([
                 'success' => false,
                 'message' => "Email {$rq->email} đã tồn tại"
             ]);
         }
-        $listUser = new Customer;
-        $listUser->name = $rq->name;
-        $listUser->address = $rq->address;
-        $listUser->phone = $rq->phone;
-        $listUser->status = 1;
-        $listUser->email = $rq->email;
-        $listUser->password = $rq->password;
+        $listCustomer = new Customer;
+        $listCustomer->name = $rq->name;
+        $listCustomer->address = $rq->address;
+        $listCustomer->phone = $rq->phone;
+        $listCustomer->status = 1;
+        $listCustomer->email = $rq->email;
+        $listCustomer->password = $rq->password;
         if ($rq->hasFile('image')) {
             $file = $rq->image;
             $path = $file->store('uploads/customers');
-            $listUser->image = $path;
+            $listCustomer->image = $path;
         }
-        $listUser->save();
+        $listCustomer->save();
         return response()->json([
             'success' => true,
             'message' => 'Lưu thông tin thành công'
@@ -79,17 +147,17 @@ class APICustomerController extends Controller
             ]);
         }
 
-        $findUser = Customer::where('name', $rq->name)->get();
+        $findCustomer = Customer::where('name', $rq->name)->get();
         return response()->json([
             'success' => true,
-            'data' => $findUser
+            'data' => $findCustomer
         ]);
     }
 
     public function update(APIUpdateCustomerRequest $request, $id)
     {
-        $user = Customer::find($id);
-        if (empty($user)) {
+        $Customer = Customer::find($id);
+        if (empty($Customer)) {
             return response()->json([
                 'success' => false,
                 'message' => "Không có dữ liệu người dùng!"
@@ -98,32 +166,32 @@ class APICustomerController extends Controller
         // Kiểm tra request có yêu cầu cập nhật mật khẩu không nếu có thì cập nhật không thì bỏ qua
         if (!empty($request->password)) {
             // Kiểm tra mật khẩu cũ có khớp trong csdl nếu không thông báo lỗi
-            if (!Hash::check($request->oldPassword, $user->password)) {
+            if (!Hash::check($request->oldPassword, $Customer->password)) {
                 return response()->json([
                     'success' => false,
                     'message' => "Mật khẩu không trùng khớp!",
                 ]);
             }
-            $user->password = Hash::make($request->password);
+            $Customer->password = Hash::make($request->password);
         }
         // Kiểm tra request có yêu cầu cập nhật email không nếu có thì cập nhật không thì bỏ qua
         if (!empty($request->email)) {
-            $user->email = $request->email;
+            $Customer->email = $request->email;
         }
         //Kiểm tra request có file ảnh không nếu có thì cập nhật ảnh còn không thì bỏ qua
         if ($request->hasFile('image')) {
-            if ($user->image) {
-                Storage::delete($user->image);
+            if ($Customer->image) {
+                Storage::delete($Customer->image);
             }
             $file = $request->file('image');
             $fileName = date('His') . $file->getClientOriginalName();
             $path = $request->file('image')->storeAs('uploads/customers', $fileName, 'local');
-            $user->image = $path;
+            $Customer->image = $path;
         }
-        $user->name = $request->name;
-        $user->address = $request->address;
-        $user->phone = $request->phone;
-        $user->save();
+        $Customer->name = $request->name;
+        $Customer->address = $request->address;
+        $Customer->phone = $request->phone;
+        $Customer->save();
         return response()->json([
             'success' => true,
             'message' => "Cập nhật thông tin tài khoản thành công!"
@@ -132,13 +200,13 @@ class APICustomerController extends Controller
 
     public function update_image(Request $request, $id)
     {
-        $user = Customer::find($id);
+        $Customer = Customer::find($id);
         //Kiểm tra request có file ảnh không nếu có thì thêm ảnh còn không thì bỏ qua
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $fileName = date('His') . $file->getClientOriginalName();
             $path = $request->file('image')->storeAs('uploads/', $fileName, 'public');
-            $user->image = $path;
+            $Customer->image = $path;
         }
     }
 }

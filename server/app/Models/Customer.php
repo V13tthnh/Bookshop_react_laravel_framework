@@ -19,13 +19,15 @@ class Customer extends Authenticatable implements JWTSubject
         'image',
         'address',
         'phone',
+        'status',
+        'google_id',
+        'is_email_verified',
         'created_at',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
-        
         'updated_at'
     ];
 
@@ -33,6 +35,7 @@ class Customer extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+    
     use Notifiable;
 
 

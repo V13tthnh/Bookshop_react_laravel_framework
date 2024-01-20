@@ -58,6 +58,7 @@ return new class extends Migration
 
         Schema::table('reviews', function (Blueprint $table) {
             $table->foreign('book_id')->references('id')->on('books')->onDelete('cascade');
+            $table->foreign('combo_id')->references('id')->on('combos')->onDelete('cascade');
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
         });
 
@@ -71,6 +72,7 @@ return new class extends Migration
 
         Schema::table('comments', function (Blueprint $table) {
             $table->foreign('book_id')->references('id')->on('books')->onDelete('cascade');
+            $table->foreign('combo_id')->references('id')->on('combos')->onDelete('cascade');
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
         });
 

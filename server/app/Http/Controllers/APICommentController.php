@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 
 class APICommentController extends Controller
 {
-    public function getComments($id){
+    public function getBookComments($id){
         $comments = Comment::with('book', 'customer', 'comment_replies', 'comment_replies.customer', 'comment_replies.comment')->where('book_id', $id)->orderBy('id', 'desc')->get();
         if(empty($comments)){
             return response()->json([
@@ -24,9 +24,24 @@ class APICommentController extends Controller
         ]);
     }
 
-    public function comment(APICommentRequest $request, $id){
+    public function getComboComments($id){
+        $comments = Comment::with('combo', 'customer', 'comment_replies', 'comment_replies.customer', 'comment_replies.comment')->where('combo_id', $id)->orderBy('id', 'desc')->get();
+        if(empty($comments)){
+            return response()->json([
+                'success' => false,
+                'message' => "Sản phẩm không có bình luận!"
+            ]);
+        }
+        return response()->json([
+            'success' => true,
+            'data' => $comments,
+        ]);
+    }
+
+    public function comment(APICommentRequest $request){
         $comment = new Comment;
-        $comment->book_id = $id;
+        $comment->book_id = $request->book_id;
+        $comment->combo_id = $request->combo_id;
         $comment->customer_id = $request->customer_id;
         $comment->comment_text = $request->comment_text;
         $comment->status = 0;

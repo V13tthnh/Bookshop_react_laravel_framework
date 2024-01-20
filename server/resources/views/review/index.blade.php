@@ -20,6 +20,7 @@
             "columns": [{ data: 'id', name: 'id' },
             { data: 'customer_name', name: 'customer.name' },
             { data: 'book_name', name: 'book.name' },
+            { data: 'combo_name', name: 'combo.name' },
             { data: 'comment', name: 'comment' },
             { data: 'rating', name: 'rating' },
             {
@@ -92,6 +93,21 @@
 @endsection
 
 @section('content')
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Danh sách đánh giá</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="{{route('dashboard.index')}}">Trang chủ</a></li>
+                    <li class="breadcrumb-item active">Danh sách đánh giá</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
 <section class="content">
     <div class="container-fluid">
         <div class="row">
@@ -107,6 +123,7 @@
                                     <th>Id</th>
                                     <th>Tên khách hàng</th>
                                     <th>Tên sách</th>
+                                    <th>Tên combo</th>
                                     <th>Nội dung</th>
                                     <th>Số sao</th>
                                     <th>Trạng thái</th>

@@ -14,11 +14,13 @@ class CommentController extends Controller
 
     public function dataTable()
     {
-        $comments = Comment::with('customer', 'book', 'comment_replies')->get();
+        $comments = Comment::with('customer', 'book', 'combo', 'comment_replies')->get();
         return Datatables::of($comments)->addColumn('customer_name', function($comments){
             return $comments->customer->name;
-        })->addColumn('book_id', function($comments){
-            return $comments->book->name;
+        })->addColumn('book_name', function($comments){
+            return $comments->book_id != null ? $comments->book->name : 'N/A';
+        })->addColumn('combo_name', function($comments){
+            return $comments->combo_id != null ? $comments->combo->name : 'N/A';
         })->addColumn('replies_count', function($comments){
             return count($comments->comment_replies);
         })->make(true);

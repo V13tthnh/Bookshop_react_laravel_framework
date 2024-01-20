@@ -20,6 +20,8 @@
             "columns": [
                 { data: 'id', name: 'id' },
                 { data: 'customer_name', name: 'customer.name' },
+                { data: 'book_name', name: 'book.name' },
+                { data: 'combo_name', name: 'combo.name' },
                 { data: 'comment_text', name: 'comment_text' },
                 { data: 'created_at', name: 'created_at' },
                 { data: 'replies_count', name: 'replies_count' },
@@ -44,7 +46,7 @@
                 { extend: "pdf", text: "Xuất PDF" },
                 { extend: "print", text: `<i class="fas fa-print"></i> In` },
                 { extend: "colvis", text: "Hiển thị cột" }],
-                "language": { search: "Tìm kiếm:", emptyTable: "Không có dữ liệu trong bảng"},
+                "language": { search: "Tìm kiếm:", emptyTable: "Không có dữ liệu trong bảng" },
                 "lengthMenu": [10, 25, 50, 75, 100],
                 "ajax": { url: "comment/data-table-detail/" + id, method: "get", dataType: "json", },
                 "columns": [
@@ -86,13 +88,14 @@
                     }).done(function (res) {
                         if (res.success) {
                             Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
+                            table.ajax.reload();
                         }
                     });
                 }
             });
         });
 
-        $('#tableDetail').on('click', '.delete_reply', function(){
+        $('#tableDetail').on('click', '.delete_reply', function () {
             var id = $(this).val();
             Swal.fire({
                 title: 'Bạn chắc chắn chứ?',
@@ -115,7 +118,7 @@
                     });
                 }
             });
-            
+
         });
     })
 </script>
@@ -159,6 +162,8 @@
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="{{route('dashboard.index')}}">Trang chủ</a></li>
+                    <li class="breadcrumb-item active">Danh sách bình luận</li>
                 </ol>
             </div>
         </div>
@@ -178,6 +183,8 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Khách hàng</th>
+                                    <th>Sách</th>
+                                    <th>Combo</th>
                                     <th>Bình luận</th>
                                     <th>Ngày đăng</th>
                                     <th>Số lượng phản hồi</th>

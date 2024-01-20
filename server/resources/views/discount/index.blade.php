@@ -65,7 +65,7 @@
                 method: 'post',
                 data: {
                     '_token': '{{csrf_token()}}',
-                    'book_id': $(' #store_book_id').val(),
+                    'book_id': $('#store_book_id').val(),
                     'percent': $('#store_percent').val(),
                     'start_date': $('#store_start_date').val(),
                     'end_date': $('#store_end_date').val()
@@ -142,6 +142,11 @@
 
         $('#modal-create').on('hidden.bs.modal', function () {
             $('#createFormValidate').removeClass('was-validated');
+            $('#store_book_id').val($('#store_book_id option:first').val());
+            $('#store_book_id').trigger('change');
+            $('#store_percent').val('');
+            $('#store_start_date').val('');
+            $('#store_end_date').val('');
             $('.create_percent_error').text('');
             $('.create_book_id_error').text('');
             $('.create_start_date_error').text('');

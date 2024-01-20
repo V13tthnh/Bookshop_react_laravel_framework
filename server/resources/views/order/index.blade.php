@@ -23,6 +23,10 @@
                 { data: 'customer_name', name: 'customer.name' },
                 { data: 'address', name: 'address' },
                 { data: 'phone', name: 'phone' },
+                { data: 'format', name: 'format ' },
+                { data: 'vnp_status', render: function (data, type, row){
+                    return data == 1 ? 'Đã thanh toán' : 'Chưa thanh toán';
+                } },
                 { data: 'total', render: $.fn.dataTable.render.number('.', 2, '') },
                 {
                     data: 'status', render: function (data, type, row) {
@@ -43,11 +47,11 @@
                         }
                     }
                 },
-                { data: 'created_at', name: 'created_at'},
+                { data: 'created_at', name: 'created_at' },
                 {
                     data: 'id', render: function (data, type, row) {
-                        return '<button class="btn btn-info showDetail" value="' + data + '" data-toggle="modal" data-target="#modal-detail"><i class="nav-icon fa fa-eye"></i></button>'
-                            + '<button class="btn btn-warning ml-2 updateStatus" value="' + data + '" data-toggle="modal" data-target="#modal-update"><i class="nav-icon fa fa-edit"></i></button>';
+                        return '<a class="btn btn-info ml-2" href="order/data-table-detail/' + data + '"><i class="nav-icon fa fa-eye"></i> Xem chi tiết</a>'
+                            + '<button class="btn btn-warning ml-2 updateStatus" value="' + data + '" data-toggle="modal" data-target="#modal-update"><i class="nav-icon fa fa-edit"></i> Sửa trạng thái</button>';
                     }
                 },
             ],
@@ -92,7 +96,7 @@
                                 $('#modal-update').modal('hide');
                                 table.ajax.reload();
                             }
-                            else{
+                            else {
                                 Swal.fire({ title: res.message, icon: 'warning', confirmButtonText: 'OK' });
                             }
                         });
@@ -115,74 +119,11 @@
                 }
             });
         });
-
-        $('#myTable').on('click', '.showDetail', function () {
-            var id = $(this).val();
-            $('#tableDetail').DataTable({
-                "responsive": true, "lengthChange": true, "autoWidth": false, //tùy chỉnh kích thước, phân trang
-                "paging": true, "ordering": true, "searching": true,
-                "pageLength": 10, "dom": 'Bfrtip', stateSave: true, "bDestroy": true,
-                "buttons": [{ extend: "copy", text: "Sao chép" }, //custom các button
-                { extend: "csv", text: "Xuất csv" },
-                { extend: "excel", text: "Xuất Excel" },
-                { extend: "pdf", text: "Xuất PDF" },
-                { extend: "print", text: `<i class="fas fa-print"></i> In` },
-                { extend: "colvis", text: "Hiển thị cột" }],
-                "language": { search: "Tìm kiếm:" },
-                "lengthMenu": [10, 25, 50, 75, 100],
-                "ajax": { url: "order/data-table-detail/" + id, method: "get", dataType: "json", },
-                "columns": [
-                    {
-                        "title": "#", // Tiêu đề của cột
-                        "data": null,
-                        "render": function (data, type, row, meta) {
-                            // 'meta.row' là chỉ số hàng, 'meta.settings._iDisplayStart' là số lượng hàng hiển thị trên mỗi trang
-                            return meta.row + meta.settings._iDisplayStart + 1;
-                        }
-                    },
-                    { data: 'book_name', name: 'book.name' },
-                    { data: 'combo_name', name: 'combo.name' },
-                    { data: 'quantity', name: 'quantity' },
-                    { data: 'unit_price', render: $.fn.dataTable.render.number('.', 2, '') },
-                ],
-               
-            });
-        });
     });
 </script>
 @endsection
 
 @section('content')
-<div class="modal fade" id="modal-detail" style="display: none;" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Chi tiết hóa đơn</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <table id="tableDetail" class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Tên Sách</th>
-                            <th>Tên Combo</th>
-                            <th>Số lượng</th>
-                            <th>Đơn giá</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-<input type="text" id="idDetail" hidden>
 
 <div class="modal fade" id="modal-update">
     <div class="modal-dialog">
@@ -238,6 +179,8 @@
                                     <th>Tên khách hàng</th>
                                     <th>Địa chỉ</th>
                                     <th>SĐT</th>
+                                    <th>Hình thức</th>
+                                    <th>Trạng Thái thanh toán</th>
                                     <th>Tổng tiền</th>
                                     <th>Trạng Thái</th>
                                     <th>Ngày mua</th>

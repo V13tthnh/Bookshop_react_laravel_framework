@@ -23,7 +23,7 @@ class Order extends Model
 
     public function getCreatedAtAttribute($value)
     {
-        return \Carbon\Carbon::parse($value)->format('d/m/Y');
+        return \Carbon\Carbon::parse($value)->format('Y/m/d');
     }
 
  

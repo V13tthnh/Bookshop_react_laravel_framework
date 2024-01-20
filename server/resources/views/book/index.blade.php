@@ -45,8 +45,9 @@
                 } },
                 {
                     data: 'id', render: function (data, type, row) {
-                        return '<button class="btn btn-warning editBtn  " value="' + data + '" data-toggle="modal" data-target="#modal-edit"><i class="nav-icon fa fa-edit"></i></button>'
-                            + '<div class="btn-group btn-group-toggle"><button class="btn btn-danger deleteBtn" value="' + data + '"><i class="nav-icon fa fa-trash"></i></button></div>'
+                        return '<a class="btn btn-info ml-1" href="book/show/' + data + '"><i class="nav-icon fa fa-eye"></i> Chi tiết</a>'+
+                        '<button class="btn btn-warning ml-1 editBtn" value="' + data + '" data-toggle="modal" data-target="#modal-edit"><i class="nav-icon fa fa-edit"></i> Sửa</button>'
+                            + '<div class="btn-group btn-group-toggle"><button class="btn btn-danger deleteBtn" value="' + data + '"><i class="nav-icon fa fa-trash"></i> Xóa</button></div>';
                     }
                 },
             ],

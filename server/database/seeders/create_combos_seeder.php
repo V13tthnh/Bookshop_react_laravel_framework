@@ -17,6 +17,7 @@ class create_combos_seeder extends Seeder
         $combo1->price = 180000;
         $combo1->quantity = 10;
         $combo1->image = null;
+        $combo1->overrate = 0;
         $combo1->save();
         $combo1->books()->sync([]);
 
@@ -26,6 +27,7 @@ class create_combos_seeder extends Seeder
         $combo2->price = 280868;
         $combo2->quantity = 10;
         $combo2->image = null;
+        $combo2->overrate = 0;
         $combo2->save();
         $combo2->books()->sync([]);
 
@@ -35,6 +37,7 @@ class create_combos_seeder extends Seeder
         $combo3->price = 1050000;
         $combo3->quantity = 10;
         $combo3->image = null;
+        $combo3->overrate = 0;
         $combo3->save();
         $combo3->books()->sync([]);
 
@@ -44,6 +47,7 @@ class create_combos_seeder extends Seeder
         $combo4->price = 2400000;
         $combo4->quantity = 10;
         $combo4->image = null;
+        $combo4->overrate = 0;
         $combo4->save();
         $combo4->books()->sync([]);
 
@@ -53,6 +57,7 @@ class create_combos_seeder extends Seeder
         $combo5->price = 2525000;
         $combo5->quantity = 10;
         $combo5->image = null;
+        $combo5->overrate = 0;
         $combo5->save();
         $combo5->books()->sync([]);
 
@@ -62,6 +67,7 @@ class create_combos_seeder extends Seeder
         $combo6->price = 217500;
         $combo6->quantity = 10;
         $combo6->image = null;
+        $combo6->overrate = 0;
         $combo6->save();
         $combo6->books()->sync([]);
 
@@ -71,6 +77,7 @@ class create_combos_seeder extends Seeder
         $combo7->price = 510500;
         $combo7->quantity = 10;
         $combo7->image = null;
+        $combo7->overrate = 0;
         $combo7->save();
         $combo7->books()->sync([]);
 
@@ -80,6 +87,7 @@ class create_combos_seeder extends Seeder
         $combo8->price = 742500;
         $combo8->quantity = 10;
         $combo8->image = null;
+        $combo8->overrate = 0;
         $combo8->save();
         $combo8->books()->sync([]);
 
@@ -89,6 +97,7 @@ class create_combos_seeder extends Seeder
         $combo9->price = 216000;
         $combo9->quantity = 10;
         $combo9->image = null;
+        $combo9->overrate = 0;
         $combo9->save();
         $combo9->books()->sync([]);
 
@@ -98,6 +107,7 @@ class create_combos_seeder extends Seeder
         $combo10->price = 156000;
         $combo10->quantity = 10;
         $combo10->image = null;
+        $combo10->overrate = 0;
         $combo10->save();
         $combo10->books()->sync([]);
 
@@ -107,6 +117,7 @@ class create_combos_seeder extends Seeder
         $combo11->price = 180000;
         $combo11->quantity = 10;
         $combo11->image = null;
+        $combo11->overrate = 0;
         $combo11->save();
         $combo11->books()->sync([]);
     }
