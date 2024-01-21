@@ -85,7 +85,6 @@ class AdminController extends Controller
 
     public function store(CreateUpdateAdminRequest $request)
     {
-        dd($request);
         if ($request->hasFile('avatar')) {
             $file = $request->avatar;
             $path = $file->store('uploads/admins');

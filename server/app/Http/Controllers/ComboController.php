@@ -46,6 +46,7 @@ class ComboController extends Controller
         $combo->name = $request->name;
         $combo->price = $request->price;
         $combo->quantity = $request->quantity;
+        $combo->overrate = 0;
         if ($request->hasFile('image')) {
             $file = $request->image;
             $path = $file->store('uploads/combos');
@@ -95,6 +96,7 @@ class ComboController extends Controller
         $combo->name = $request->name;
         $combo->price = $request->price;
         $combo->quantity = $request->quantity;
+        $combo->overrate = 0;
         if ($request->hasFile('image')) {
             $file = $request->image;
             $path = $file->store('uploads/combos');

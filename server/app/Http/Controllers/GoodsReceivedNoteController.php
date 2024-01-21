@@ -35,10 +35,6 @@ class GoodsReceivedNoteController extends Controller
         })->make(true);
     }
 
-    public function import(Request $request){
-       
-    }
-
     public function create()
     {
         $listSupplier = Supplier::all();
@@ -54,6 +50,7 @@ class GoodsReceivedNoteController extends Controller
         $createGoodsReceivedNote->admin_id = Auth::user()->id;
         $createGoodsReceivedNote->total = null;
         $createGoodsReceivedNote->status = 1;
+        $createGoodsReceivedNote->formality = $rq->formality;
         $createGoodsReceivedNote->save();
 
         $total = 0;

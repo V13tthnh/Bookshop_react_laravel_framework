@@ -5,7 +5,7 @@
         <p>Vui lòng click vào link dưới đây.</p>
         <p>Chú ý: Mã xác nhận chỉ có hiệu lực trong 24h</p>
         <p>
-            <a href="/customer/reset-password">Kích hoạt tài khoản</a>
+            <a href="{{$data['url']}}">Kích hoạt tài khoản</a>
         </p>
     </div>
     <h3></h3>

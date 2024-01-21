@@ -31,7 +31,8 @@ class Book extends Model
         'slug', 
         'supplier_id', 
         'publisher_id', 
-        'book_type'];
+        'book_type',
+        'overrate'];
 
     public function categories(){
         return $this->belongsToMany(Category::class);

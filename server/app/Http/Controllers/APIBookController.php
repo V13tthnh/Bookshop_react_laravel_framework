@@ -253,6 +253,12 @@ class APIBookController extends Controller
         ]);
     }
 
-   
+    public function listEbook(){
+        $ebook = Book::with('images', 'discounts', 'authors')->where('book_type', 1)->take(3)->get();
+        return response()->json([
+            'success' => true,
+            'data' => $ebook
+        ]);
+    }
 }
 

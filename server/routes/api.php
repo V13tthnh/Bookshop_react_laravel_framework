@@ -39,6 +39,7 @@ Route::get('/filter-books-by-price/{minPrice}/{maxPrice}', [APIBookController::c
 Route::get('/filter-books-by-type/{type}', [APIBookController::class, 'filterByType']);
 Route::get('/show-pdf/{id}', [APIBookController::class, 'showPDF'])->middleware('cors');
 Route::get('/featured-book', [APIBookController::class, 'featuredBook']);
+Route::get('/list-ebook', [APIBookController::class, 'listEbook']);
 //reviews
 Route::get('/book/reviews/{id}',[APIReviewController::class,'getBookReviews']);
 Route::get('/combo/reviews/{id}',[APIReviewController::class,'getComboReviews']);

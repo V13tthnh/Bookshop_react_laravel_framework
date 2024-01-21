@@ -16,7 +16,9 @@ class APICheckoutRequest extends FormRequest
         return [
             'customer_id' => 'required|numeric',
             'name' => 'required|min:4|max:50|regex:/^[\pL\s]+$/u',
-            'address' => 'required|string|max:255',
+            'address' => 'required|max:255',
+            'district' => 'required|string|max:255',
+            'province' => 'required|string|max:255',
             'phone' => 'required|regex:/^0[0-9]{9,10}$/',
             'format' => 'required',
         ];
@@ -32,9 +34,14 @@ class APICheckoutRequest extends FormRequest
             'name.min' => "Tên tối thiểu :min ký tự!",
             'name.max' => "Tên tối đa :max ký tự!",
 
-            'address.required' => "Địa chỉ không được bỏ trống!",
-            'address.string' => "Địa chỉ phải là một chuỗi ký tự!",
+            'address.required' => "(*) Vui lòng nhập địa chỉ cụ thể, số nhà, tên đường...!",
             'address.max' => "Địa chỉ tối đa :max ký tự!",
+
+            'district.required' => "Vui lòng chọn tỉnh/thành!",
+            'district.max' => "Địa chỉ tối đa :max ký tự!",
+
+            'province.required' => "Vui lòng chọn quận/huyện!",
+            'province.max' => "Địa chỉ tối đa :max ký tự!",
 
             'phone.required' => "Số điện thoại không được bỏ trống!",
             'phone.regex' => "Số điện thoại có 10 chữ số và bắt đầu từ số 0!",

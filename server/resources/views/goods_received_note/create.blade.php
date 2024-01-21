@@ -20,6 +20,14 @@
             $("#quantity").val('');
             $("#export_unit_price").val('');
             $("#import_unit_price").val('');
+            $("#formality").val($("#formality option:first").val());
+            $(".create_book_id_error").text('');
+            $(".create_supplier_id_error").text('');
+            $(".create_quantity_error").text('');
+            $(".create_import_unit_price_error").text('');
+            $(".create_export_unit_price_error").text('');
+            $(".create_range_error_error ul").text('');
+
         }
 
         function addToTableProduct() {
@@ -158,7 +166,7 @@
                 formData.append('export_unit_price[]', exportUnitPriceValue);
                 formData.append('total[]', totalValue);
             });
-           
+
             $.ajax({
                 url: "{{route('goods-received-note.store')}}",
                 method: "post",
@@ -166,26 +174,30 @@
                 contentType: false,
                 processData: false,
             }).done(function (res) {
-                if (res.success) { 
+                if (res.success) {
                     Swal.fire({ title: res.message, icon: 'success', confirmButtonText: 'OK' });
+                    $("#supplier").val($("#supplier option:first").val());
+                    $('#supplier').trigger('change');
+                    $("#myTable tbody").remove();
                 }
-                if (!res.success){ 
-                    Swal.fire({ title: res.message, icon: 'error', confirmButtonText: 'OK' }); 
-                    return; 
+                if (!res.success) {
+                    Swal.fire({ title: res.message, icon: 'error', confirmButtonText: 'OK' });
+                    return;
                 }
             }).fail(function (res) {
                 console.log(res.responseJSON.errors);
                 $.each(res.responseJSON.errors, function (key, value) {  //Duyệt mảng errors và gán các giá trị lỗi phía dưới các trường input
                     $('.create_' + key + '_error').text(value[0]);
                     $('.create_' + key + '_error').text(value[1]);
-                    // $('.create_' + key + '_error').text(value[2]);
-                    // $('.create_' + key + '_error').text(value[3]);
-                    // $('.create_' + key + '_error').text(value[4]);
-                    // $('.create_' + key + '_error').text(value[5]);
+                    $('.create_' + key + '_error').text(value[2]);
+                    $('.create_' + key + '_error').text(value[3]);
+                    $('.create_' + key + '_error').text(value[4]);
+                    $('.create_' + key + '_error').text(value[5]);
+
+                    $('.create_range_error_error ul').append('<li>'+value+'</li>');
                 });
             });
             formClear();
-            $("#myTable tbody").remove();
         });
     });
 </script>
@@ -202,7 +214,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form  method="post" enctype="multipart/form-data">
+            <form method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
                     <div class="form-group">
@@ -260,6 +272,7 @@
         </div>
     </div>
 </section>
+
 <section class="content">
     <div class="container-fluid">
         <div class="row">
@@ -269,6 +282,7 @@
                         <h3 class="card-title">Phiếu nhập</h3>
                     </div>
                     <div class="card-body">
+                    <div class="text-danger create_range_error_error"><ul></ul></div>
                         <div class="form-group">
                             <label for="exampleInputEmail1">Nhà cung cấp</label>
                             <select id="supplier" name="name" class="form-control select2">
@@ -291,7 +305,8 @@
                         </div>
                         <div class="form-group">
                             <label for="exampleInputPassword1">Số lượng</label>
-                            <input type="number" id="quantity" class="form-control" placeholder="Số lượng" required>
+                            <input type="number" min="1" id="quantity" class="form-control" placeholder="Số lượng"
+                                required>
                             <div class="text-danger create_quantity_error"></div>
                         </div>
                         <div class="form-group">
