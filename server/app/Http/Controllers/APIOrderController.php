@@ -26,7 +26,7 @@ class APIOrderController extends Controller
         $order = new Order();
         $order->customer_id = $rq->customer_id;
         $order->name = $rq->name;
-        $order->address = $rq->address;
+        $order->address = strval($rq->address) . ', ' .  $rq->district . ', ' .  $rq->province . ', ' . $rq->country;
         $order->phone = $rq->phone;
         $order->total = null;
         $order->format = $rq->format;

@@ -13,6 +13,7 @@ use Storage;
 use Str;
 use URL;
 use Mail;
+use DB;
 
 class APICustomerController extends Controller
 {
@@ -53,7 +54,7 @@ class APICustomerController extends Controller
             if (count($customer) > 0) {
                 $token = Str::random(40);
                 $domain = URL::to('http://localhost:3000');
-                $url = $domain . '/reset-password?token=' . $token;
+                $url = $domain . '/password-reset/' . $token;
 
                 $data['url'] = $url;
                 $data['email'] = $request->email;
@@ -65,6 +66,7 @@ class APICustomerController extends Controller
                 });
 
                 $datetime = \Carbon\Carbon::now()->format('Y-m-d H:i:s');
+
                 PasswordReset::updateOrCreate(
                     ['email' => $request->email],
                     [
@@ -72,6 +74,9 @@ class APICustomerController extends Controller
                         'token' => $token,
                         'created_at' => $datetime
                     ]
+                );
+                DB::table('customers')->where('email', $request->email)->update(
+                    ['remember_token' => $token]
                 );
                 return response()->json(['success' => true, 'msg' => 'Please check your mail to reset password !']);
             } else {
@@ -93,20 +98,34 @@ class APICustomerController extends Controller
     public function resetPassword(Request $request)
     {
         $request->validate([
-            'password' =>
-                [
-                    'required',
-                    'string',
-                    'min:6',
-                    'confirmed'
-                ]
+            'password' => 'required|string|min:6|confirmed',
+            'token' => 'required|string',
         ]);
-
-        $customer = Customer::find($request->id);
-        $customer->password = Hash::make($request->password);
-        $customer->save();
-        PasswordReset::where('email', $customer->email)->delete();
-        return '<h1> Your password has been reset! </h1>';
+    
+        $passwordReset = DB::table('password_resets')
+            ->where('token', $request->token)
+            ->first();
+    
+        if (!$passwordReset) {
+            return '<h1>Invalid token</h1>';
+        }
+    
+        $user = Customer::where('email', $passwordReset->email)->first();
+    
+        if (!$user) {
+            return '<h1>User not found</h1>';
+        }
+    
+        $user->password = Hash::make($request->password);
+        $user->save();
+    
+        // Xóa token sau khi mật khẩu đã được đặt lại
+        DB::table('password_resets')->where('email', $user->email)->delete();
+    
+        return response()->json([
+            'success' => true,
+            'message' => "Mật khẩu mới đã được cập nhật!"
+        ]);
     }
 
     public function store(Request $rq)

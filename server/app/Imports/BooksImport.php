@@ -26,6 +26,7 @@ class BooksImport implements ToModel, WithHeadingRow
             'publisher_id' => $row['publisher_id'],
             'slug' => Str::slug($row['name']),
             'book_type' => $row['book_type'],
+            'overrate' => $row['overrate']
         ]);
     }
 
